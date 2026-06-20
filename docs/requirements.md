@@ -1,6 +1,6 @@
 # Starter Clock Requirements
 
-**Status:** Seeded; pending validation and Task T003
+**Status:** Seeded; T002 evidence partial and blocked, pending T003
 **Last updated:** 2026-06-21
 
 This document is the canonical owner of product requirements and constraints.
@@ -46,3 +46,9 @@ scope change.
 T003 must define measurable acceptance thresholds, missing-input behavior,
 history limits, entitlement semantics, accessibility criteria, performance and
 reliability targets, privacy requirements, and platform-specific constraints.
+
+T002's partial evidence does not authorize a scope change. If its remaining
+research supports the apparent gap, T003 should give highest priority to an
+explainable peak window, observed-peak capture and personalization, reliable
+reminders, and feeding entry under 15 seconds. Pricing and history limits remain
+unvalidated decisions rather than requirements.

@@ -1,6 +1,6 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 0 complete after T001; Phase 1 awaits user approval
+**Status:** Phase 1 approved; T002 blocked
 **Last updated:** 2026-06-21
 
 This document owns milestone intent and phase outcomes. Task status and order
@@ -18,6 +18,7 @@ are canonical in `docs/tasks.md`.
 
 ## Current Position
 
-Phase 0 establishes process only. No customer validation, product-definition,
-design, architecture, or application implementation is complete. After the
-T001 commit, the next decision is whether to approve Phase 1 and assign T002.
+Phase 1 was approved by the user on 2026-06-21. T002 has partial official-store
+evidence but is blocked on written customer reviews plus complete Android and
+web comparisons. No customer validation, detailed product definition, design,
+architecture, or application implementation is complete yet.

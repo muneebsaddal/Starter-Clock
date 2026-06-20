@@ -4,10 +4,9 @@
 
 ## Current State
 
-Phase 0, the operating foundation, is complete with T001. The repository now
-has canonical product-document shells, a permanent task ledger, and one compact
-plan per task. No research, detailed product definition, design, architecture,
-or app implementation has started.
+Phase 1 was approved by the user on 2026-06-21. T002 has partial current
+official-store evidence and a provisional product implication, but is blocked.
+No later task is eligible.
 
 ## Decisions and Constraints
 
@@ -18,11 +17,12 @@ or app implementation has started.
 
 ## Blockers
 
-- Phase 1 requires explicit user approval before T002 can become `READY`.
+- External research access reached its usage limit before written customer
+  reviews and complete Android/web comparisons could be collected. These are
+  required by T002's acceptance criteria.
 
 ## Next Action
 
-User: approve Phase 1 and assign `T002` (`complete task 2`) when ready.
-
-The executing agent should then update T002 from `PLANNED` to `READY` as part
-of the approved phase transition, mark it `IN PROGRESS`, and follow its plan.
+Resume T002 after external research access is restored: collect and code recent
+written iOS/Android reviews, verify material Android listings and current web
+competitors, recheck citations, then complete the product-evidence review.

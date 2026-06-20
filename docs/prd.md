@@ -1,6 +1,6 @@
 # Starter Clock Product Requirements Document
 
-**Status:** Seeded; pending validation and Task T003
+**Status:** Seeded; T002 evidence partial and blocked
 **Last updated:** 2026-06-21
 
 ## Product Promise
@@ -18,8 +18,11 @@ useful expectation of when a starter will be ready. Existing timers,
 calculators, and tracking apps may not combine fast logging, transparent peak
 windows, personal observations, and calm reminders well enough.
 
-This is a hypothesis, not a validated fact. T002 owns validation and must put
-sourced findings in `docs/research/market-research.md`.
+T002 found a plausible but narrower opportunity around transparent,
+starter-specific peak windows and observed-peak learning. Close substitutes
+already cover much of the generic tracking scope, and written customer evidence
+is still missing. The sourced assessment is canonical in
+`docs/research/market-research.md`; the problem remains unvalidated.
 
 ## Candidate Users and Jobs
 
@@ -29,6 +32,9 @@ sourced findings in `docs/research/market-research.md`.
 
 Primary job: after feeding, help me understand roughly when my starter will
 peak so I can plan when to use it.
+
+Competitor copy supports these audiences only as vendor-selected targets; T002
+has not yet verified them through customer-review evidence.
 
 ## Success Measures to Define
 
@@ -43,10 +49,10 @@ T003 must convert these directions into measurable targets:
 ## Scope
 
 The candidate MVP scope and exclusions are canonical in
-`docs/requirements.md`. Monetization begins as a hypothesis: one free starter
-and limited history, with a lifetime Pro purchase initially tested near USD
-19.99. T002 must validate the market context before this becomes a release
-decision.
+`docs/requirements.md`. Monetization remains a hypothesis: current store
+evidence does not validate a lifetime Pro purchase near USD 19.99. Exact price
+experiments must wait for T002's missing evidence and a demonstrable core
+prediction experience.
 
 ## Stories and Acceptance Criteria
 

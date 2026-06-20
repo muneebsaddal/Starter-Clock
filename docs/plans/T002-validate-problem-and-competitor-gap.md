@@ -50,8 +50,18 @@ sample limits, and confidence; revert only unsupported documentation claims.
 
 ## Completion Record
 
-- Outcome: Not started
-- Summary: —
-- Actual files changed: —
-- Verification: —
-- Remaining risks or blocker: Phase 1 user approval is required.
+- Outcome: `BLOCKED`
+- Summary: collected and synthesized current Apple metadata and Google Play
+  discovery evidence; narrowed the plausible product wedge and kept scope and
+  pricing explicitly provisional.
+- Actual files changed: `docs/research/market-research.md`, `docs/prd.md`,
+  `docs/requirements.md`, `docs/roadmap.md`, `docs/tasks.md`, this plan, and
+  `HANDOFF.md`.
+- Verification: official Apple listing links and adjacent claims checked from
+  the public Search/Lookup API; Google Play presence checked from its US search
+  surface; evidence labels and unsupported-claim boundaries reviewed. Final
+  citation and acceptance review cannot pass while required evidence is absent.
+- Remaining risks or blocker: the environment's external-research usage limit
+  stopped collection of written customer reviews and full Android/web details.
+  Restore research access, gather the evidence enumerated in the research
+  document, revise confidence, and rerun the T002 product-evidence review.
