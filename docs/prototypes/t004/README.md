@@ -1,0 +1,17 @@
+# T004 interactive prototype
+
+Open `index.html` through a local static server. This disposable prototype
+tests information architecture and interaction decisions; it is not production
+application code and does not define the T005 estimation formula.
+
+Suggested command from the repository root:
+
+```powershell
+python -m http.server 4173 --directory docs/prototypes/t004
+```
+
+Use the scenario selector to inspect first use, missing-input uncertainty,
+offline, permission-denied, storage-failure, free-limit, and loading states.
+The normal task path is **Log feeding → Save feeding → inspect peak window →
+Why this window?**. Keyboard users can tab through every action and press
+Escape to dismiss a sheet or dialog.

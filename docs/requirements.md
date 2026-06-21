@@ -1,6 +1,6 @@
 # Starter Clock Requirements
 
-**Status:** MVP contract defined by T003; awaiting Phase 1 approval
+**Status:** MVP contract approved; T004 moderated validation pending
 
 **Last updated:** 2026-06-21
 

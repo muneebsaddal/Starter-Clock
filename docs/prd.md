@@ -1,6 +1,6 @@
 # Starter Clock Product Requirements Document
 
-**Status:** Measurable MVP defined by T003; awaiting Phase 1 approval
+**Status:** Measurable MVP approved; Phase 2 in progress
 
 **Last updated:** 2026-06-21
 

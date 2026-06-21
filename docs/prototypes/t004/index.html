@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Starter Clock — T004 prototype</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%239b4f35'/%3E%3Cpath d='M16 8v9l6 3' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="prototype-bar" aria-label="Prototype controls">
+    <strong>T004 prototype</strong>
+    <label>Scenario
+      <select id="scenario">
+        <option value="ready">Ready to peak</option>
+        <option value="empty">First use</option>
+        <option value="missing">Missing optional inputs</option>
+        <option value="offline">Offline</option>
+        <option value="permission">Reminder denied</option>
+        <option value="storage">Save failed</option>
+        <option value="limit">Free starter limit</option>
+        <option value="loading">Loading</option>
+      </select>
+    </label>
+    <button id="theme" class="quiet compact" type="button" aria-pressed="false">Dark</button>
+  </div>
+
+  <div class="shell">
+    <header class="topbar">
+      <button class="starter-switch quiet" type="button" data-action="starter-menu" aria-label="Switch starter">
+        <span class="culture-dot" aria-hidden="true"></span>
+        <span><strong>Mabel</strong><small>Active starter</small></span>
+        <span aria-hidden="true">⌄</span>
+      </button>
+      <button class="icon-button" type="button" data-action="settings" aria-label="Open settings">•••</button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="dashboard" class="screen active" aria-labelledby="dashboard-title">
+        <div id="status-banner" class="banner hidden" role="status"></div>
+        <div id="dashboard-content">
+          <p class="eyebrow" id="dashboard-title">Estimated peak</p>
+          <div class="peak-card">
+            <p class="status-pill"><span aria-hidden="true">◔</span> Before peak window</p>
+            <h1>Today<br><span>4:30–6:00 PM</span></h1>
+            <p class="countdown">Starts in about 2 hr 15 min</p>
+            <div class="timeline" aria-label="Peak progress: fed at 8 AM, estimated peak from 4:30 to 6 PM">
+              <span class="timeline-fill"></span><span class="timeline-window"></span><span class="timeline-now"></span>
+            </div>
+            <div class="timeline-labels"><span>Fed 8:00 AM</span><span>Peak window</span></div>
+            <button class="explain-link" type="button" data-action="explain" aria-expanded="false">Why this window?</button>
+            <div id="explanation" class="explanation hidden">
+              <p><strong>An estimate, not a guarantee.</strong> Your starter may peak earlier or later. Look for a rounded top, bubbles, and maximum rise.</p>
+              <ul><li>1:2:2 feeding ratio</li><li>24°C temperature</li><li>Bread flour</li></ul>
+            </div>
+          </div>
+
+          <button class="primary log-button" type="button" data-action="log">＋ Log feeding</button>
+
+          <section class="next-step" aria-labelledby="next-title">
+            <div><p class="eyebrow">Next step</p><h2 id="next-title">Remind me near the peak</h2><p>At 4:30 PM · only on this device</p></div>
+            <button class="secondary" type="button" data-action="reminder">Set reminder</button>
+          </section>
+
+          <section class="latest" aria-labelledby="latest-title">
+            <div class="section-heading"><h2 id="latest-title">Latest feeding</h2><button class="quiet" data-action="history" type="button">View history</button></div>
+            <button class="feeding-row" type="button" data-action="edit">
+              <span><strong>Today, 8:00 AM</strong><small>1:2:2 · 100% hydration</small></span><span aria-hidden="true">›</span>
+            </button>
+            <button class="text-action" type="button" data-action="observe">＋ Record observed peak</button>
+          </section>
+        </div>
+        <div id="empty-state" class="empty-state hidden">
+          <div class="starter-illustration" aria-hidden="true"><span></span></div>
+          <p class="eyebrow">Welcome to Starter Clock</p>
+          <h1>Meet your starter<br>at its best.</h1>
+          <p>Name your starter, log a feeding, and get an understandable peak window.</p>
+          <button class="primary" type="button" data-action="create">Create my starter</button>
+          <small>No account needed. Your data stays on this device.</small>
+        </div>
+        <div id="loading-state" class="loading-state hidden" role="status" aria-label="Loading starter">
+          <div class="skeleton tall"></div><div class="skeleton"></div><div class="skeleton short"></div>
+        </div>
+      </section>
+
+      <section id="history" class="screen" aria-labelledby="history-title">
+        <div class="page-heading"><button class="icon-button" type="button" data-action="back" aria-label="Back">‹</button><div><p class="eyebrow">Mabel</p><h1 id="history-title">Feeding history</h1></div></div>
+        <p class="entitlement-note">Showing your 30 most recent feedings on Free. <button type="button" data-action="upgrade">See Pro</button></p>
+        <div class="date-group"><h2>Today</h2><button class="history-card" data-action="edit" type="button"><span><strong>8:00 AM</strong><small>1:2:2 · Bread flour · 24°C</small><em>Peak estimated 4:30–6:00 PM</em></span><span aria-hidden="true">›</span></button></div>
+        <div class="date-group"><h2>Yesterday</h2><button class="history-card" data-action="edit" type="button"><span><strong>7:42 AM</strong><small>1:3:3 · Whole wheat · 23°C</small><em>Observed peak 5:10 PM</em></span><span aria-hidden="true">›</span></button></div>
+      </section>
+    </main>
+
+    <nav class="tabbar" aria-label="Primary navigation">
+      <button class="selected" type="button" data-tab="dashboard" aria-current="page"><span aria-hidden="true">◷</span>Today</button>
+      <button type="button" data-tab="history"><span aria-hidden="true">≡</span>History</button>
+    </nav>
+  </div>
+
+  <div id="scrim" class="scrim hidden"></div>
+  <section id="sheet" class="sheet hidden" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-heading"><div><p class="eyebrow" id="sheet-kicker">Mabel</p><h1 id="sheet-title">Log feeding</h1></div><button class="icon-button" type="button" data-action="close" aria-label="Close">×</button></div>
+    <form id="feeding-form" novalidate>
+      <div class="time-row"><label for="fed-time">Fed at</label><input id="fed-time" name="time" type="datetime-local" value="2026-06-21T08:00" required></div>
+      <fieldset><legend>Amounts</legend><p>Enter what you used in grams.</p><div class="amount-grid">
+        <label>Starter <span><input name="starter" inputmode="decimal" value="25" required aria-describedby="form-error"><b>g</b></span></label>
+        <label>Flour <span><input name="flour" inputmode="decimal" value="50" required aria-describedby="form-error"><b>g</b></span></label>
+        <label>Water <span><input name="water" inputmode="decimal" value="50" required aria-describedby="form-error"><b>g</b></span></label>
+      </div></fieldset>
+      <div class="calculation" aria-live="polite"><span><small>Feeding ratio</small><strong id="ratio">1:2:2</strong></span><span><small>Hydration</small><strong id="hydration">100%</strong></span></div>
+      <details><summary>Flour, temperature & photo <span>Optional</span></summary><div class="optional-fields">
+        <label>Flour type<select name="flourType"><option>Bread flour</option><option>Whole wheat</option><option>Rye</option><option>Other</option></select></label>
+        <label>Temperature<div class="unit-input"><input name="temperature" inputmode="decimal" value="24"><span>°C</span></div></label>
+        <button class="secondary" type="button" data-action="photo">＋ Add progress photo</button>
+      </div></details>
+      <p id="form-error" class="error hidden" role="alert"></p>
+      <div class="form-actions"><button class="primary" type="submit">Save feeding</button><button class="quiet danger hidden" id="delete-feeding" type="button" data-action="delete">Delete feeding</button></div>
+    </form>
+  </section>
+
+  <section id="message-dialog" class="dialog hidden" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <p class="eyebrow" id="dialog-kicker">Starter Clock</p><h1 id="dialog-title">Title</h1><p id="dialog-copy"></p><div id="dialog-extra"></div>
+    <div class="dialog-actions"><button id="dialog-primary" class="primary" type="button">Continue</button><button class="quiet" type="button" data-action="close-dialog">Not now</button></div>
+  </section>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

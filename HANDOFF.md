@@ -4,31 +4,48 @@
 
 ## Current State
 
-Phase 1 work is complete. T002 validated a narrow feed-to-peak planning
-opportunity with explicit evidence limits. T003 defined the measurable MVP
-contract and passed the Phase 1 audit with verdict `APPROVE`. No design,
-architecture, or implementation work has begun.
+Phase 1 is complete with verdict `APPROVE`. The user approved Phase 2 and
+explicitly assigned T004 on 2026-06-21. T004's information architecture,
+interaction/state contract, responsive accessible prototype, and moderated
+test protocol are implemented. T004 is `BLOCKED`, not done, because its two
+human usability thresholds have not yet been tested. T005 remains `PLANNED`.
 
 ## Decisions and Constraints
 
-- `AGENTS.md` owns operating authority and chartered product constraints.
-- `docs/requirements.md` owns 15 functional and 11 non-functional requirements;
-  `docs/prd.md` owns 12 traced stories and five release goals.
-- Free supports one active starter and browsing its 30 most recent feedings;
-  lifetime Pro unlocks multiple starters and complete retained history.
-- Export and complete deletion are available regardless of entitlement.
-- USD 9.99 and USD 19.99 are pricing experiments, not an approved release
-  price. Subscriptions remain out of scope.
-- Peak timing remains an explainable interval, not a scientific or food-safety
-  claim. T005 owns model accuracy and personalization thresholds.
-- The user selects tasks and explicitly approves phase progression.
+- Mobile uses two persistent destinations: Today and History. Starter
+  management and Settings remain secondary surfaces.
+- Today leads with a plain-language estimated interval and before/in/past state.
+  Factors and uncertainty are progressively disclosed.
+- Feeding entry keeps time plus starter/flour/water in the primary path; flour,
+  temperature, photo, and notes are optional.
+- Missing optional inputs widen and explain the interval. T005 still owns the
+  formula, confidence behavior, accuracy evidence, and learning threshold.
+- Reminder/photo/network/Pro failure never blocks core tracking. Recoverable
+  errors preserve input and state a next action.
+- Free remains one active starter and 30 browsable feedings. Export and complete
+  deletion remain free. No scope, price, or platform boundary changed.
+- Prototype code under `docs/prototypes/t004/` is disposable design evidence,
+  not production architecture.
 
-## Blockers
+## Verification Evidence
 
-- Phase 2 requires explicit user approval before T004 can become ready.
+- Prototype JavaScript syntax, local asset references, and diff whitespace pass.
+- Playwright covered save, validation preservation, uncertainty disclosure,
+  all scenario states, history/edit, keyboard dismissal, and modal focus wrap.
+- No horizontal overflow at 320×640, 390×844, or 1280×800 review viewports.
+- Tested light/dark text pairs meet WCAG AA; detailed ratios are in the T004
+  completion record.
+- Human feeding-time and peak-comprehension results are intentionally absent.
+
+## Blocker
+
+NFR-001 and NFR-002 require five representative bakers in moderated prototype
+sessions, with at least 4/5 logging within 15 seconds and at least 4/5 stating
+the interval and its approximate nature within 10 seconds. Automation cannot
+satisfy this evidence requirement.
 
 ## Next Action
 
-User: review the Phase 1 contract and approve or reject progression to Phase 2.
-If approved, update the phase gate and prepare T004 for a separate explicit
-assignment; do not start it automatically.
+Run the five sessions in `docs/prototypes/t004/usability-test.md`, record
+anonymized results, revise and retest any failed criteria, then resume T004 to
+mark it `DONE`. Do not start T005 while T004 is blocked.
