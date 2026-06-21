@@ -1,6 +1,6 @@
 # Starter Clock Product Requirements Document
 
-**Status:** Measurable MVP approved; Phase 2 in progress
+**Status:** Measurable MVP approved; Phase 2 in progress, T004 complete
 
 **Last updated:** 2026-06-21
 
@@ -52,15 +52,18 @@ teams and commercial production are not MVP users.
 
 | ID | Goal | Release measure | Evidence collection |
 |---|---|---|---|
-| GOAL-001 | Make feeding capture genuinely fast. | At least 4 of 5 representative users save a standard feeding in ≤15 seconds after one practice attempt. | T004 moderated usability test; NFR-001 |
-| GOAL-002 | Make the estimate understandable without false precision. | At least 4 of 5 first-time users identify the interval and its approximate nature within 10 seconds of seeing the dashboard. | T004 moderated comprehension test; NFR-002 |
+| GOAL-001 | Make feeding capture genuinely fast. | Post-build validation target: at least 4 of 5 representative users save a standard feeding in ≤15 seconds after one practice attempt. | Deferred representative test; T004 owner walkthrough found the flow clear but did not measure speed; NFR-001 |
+| GOAL-002 | Make the estimate understandable without false precision. | Post-build validation target: at least 4 of 5 first-time users identify the interval and its approximate nature within 10 seconds. | Deferred representative test; T004 owner walkthrough found the interval and uncertainty clear; NFR-002 |
 | GOAL-003 | Make the core loop dependable without connectivity. | All specified offline persistence, restart, edit/delete, and recovery tests pass on representative iOS and Android targets. | T006 verification; FR-010, NFR-006 |
 | GOAL-004 | Make reminders helpful but safely optional. | Permission-denied, scheduling-failure, edit, delete, and reschedule scenarios all pass without blocking tracking or showing false success. | T007 integration tests; FR-006, NFR-011 |
 | GOAL-005 | Preserve user agency and privacy. | Export and complete deletion pass on both mobile platforms; no user-entered data is transmitted in MVP. | T009 privacy/data-control audit; FR-013, NFR-007 |
 
-These are release-readiness thresholds, not post-launch market validation.
-Retention, conversion, willingness to pay, and prediction error need later
-instrumentation or research and are not fabricated as MVP success claims.
+GOAL-003 through GOAL-005 are release-readiness thresholds. The user explicitly
+waived representative evidence for GOAL-001 and GOAL-002 because participants
+are unavailable; those measures remain non-blocking validation targets and are
+not reported as passed. Retention, conversion, willingness to pay, and
+prediction error need later instrumentation or research and are not fabricated
+as MVP success claims.
 
 ## MVP Stories and Traceability
 
@@ -70,7 +73,7 @@ instrumentation or research and are not fabricated as MVP success claims.
 | US-002 | As a baker who just fed, I can enter amounts, flour, temperature, and time quickly so the app can calculate from what happened. Accepted when valid entries save within the speed target and invalid entries preserve input with clear corrections. | FR-002, FR-014, NFR-001 |
 | US-003 | As a baker, I can see ratio and hydration before saving so I understand the feeding. Accepted when shared-formula calculation and boundary tests pass on mobile and web. | FR-003, FR-012, NFR-009 |
 | US-004 | As a planning baker, I can see an explainable peak interval and current timing state so I know roughly when to use the starter. Accepted when complete- and missing-input cases, comprehension testing, restart, time-zone, and DST cases pass. | FR-004, FR-005, NFR-002, NFR-009 |
-| US-005 | As a busy baker, I can set a reminder from the interval so I do not have to manage a separate timer. Accepted when schedule, denial, failure, edit, delete, and reschedule scenarios pass. | FR-006, FR-014, NFR-011 |
+| US-005 | As a busy baker, I get an optional reminder from the interval without managing a separate timer. Accepted when default-on automatic scheduling, opt-out, remembered preference, denial, failure, edit, delete, change, and reschedule scenarios pass. | FR-006, FR-014, NFR-011 |
 | US-006 | As an iterative baker, I can review, correct, and delete feedings and record the observed peak so my history reflects reality. Accepted when derived values and reminder state remain coherent after every mutation. | FR-007, FR-008, NFR-006 |
 | US-007 | As a visual baker, I can optionally keep one progress photo with a feeding without photo access blocking the core log. | FR-009, NFR-007, NFR-011 |
 | US-008 | As an offline baker, I can complete the tracking loop and recover it after restart without an account. Accepted when offline and interrupted-write suites pass without silent loss. | FR-010, NFR-006, NFR-011 |
@@ -109,8 +112,9 @@ subscription is approved for release.
 
 ## Open Decisions and Learning Plan
 
-- T004 tests feeding speed, interval comprehension, and whether the free
-  history boundary feels clear and fair.
+- T004 established the core flow through automated checks and an owner
+  walkthrough. Its five-person speed and comprehension study was explicitly
+  waived as unavailable, leaving a recorded validation risk rather than a pass.
 - T005 defines the deterministic model, error measurement, missing-input
   confidence behavior, and the observation threshold for personalization.
 - T007 validates native notification and purchase edge cases before those

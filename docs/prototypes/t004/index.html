@@ -60,8 +60,8 @@
           <button class="primary log-button" type="button" data-action="log">＋ Log feeding</button>
 
           <section class="next-step" aria-labelledby="next-title">
-            <div><p class="eyebrow">Next step</p><h2 id="next-title">Remind me near the peak</h2><p>At 4:30 PM · only on this device</p></div>
-            <button class="secondary" type="button" data-action="reminder">Set reminder</button>
+            <div><p class="eyebrow">Peak reminder</p><h2 id="next-title">Scheduled for 4:30 PM</h2><p>Created with this feeding · only on this device</p></div>
+            <div class="reminder-actions"><button class="quiet" type="button" data-action="change-reminder">Change</button><button class="quiet" type="button" data-action="cancel-reminder">Cancel</button></div>
           </section>
 
           <section class="latest" aria-labelledby="latest-title">
@@ -111,6 +111,7 @@
         <label>Water <span><input name="water" inputmode="decimal" value="50" required aria-describedby="form-error"><b>g</b></span></label>
       </div></fieldset>
       <div class="calculation" aria-live="polite"><span><small>Feeding ratio</small><strong id="ratio">1:2:2</strong></span><span><small>Hydration</small><strong id="hydration">100%</strong></span></div>
+      <label class="reminder-toggle"><span><strong>Remind me near peak</strong><small>Automatically at the start of the estimated window</small></span><input id="reminder-enabled" name="reminderEnabled" type="checkbox" checked></label>
       <details><summary>Flour, temperature & photo <span>Optional</span></summary><div class="optional-fields">
         <label>Flour type<select name="flourType"><option>Bread flour</option><option>Whole wheat</option><option>Rye</option><option>Other</option></select></label>
         <label>Temperature<div class="unit-input"><input name="temperature" inputmode="decimal" value="24"><span>°C</span></div></label>

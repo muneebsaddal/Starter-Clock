@@ -1,6 +1,6 @@
 # Starter Clock Requirements
 
-**Status:** MVP contract approved; T004 moderated validation pending
+**Status:** MVP contract approved; T004 complete with approved validation waiver
 
 **Last updated:** 2026-06-21
 
@@ -29,7 +29,7 @@ the evidence synthesis in `docs/research/market-research.md`.
 | FR-003 | Must | For every valid feeding, calculate and display the starter:flour:water feeding ratio and hydration percentage using documented formulas. Results update before save, round only for display, and remain reproducible from stored inputs. | Charter; T002 calculator evidence |
 | FR-004 | Must | After a feeding, produce an estimated peak interval with an earliest and latest time. The result identifies which available inputs influenced it, labels the result as an estimate, and widens or lowers confidence when optional flour type or temperature is missing; it never invents a measured value. Exact formulas and accuracy thresholds belong to T005. | Charter; T002 narrow-gap inference |
 | FR-005 | Must | The mobile dashboard shows the current starter, time since its latest feeding, the estimated peak interval, and one plain-language state: before window, in window, or past window. The state recomputes from absolute timestamps after restart, time-zone change, and daylight-saving transition. | Product promise; T002 planning evidence |
-| FR-006 | Must | A user can schedule, change, or cancel one local reminder derived from a feeding's peak interval. Editing or deleting that feeding reschedules or cancels its reminder. Permission denial, unavailable notification services, or scheduling failure leaves tracking usable and exposes a recoverable status; no success state is shown unless scheduling succeeds. | Charter; T002 reminder/reliability evidence |
+| FR-006 | Must | Feeding entry offers a remembered **Remind me near peak** preference, enabled by default. Saving automatically schedules one local reminder at the estimated interval start when enabled; the user can opt out before save and change or cancel it afterward. On first use, save completes before a contextual notification-permission request. Editing or deleting the feeding reschedules or cancels its reminder. Permission denial, unavailable services, or scheduling failure leaves tracking usable and exposes a recoverable status; no success state is shown unless scheduling succeeds. | Charter; T002 reminder/reliability evidence; approved T004 owner review |
 | FR-007 | Must | A user can view feeding history newest-first, open an entry, edit all recorded fields, and delete it with confirmation. Editing recalculates derived values and the peak interval. Free users can browse the 30 most recent feedings for their starter; Pro users can browse complete retained history. | Charter; T002 editing evidence; product decision |
 | FR-008 | Must | A user can record, edit, or remove an observed peak time for a feeding and see estimated versus observed timing. Once the model has enough valid observations, it may personalize later windows for that starter; until T005 defines and verifies that threshold, baseline estimates remain the fallback and the UI must not claim learning. | Charter peak-safety rule; T002 narrow-gap inference |
 | FR-009 | Must | A user can attach, replace, view, or remove one progress photo per feeding. Photos remain device-local, are excluded from calculations, and removal of a feeding or starter removes its associated photo. Denied photo access does not block saving the feeding. | Chartered MVP; T002 history evidence |
@@ -44,8 +44,8 @@ the evidence synthesis in `docs/research/market-research.md`.
 
 | ID | Priority | Requirement and objective acceptance criterion | Source |
 |---|---|---|---|
-| NFR-001 | Must | In moderated prototype testing, at least 4 of 5 representative users can save a standard feeding from the dashboard in 15 seconds or less after one practice attempt, without facilitator help. | Project charter |
-| NFR-002 | Must | In moderated testing, at least 4 of 5 representative first-time users can state the peak interval and that it is approximate within 10 seconds of seeing the populated dashboard, without external instruction. | Product promise; T002 uncertainty implication |
+| NFR-001 | Should | When representative participant access becomes feasible, target at least 4 of 5 users saving a standard feeding in 15 seconds or less after one practice attempt, without facilitator help. The user explicitly waived this evidence for T004 on 2026-06-21; the owner walkthrough found the flow clear but did not measure speed. | Project charter; approved validation waiver |
+| NFR-002 | Should | When representative participant access becomes feasible, target at least 4 of 5 first-time users stating the peak interval and that it is approximate within 10 seconds, without external instruction. The user explicitly waived this evidence for T004 on 2026-06-21; the owner walkthrough found the interval and uncertainty clear. | Product promise; T002 uncertainty implication; approved validation waiver |
 | NFR-003 | Must | Core screens meet WCAG 2.2 AA contrast and text-resize/reflow expectations; every interactive control has an accessible name, role, state, and logical focus order. Targets meet platform minimums of 44×44 pt on iOS and web and 48×48 dp on Android. Critical flows pass screen-reader checks on iOS and Android and keyboard checks on web. | Charter accessibility standard |
 | NFR-004 | Must | On the representative release device matrix, a warm app launch makes local dashboard content interactive within 2 seconds, a cold launch within 3 seconds, and a save or history update visibly completes within 1 second at p95 for 1,000 feedings, excluding OS notification prompts. | Charter performance and reliability standards |
 | NFR-005 | Must | Automated tests cover ratio, hydration, peak-window, time-zone/DST, edit/delete, entitlement, and persistence behavior. Required unit suites pass with at least 80% statement and branch coverage for domain and data modules; every meaningful defect adds a regression test. | Charter testing standard |
@@ -60,6 +60,9 @@ the evidence synthesis in `docs/research/market-research.md`.
 
 - `Must` requirements define the MVP release contract. Any deferral requires an
   explicit approved scope change.
+- NFR-001 and NFR-002 remain useful validation targets but are not T004 or MVP
+  release gates after the user's explicit participant-testing waiver. This is
+  accepted uncertainty, not evidence that the original thresholds passed.
 - USD 9.99 and USD 19.99 lifetime prices are experiment candidates. No release
   price is approved, and subscriptions remain out of scope.
 - The 30-feeding free history boundary is a product hypothesis to test for

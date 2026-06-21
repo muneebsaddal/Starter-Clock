@@ -1,6 +1,6 @@
 # T004 moderated usability protocol
 
-**Status:** Participant sessions required
+**Status:** Deferred by explicit owner waiver on 2026-06-21
 
 **Prototype:** `index.html`
 
@@ -37,6 +37,11 @@ explain interface labels or peak-window meaning.
 
 ## Results
 
+The product owner completed an informal walkthrough and reported that the flow,
+peak interval, and approximate nature of the estimate were clear. No timed
+feeding result was recorded. This is directional owner feedback, not a
+representative participant result, so it is not entered in the table below.
+
 | Participant | Segment | Feed time | Feed pass | Interval + uncertainty ≤10 s | Recovery understood | Free boundary notes |
 |---|---|---:|---|---|---|---|
 | P1 | — | — | — | — | — | — |
@@ -45,7 +50,9 @@ explain interface labels or peak-window meaning.
 | P4 | — | — | — | — | — | — |
 | P5 | — | — | — | — | — | — |
 
-Completion requires at least 4/5 feeding passes and at least 4/5 interval-
-comprehension passes. Summarize observed issues without names, revise the
-prototype if needed, rerun failed criteria, and record the final evidence in
-the T004 plan. Automated browser walkthroughs must not be entered as users.
+The original completion rule required at least 4/5 feeding passes and at least
+4/5 interval-comprehension passes. On 2026-06-21 the user explicitly waived
+that rule because representative participants cannot be recruited and approved
+proceeding with the resulting uncertainty. T004 therefore closes without
+claiming these thresholds passed. This protocol remains available if access
+becomes feasible; automated browser walkthroughs must not be entered as users.

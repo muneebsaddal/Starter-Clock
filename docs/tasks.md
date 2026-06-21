@@ -10,7 +10,7 @@ never reused. The user selects tasks explicitly and approves phase changes.
 | T001 | Establish project operating workflow | 0 | DONE | None | [Plan](plans/T001-establish-project-operating-workflow.md) |
 | T002 | Validate problem and competitor gap | 1 | DONE | User approval of Phase 1 | [Plan](plans/T002-validate-problem-and-competitor-gap.md) |
 | T003 | Define measurable MVP requirements | 1 | DONE | T002 | [Plan](plans/T003-define-measurable-mvp-requirements.md) |
-| T004 | Design and prototype the core feed-to-peak flow | 2 | BLOCKED | T003, user approval of Phase 2 | [Plan](plans/T004-design-core-feed-to-peak-flow.md) |
+| T004 | Design and prototype the core feed-to-peak flow | 2 | DONE | T003, user approval of Phase 2 | [Plan](plans/T004-design-core-feed-to-peak-flow.md) |
 | T005 | Define and test the estimation model and architecture | 2 | PLANNED | T003, T004 | [Plan](plans/T005-define-estimation-model-and-architecture.md) |
 | T006 | Implement local-first mobile tracking | 3 | PLANNED | T005, user approval of Phase 3 | [Plan](plans/T006-implement-local-first-mobile-tracking.md) |
 | T007 | Add notifications and purchase handling | 4 | PLANNED | T006, user approval of Phase 4 | [Plan](plans/T007-add-notifications-and-purchases.md) |
@@ -29,4 +29,5 @@ never reused. The user selects tasks explicitly and approves phase changes.
 
 Phase 1 execution was approved by the user on 2026-06-21. T002 and T003 are
 complete. The Phase 1 audit passed. The user approved Phase 2 and explicitly
-assigned T004 on 2026-06-21.
+assigned T004 on 2026-06-21. T004 is complete with an explicit owner waiver of
+unavailable representative testing; T005 remains `PLANNED` and unassigned.

@@ -20,7 +20,9 @@ entry to peak-window understanding, reminders, observed peaks, and history.
 ## Acceptance Criteria
 
 - The dashboard answers peak timing immediately and communicates uncertainty.
-- Representative users can log a feeding in under 15 seconds in prototype tests.
+- The under-15-second representative-user target has a documented protocol;
+  if participant access is unavailable, only an explicit owner waiver can close
+  T004 and the unmet evidence must remain recorded as validation risk.
 - All required empty, error, offline, permission, limit, and edit states exist.
 - Small Android, current iPhone, and responsive web layouts are reviewed.
 - Decisions trace to requirements and usability evidence.
@@ -42,7 +44,8 @@ entry to peak-window understanding, reminders, observed peaks, and history.
 
 - Trace screens and states to requirement IDs.
 - Run prototype interaction, viewport, keyboard, contrast, and touch-target checks.
-- Record feeding-time and peak-comprehension evidence; inspect the final diff.
+- Record feeding-time and peak-comprehension evidence or an explicit owner
+  waiver without claiming a pass; inspect the final diff.
 
 ## Risks and Rollback
 
@@ -51,12 +54,13 @@ realistic ranges and missing inputs; retain rejected alternatives in Git only.
 
 ## Completion Record
 
-- Outcome: Blocked after implementation; moderated acceptance evidence pending
+- Outcome: Done with explicit representative-validation waiver
 - Summary: Defined the two-destination mobile IA, complete happy/recovery state
   contract, accessibility and platform behavior, and a disposable interactive
-  prototype. Added a five-participant protocol with objective feeding-speed and
-  interval-comprehension gates. No production architecture or peak formula was
-  selected.
+  prototype. The owner walkthrough found the flow and estimated-window language
+  clear and approved replacing the manual reminder setup with a default-on,
+  remembered feeding-entry preference that schedules automatically on save.
+  No production architecture or peak formula was selected.
 - Actual files changed: `docs/ux-flow.md`, `docs/prototypes/t004/index.html`,
   `styles.css`, `app.js`, `README.md`, `usability-test.md`,
   `docs/requirements.md`, `docs/prd.md`, `docs/roadmap.md`, `docs/tasks.md`, this
@@ -67,9 +71,14 @@ realistic ranges and missing inputs; retain rejected alternatives in Git only.
   wrapping. Viewport checks at 320×640, 390×844, and 1280×800 found no
   horizontal overflow. Light contrast ratios were 12.94:1 (body), 4.78:1
   (muted), and 8.93:1 (accent); dark ratios were 14.72:1, 8.28:1, and 7.96:1.
-  The UX contract traces 17 critical requirement IDs. `git diff --check` passed.
-- Remaining risks or blocker: NFR-001 and NFR-002 require moderated evidence
-  from five representative bakers. No participants were available in this
-  execution context, and automated agents are not substituted for users. Resume
-  by running `docs/prototypes/t004/usability-test.md`, recording anonymized
-  results, incorporating any failed observations, and repeating verification.
+  The UX contract traces 17 critical requirement IDs. For the reminder revision,
+  `node --check`, local-asset resolution, data-action handler coverage, required
+  state-copy checks, stale-status searches, and `git diff --check` passed. The
+  earlier browser viewport suite was not rerun for this localized revision.
+- Validation decision: The user stated that representative participants cannot
+  be recruited, explicitly waived the five-person NFR-001/NFR-002 evidence on
+  2026-06-21, and approved proceeding. The thresholds are not reported as
+  passed. They remain non-blocking validation targets and the protocol is kept
+  for future use if participant access becomes feasible.
+- Remaining risk: feeding speed and first-time interval comprehension are
+  supported only by an untimed owner walkthrough, not representative evidence.

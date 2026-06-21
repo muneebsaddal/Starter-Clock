@@ -1,6 +1,6 @@
 # Starter Clock UX Flow
 
-**Status:** T004 prototype defined; moderated validation pending
+**Status:** T004 complete; representative validation waived with accepted risk
 
 **Last updated:** 2026-06-21
 
@@ -12,7 +12,8 @@ remain in `requirements.md`; the T005 model will define calculation behavior.
 
 The interface makes one promise at a time: **know when your starter will
 peak**. The first viewport answers that question with an interval, its current
-state, and an optional reminder. It never presents an exact predicted instant.
+state, and the status of an optional, default-on reminder. It never presents an
+exact predicted instant.
 
 - Show the peak interval before charts, history, or secondary metrics.
 - Keep the primary feeding path to time plus starter, flour, and water amounts.
@@ -44,7 +45,7 @@ place users return to. Web does not use this tracking IA in MVP (CON-002).
 ```text
 First use -> Create starter -> Log feeding -> Today / peak interval
                                       |          |-> Explain factors
-                                      |          |-> Set/change reminder
+                                      |          |-> Change/cancel reminder
                                       |          |-> Record observed peak
                                       +-> History -> Feeding detail -> Edit/delete
 Today -> Starter switcher -> create/rename/archive/delete or free-limit choice
@@ -70,15 +71,18 @@ panel on wide web prototype viewports. The default order is:
 1. Feeding time, defaulted to now and editable.
 2. Starter, flour, and water grams in a single visible amount group.
 3. Live feeding-ratio and hydration preview.
-4. Collapsed optional section: flour type, temperature, photo, and notes.
-5. Full-width **Save feeding** action.
+4. Default-on **Remind me near peak** control, using the remembered preference.
+5. Collapsed optional section: flour type, temperature, photo, and notes.
+6. Full-width **Save feeding** action.
 
 All amount fields use a decimal keypad hint. Zero, negative, non-numeric, or
 missing required values block save with one summary sentence, focus the first
 invalid field, and preserve the rest. Photo denial returns to the same form.
 A storage failure leaves the sheet and every value open with **Try again**
-guidance. Save success returns to Today and announces that the peak window was
-updated (FR-002–003, FR-009–010, FR-014; NFR-001, NFR-011).
+guidance. Save success returns to Today, announces that the peak window was
+updated, and automatically schedules the reminder when enabled. Reminder
+permission or scheduling failure is handled after the feeding is safely saved
+(FR-002–003, FR-006, FR-009–010, FR-014; NFR-001, NFR-011).
 
 ### Understand the peak
 
@@ -98,12 +102,14 @@ before T005 supplies verified behavior (FR-004–005, FR-008; NFR-002, NFR-009).
 
 ### Reminder and observation
 
-**Set reminder** proposes the interval start and states that it is local to the
-device. The confirmation permits changing the time. After success the card
-shows the scheduled time plus Change and Cancel. Denial or scheduling failure
-shows a recoverable status, never false success, and never blocks feeding.
-Editing or deleting the source feeding previews the reminder consequence
-(FR-006, FR-014; NFR-011).
+**Remind me near peak** is enabled by default in feeding entry and remembers the
+user's last choice. Saving schedules the reminder for the interval start with
+no separate dashboard setup action. The user can opt out before saving and can
+Change or Cancel after success. When notification permission is undetermined,
+the feeding saves first, then a contextual rationale precedes the OS prompt.
+Denial or scheduling failure shows a recoverable status, never false success,
+and never blocks feeding. Editing or deleting the source feeding previews and
+applies the reminder consequence (FR-006, FR-014; NFR-011).
 
 **Record observed peak** asks for an absolute date/time, defaulted within the
 estimated interval. History then displays estimated versus observed time. The
@@ -131,7 +137,7 @@ all data are always visible in Settings and never presented as paid features
 |---|---|---|
 | Today | first use; loading skeleton; before/in/past interval; missing-input wider interval; no saved feeding; offline banner; read/storage failure with retry | FR-004–005, FR-010, FR-014 |
 | Feeding sheet | create/edit; live valid preview; invalid field; date in future; photo denied; save in progress; storage failure preserving values; success | FR-002–003, FR-009–010, FR-014 |
-| Reminder | unscheduled; permission rationale; denied with Settings route; scheduling failure; scheduled; changed; cancelled | FR-006, FR-014, NFR-011 |
+| Reminder | default-on and opted-out preference; post-save permission rationale; denied with Settings route; scheduling failure; automatically scheduled; changed; cancelled | FR-006, FR-014, NFR-011 |
 | History/detail | empty; populated; newest 30 Free boundary; full Pro history; observed peak absent/present; edit/delete confirmation | FR-007–008, FR-011 |
 | Starter management | one active Free; archived starter; Pro multiple starters; rename validation; deletion confirmation | FR-001, FR-011 |
 | Optional capability | offline, photo denied, notification denied, purchase unavailable: core logging stays enabled | NFR-011 |
@@ -185,7 +191,9 @@ missing inputs, offline, denied permissions, storage failure, the Free starter
 limit, and loading. It deliberately does not persist data or implement a peak
 formula.
 
-Automated interaction and viewport checks verify mechanics, not usability.
-The moderated five-participant protocol and honest completion gate are in
-`docs/prototypes/t004/usability-test.md`. T004 remains incomplete until at
-least four representative participants meet both NFR-001 and NFR-002.
+Automated interaction and viewport checks verify mechanics, not usability. The
+user completed an owner walkthrough, found the flow and estimated-window
+communication clear, requested default-on automatic reminders, and explicitly
+waived the unavailable five-participant study on 2026-06-21. The original
+protocol remains in `docs/prototypes/t004/usability-test.md` for later use.
+NFR-001 and NFR-002 are not reported as passed; their uncertainty is accepted.

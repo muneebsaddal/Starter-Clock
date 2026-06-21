@@ -1,6 +1,6 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-const state = { scenario: "ready", editing: false, lastFocus: null };
+const state = { scenario: "ready", editing: false, lastFocus: null, reminderEnabled: true };
 
 function show(element, visible = true) { element.classList.toggle("hidden", !visible); }
 function announce(message) {
@@ -17,6 +17,7 @@ function closeDialog() { show($("#scrim"), false); show($("#message-dialog"), fa
 function openSheet(editing = false) {
   state.editing = editing; state.lastFocus = document.activeElement;
   $("#sheet-title").textContent = editing ? "Edit feeding" : "Log feeding";
+  $("#reminder-enabled").checked = state.reminderEnabled;
   show($("#delete-feeding"), editing); show($("#form-error"), false);
   show($("#scrim")); show($("#sheet")); $("#fed-time").focus();
 }
@@ -31,6 +32,12 @@ function calculate() {
   const valid = [starter, flour, water].every(value => Number.isFinite(value) && value > 0);
   $("#ratio").textContent = valid ? `1:${(flour / starter).toFixed(1).replace(".0", "")}:${(water / starter).toFixed(1).replace(".0", "")}` : "—";
   $("#hydration").textContent = valid ? `${Math.round(water / flour * 100)}%` : "—";
+}
+function updateReminderCard() {
+  const permissionDenied = state.scenario === "permission" && state.reminderEnabled;
+  $("#next-title").textContent = permissionDenied ? "Reminder needs permission" : state.reminderEnabled ? "Scheduled for 4:30 PM" : "No reminder scheduled";
+  $(".next-step p:last-child").textContent = permissionDenied ? "Feeding saved · enable notifications in Settings" : state.reminderEnabled ? "Created with this feeding · only on this device" : "Turn it on with your next feeding";
+  show($(".reminder-actions"), state.reminderEnabled && !permissionDenied);
 }
 function applyScenario(value) {
   state.scenario = value; const empty = value === "empty"; const loading = value === "loading";
@@ -50,6 +57,7 @@ function applyScenario(value) {
     $(".peak-card h1 span").textContent = "4:30–6:00 PM"; $(".countdown").textContent = "Starts in about 2 hr 15 min";
     $("#explanation ul").innerHTML = "<li>1:2:2 feeding ratio</li><li>24°C temperature</li><li>Bread flour</li>";
   }
+  updateReminderCard();
 }
 
 $("#feeding-form").addEventListener("input", calculate);
@@ -58,7 +66,15 @@ $("#feeding-form").addEventListener("submit", event => {
   const invalid = amounts.find(input => !Number.isFinite(Number(input.value)) || Number(input.value) <= 0);
   if (invalid) { $("#form-error").textContent = "Enter an amount greater than 0 g for starter, flour, and water."; show($("#form-error")); invalid.focus(); return; }
   if (state.scenario === "storage") { $("#form-error").textContent = "Couldn’t save this feeding. Your entries are still here. Try again."; show($("#form-error")); return; }
-  closeSheet(); applyScenario("ready"); $("#scenario").value = "ready"; announce(state.editing ? "Feeding updated" : "Feeding saved. Peak window updated.");
+  state.reminderEnabled = form.reminderEnabled.checked;
+  const permissionDenied = state.scenario === "permission" && state.reminderEnabled;
+  closeSheet(); applyScenario(permissionDenied ? "permission" : "ready"); $("#scenario").value = permissionDenied ? "permission" : "ready";
+  if (permissionDenied) {
+    setDialog("Allow peak reminders?", "Your feeding is saved. Enable notifications in device Settings to receive the reminder; tracking works either way.", "Open Settings", () => { closeDialog(); announce("Settings handoff demonstrated"); });
+  } else {
+    const saved = state.editing ? "Feeding updated" : "Feeding saved";
+    announce(state.reminderEnabled ? `${saved}. Reminder set for 4:30 PM.` : `${saved}. No reminder set.`);
+  }
 });
 
 document.addEventListener("click", event => {
@@ -71,7 +87,8 @@ document.addEventListener("click", event => {
   if (action === "back") selectScreen("dashboard");
   if (action === "history") selectScreen("history");
   if (action === "explain") { const panel = $("#explanation"); const opened = panel.classList.contains("hidden"); show(panel, opened); target.setAttribute("aria-expanded", String(opened)); }
-  if (action === "reminder") state.scenario === "permission" ? setDialog("Reminders are off", "Starter Clock can still estimate your peak. Enable notifications in device Settings whenever you’re ready.", "Open Settings", () => { closeDialog(); announce("Settings handoff demonstrated"); }) : setDialog("Set a peak reminder?", "We’ll remind you at 4:30 PM, the start of the estimated window. This reminder stays on this device.", "Set for 4:30 PM", () => { closeDialog(); announce("Reminder set for 4:30 PM"); });
+  if (action === "change-reminder") setDialog("Change peak reminder", "The reminder follows this feeding’s estimated window and stays on this device.", "Set for 5:00 PM", () => { closeDialog(); $("#next-title").textContent = "Scheduled for 5:00 PM"; announce("Reminder changed to 5:00 PM"); });
+  if (action === "cancel-reminder") setDialog("Cancel this reminder?", "This only removes the notification. Your feeding and peak estimate stay available.", "Cancel reminder", () => { closeDialog(); state.reminderEnabled = false; updateReminderCard(); announce("Reminder cancelled"); });
   if (action === "observe") setDialog("Record the observed peak", "When did Mabel actually reach maximum rise? This helps compare the estimate with what happened; the prototype does not claim learning yet.", "Record 5:10 PM", () => { closeDialog(); announce("Observed peak recorded"); });
   if (action === "create") setDialog("Name your starter", "A short, familiar name makes feeding history easier to recognize.", "Create Mabel", () => { closeDialog(); applyScenario("ready"); $("#scenario").value = "ready"; openSheet(false); });
   if (action === "upgrade") setDialog("Complete history, multiple starters", "Free keeps one active starter and lets you browse its 30 newest feedings. Pro is a one-time purchase; export and deletion are always available.", "Continue to Pro");
@@ -93,4 +110,4 @@ document.addEventListener("keydown", event => {
   if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
   if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 });
-applyScenario("ready"); calculate();
+applyScenario("ready"); calculate(); updateReminderCard();
