@@ -1,6 +1,6 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 1 approved; T002 complete and T003 ready
+**Status:** Phase 1 work complete; phase gate awaiting user approval
 **Last updated:** 2026-06-21
 
 This document owns milestone intent and phase outcomes. Task status and order
@@ -18,7 +18,8 @@ are canonical in `docs/tasks.md`.
 
 ## Current Position
 
-Phase 1 was approved by the user on 2026-06-21. T002 validated a narrow problem
-and competitor gap with explicit evidence limits. T003 is ready to turn that
-direction into measurable requirements. Design, architecture, and application
-implementation have not started.
+Phase 1 execution was authorized by the user on 2026-06-21. T002 validated a
+narrow problem and competitor gap with explicit evidence limits. T003 converted
+that direction into a measurable MVP contract and passed its documentation
+audit. Phase 2 remains gated on explicit user approval; design, architecture,
+and application implementation have not started.
