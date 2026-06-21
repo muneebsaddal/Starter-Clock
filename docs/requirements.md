@@ -1,6 +1,6 @@
 # Starter Clock Requirements
 
-**Status:** MVP contract approved; T004 complete with approved validation waiver
+**Status:** MVP contract approved; T005 technical behavior defined
 
 **Last updated:** 2026-06-21
 
@@ -27,11 +27,11 @@ the evidence synthesis in `docs/research/market-research.md`.
 | FR-001 | Must | On iOS and Android, a user can create, name, rename, archive, and permanently delete a starter. Names contain 1–40 visible characters after trimming; duplicate names are allowed. Deletion requires confirmation and removes associated feedings and local photos. | Chartered MVP |
 | FR-002 | Must | A feeding records starter, flour, and water amounts plus feeding time, and accepts optional flour type and temperature. Amounts accept grams to 0.1 g, temperature accepts Celsius or Fahrenheit, and the app stores normalized values. Only positive amounts and a valid time may be saved. The primary happy path contains no optional-field gate and supports the under-15-second target in NFR-001. | Charter; T002 fast-log evidence |
 | FR-003 | Must | For every valid feeding, calculate and display the starter:flour:water feeding ratio and hydration percentage using documented formulas. Results update before save, round only for display, and remain reproducible from stored inputs. | Charter; T002 calculator evidence |
-| FR-004 | Must | After a feeding, produce an estimated peak interval with an earliest and latest time. The result identifies which available inputs influenced it, labels the result as an estimate, and widens or lowers confidence when optional flour type or temperature is missing; it never invents a measured value. Exact formulas and accuracy thresholds belong to T005. | Charter; T002 narrow-gap inference |
+| FR-004 | Must | After a feeding, produce an estimated peak interval with an earliest and latest time. The result identifies which available inputs influenced it, labels the result as an estimate, and widens when optional flour type or temperature is missing or outside calibration; it never invents a measured value. The versioned formula, calibration bounds, and accuracy-claim gate are owned by `architecture.md` ADR-005. | Charter; T002 narrow-gap inference; T005 ADR-005 |
 | FR-005 | Must | The mobile dashboard shows the current starter, time since its latest feeding, the estimated peak interval, and one plain-language state: before window, in window, or past window. The state recomputes from absolute timestamps after restart, time-zone change, and daylight-saving transition. | Product promise; T002 planning evidence |
 | FR-006 | Must | Feeding entry offers a remembered **Remind me near peak** preference, enabled by default. Saving automatically schedules one local reminder at the estimated interval start when enabled; the user can opt out before save and change or cancel it afterward. On first use, save completes before a contextual notification-permission request. Editing or deleting the feeding reschedules or cancels its reminder. Permission denial, unavailable services, or scheduling failure leaves tracking usable and exposes a recoverable status; no success state is shown unless scheduling succeeds. | Charter; T002 reminder/reliability evidence; approved T004 owner review |
 | FR-007 | Must | A user can view feeding history newest-first, open an entry, edit all recorded fields, and delete it with confirmation. Editing recalculates derived values and the peak interval. Free users can browse the 30 most recent feedings for their starter; Pro users can browse complete retained history. | Charter; T002 editing evidence; product decision |
-| FR-008 | Must | A user can record, edit, or remove an observed peak time for a feeding and see estimated versus observed timing. Once the model has enough valid observations, it may personalize later windows for that starter; until T005 defines and verifies that threshold, baseline estimates remain the fallback and the UI must not claim learning. | Charter peak-safety rule; T002 narrow-gap inference |
+| FR-008 | Must | A user can record, edit, or remove an observed peak time for a feeding and see estimated versus observed timing. Later windows may shift only after the stable-history threshold in `architecture.md` ADR-014 passes; otherwise baseline estimates remain the fallback and the UI does not claim learning. Personalization never narrows the MVP interval. | Charter peak-safety rule; T002 narrow-gap inference; T005 ADR-014 |
 | FR-009 | Must | A user can attach, replace, view, or remove one progress photo per feeding. Photos remain device-local, are excluded from calculations, and removal of a feeding or starter removes its associated photo. Denied photo access does not block saving the feeding. | Chartered MVP; T002 history evidence |
 | FR-010 | Must | Create, read, update, and delete operations for starters, feedings, observations, and reminder intent work with no network connection and persist across a normal app restart. Interrupted writes preserve the last valid committed record and surface recoverable failure. | Charter; T002 reliability evidence |
 | FR-011 | Must | Free permits exactly one active starter, all calculators and reminders, and access to its 30 most recent feedings. A verified lifetime Pro entitlement permits multiple active starters and complete retained history. Purchase restore is available. Loss or refund of entitlement never deletes records: creation beyond the free limit is blocked and only the newest 30 feedings of one user-selected starter are browsable until entitlement returns. | Charter monetization assumption; T002 pricing evidence; product decision |
@@ -67,9 +67,10 @@ the evidence synthesis in `docs/research/market-research.md`.
   price is approved, and subscriptions remain out of scope.
 - The 30-feeding free history boundary is a product hypothesis to test for
   comprehension and perceived fairness in T004; changing it requires approval.
-- Peak accuracy and the minimum observations needed for personalization remain
-  open until T005. FR-004 and FR-008 deliberately specify behavior, not an
-  unsupported scientific accuracy claim.
+- Peak coefficients remain a transparent, conservative product heuristic, not
+  a scientifically validated prediction. `architecture.md` owns the fixed
+  formula, five-observation stability gate, and the evidence required before
+  any accuracy claim or interval narrowing.
 - Representative test devices and exact export format will be fixed in later
   technical and release plans without changing the product boundary.
 

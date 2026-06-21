@@ -1,6 +1,6 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 2 approved; T004 complete, T005 awaiting explicit assignment
+**Status:** Phase 2 complete; awaiting user approval of Phase 3
 **Last updated:** 2026-06-21
 
 This document owns milestone intent and phase outcomes. Task status and order
@@ -23,5 +23,7 @@ narrow problem and competitor gap with explicit evidence limits. T003 converted
 that direction into a measurable MVP contract and passed its documentation
 audit. The user approved Phase 2 and assigned T004 on 2026-06-21. Its core UX
 and interactive prototype are complete. The user explicitly waived unavailable
-representative testing and accepted the recorded validation risk. T005 is the
-next task but remains unassigned.
+representative testing and accepted the recorded validation risk. T005 defined
+the tested deterministic model and implementation-ready architecture. The Phase
+2 audit verdict is `APPROVE WITH FOLLOW-UPS`; Phase 3 remains gated on explicit
+user approval and assignment of T006.

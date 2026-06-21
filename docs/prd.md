@@ -1,6 +1,6 @@
 # Starter Clock Product Requirements Document
 
-**Status:** Measurable MVP approved; Phase 2 in progress, T004 complete
+**Status:** Measurable MVP approved; Phase 2 design complete
 
 **Last updated:** 2026-06-21
 
@@ -115,12 +115,14 @@ subscription is approved for release.
 - T004 established the core flow through automated checks and an owner
   walkthrough. Its five-person speed and comprehension study was explicitly
   waived as unavailable, leaving a recorded validation risk rather than a pass.
-- T005 defines the deterministic model, error measurement, missing-input
-  confidence behavior, and the observation threshold for personalization.
+- T005 defined the deterministic model, accuracy-claim gate, missing-input
+  widening, and five-observation stability threshold for personalization. The
+  coefficients remain an unvalidated product heuristic as recorded in
+  `architecture.md`.
 - T007 validates native notification and purchase edge cases before those
   behaviors are considered release-ready.
 - Post-prototype pricing research must test willingness to pay; competitor
   anchors alone cannot select a price.
 
-Interaction design, technical architecture, and store setup remain outside
-T003 and cannot silently change this contract.
+Interaction design and technical architecture are now fixed by T004 and T005.
+Store setup remains later work and cannot silently change this contract.

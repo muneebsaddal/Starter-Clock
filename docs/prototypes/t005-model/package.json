@@ -1,0 +1,14 @@
+{
+  "name": "starter-clock-t005-model",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --coverage.enabled --coverage.provider=v8 --coverage.thresholds.statements=80 --coverage.thresholds.branches=80",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "4.1.9",
+    "typescript": "6.0.3",
+    "vitest": "4.1.9"
+  }
+}
