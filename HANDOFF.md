@@ -4,9 +4,9 @@
 
 ## Current State
 
-Phase 1 was approved by the user on 2026-06-21. T002 has partial current
-official-store evidence and a provisional product implication, but is blocked.
-No later task is eligible.
+Phase 1 was approved by the user on 2026-06-21. T002 is complete; its evidence
+supports a narrow feed-to-peak planning opportunity. T003 is ready for explicit
+assignment; no design, architecture, or implementation work has begun.
 
 ## Decisions and Constraints
 
@@ -15,14 +15,15 @@ No later task is eligible.
 - The user explicitly selects tasks and approves phase progression.
 - Current product assumptions remain hypotheses until T002 and T003 complete.
 
+T002 supports the problem and a narrow competitor gap, but pricing remains an
+experiment and the prediction model remains unproven. T003 still owns the
+measurable product definition.
+
 ## Blockers
 
-- External research access reached its usage limit before written customer
-  reviews and complete Android/web comparisons could be collected. These are
-  required by T002's acceptance criteria.
+- None. T003 is ready but must be explicitly assigned by the user.
 
 ## Next Action
 
-Resume T002 after external research access is restored: collect and code recent
-written iOS/Android reviews, verify material Android listings and current web
-competitors, recheck citations, then complete the product-evidence review.
+User: assign `T003` (`complete task 3`) when ready. The executing agent should
+follow its interview and measurable-requirements plan without starting Phase 2.

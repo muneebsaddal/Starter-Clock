@@ -1,6 +1,6 @@
 # Starter Clock Product Requirements Document
 
-**Status:** Seeded; T002 evidence partial and blocked
+**Status:** Problem and gap validated by T002; pending measurable definition in T003
 **Last updated:** 2026-06-21
 
 ## Product Promise
@@ -18,11 +18,13 @@ useful expectation of when a starter will be ready. Existing timers,
 calculators, and tracking apps may not combine fast logging, transparent peak
 windows, personal observations, and calm reminders well enough.
 
-T002 found a plausible but narrower opportunity around transparent,
-starter-specific peak windows and observed-peak learning. Close substitutes
-already cover much of the generic tracking scope, and written customer evidence
-is still missing. The sourced assessment is canonical in
-`docs/research/market-research.md`; the problem remains unvalidated.
+T002 supports the timing, reminder, calculation, and cognitive-load problem
+from a directional sample of public reviews. It found a narrower opportunity
+around the combination of fast persistent logging, an explainable peak window,
+observed-peak capture, starter-specific learning, and a derived reminder. Close
+substitutes already cover most generic tracking features, and free web tools
+already estimate peak/readiness. The sourced assessment and its limits are
+canonical in `docs/research/market-research.md`.
 
 ## Candidate Users and Jobs
 
@@ -33,8 +35,9 @@ is still missing. The sourced assessment is canonical in
 Primary job: after feeding, help me understand roughly when my starter will
 peak so I can plan when to use it.
 
-Competitor copy supports these audiences only as vendor-selected targets; T002
-has not yet verified them through customer-review evidence.
+T002's review evidence supports beginners who value guidance and confidence and
+regular home bakers who value planning, calculators, history, and iteration.
+It does not justify professional bakery scope.
 
 ## Success Measures to Define
 
@@ -49,13 +52,12 @@ T003 must convert these directions into measurable targets:
 ## Scope
 
 The candidate MVP scope and exclusions are canonical in
-`docs/requirements.md`. Monetization remains a hypothesis: current store
-evidence does not validate a lifetime Pro purchase near USD 19.99. Exact price
-experiments must wait for T002's missing evidence and a demonstrable core
-prediction experience.
+`docs/requirements.md`. Monetization remains a hypothesis: T002 found current
+one-time anchors at USD 9.99 and USD 19.99 but no evidence of price elasticity.
+Test both against a demonstrable core experience rather than locking a release
+price now.
 
 ## Stories and Acceptance Criteria
 
-Stable user-story IDs and release acceptance criteria will be added by T003
-after T002 establishes the customer problem, competitor gap, and approved MVP
-boundary.
+Stable user-story IDs and release acceptance criteria will be added by T003,
+using T002's evidence to resolve and measure the candidate MVP boundary.

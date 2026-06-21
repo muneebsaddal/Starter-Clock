@@ -50,18 +50,18 @@ sample limits, and confidence; revert only unsupported documentation claims.
 
 ## Completion Record
 
-- Outcome: `BLOCKED`
-- Summary: collected and synthesized current Apple metadata and Google Play
-  discovery evidence; narrowed the plausible product wedge and kept scope and
-  pricing explicitly provisional.
+- Outcome: `DONE`
+- Summary: validated a directional timing and cognitive-load problem, compared
+  current mobile and web substitutes, narrowed the defensible product wedge,
+  and produced decision-ready MVP and pricing experiments with evidence limits.
 - Actual files changed: `docs/research/market-research.md`, `docs/prd.md`,
   `docs/requirements.md`, `docs/roadmap.md`, `docs/tasks.md`, this plan, and
   `HANDOFF.md`.
-- Verification: official Apple listing links and adjacent claims checked from
-  the public Search/Lookup API; Google Play presence checked from its US search
-  surface; evidence labels and unsupported-claim boundaries reviewed. Final
-  citation and acceptance review cannot pass while required evidence is absent.
-- Remaining risks or blocker: the environment's external-research usage limit
-  stopped collection of written customer reviews and full Android/web details.
-  Restore research access, gather the evidence enumerated in the research
-  document, revise confidence, and rerun the T002 product-evidence review.
+- Verification: official Apple and Google Play listing claims and prices
+  checked; 46 public reviews sampled and coded with limitations; two live web
+  calculators inspected; material competitors compared on consistent criteria;
+  citations, evidence labels, hypothesis decisions, and documentation diff
+  reviewed. Product-evidence verdict: `APPROVE` for T002.
+- Remaining risks or blocker: no blocker. Review evidence is directional and
+  platform-skewed; product behavior and willingness to pay require later
+  prototype validation.

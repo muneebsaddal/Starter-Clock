@@ -1,6 +1,6 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 1 approved; T002 blocked
+**Status:** Phase 1 approved; T002 complete and T003 ready
 **Last updated:** 2026-06-21
 
 This document owns milestone intent and phase outcomes. Task status and order
@@ -18,7 +18,7 @@ are canonical in `docs/tasks.md`.
 
 ## Current Position
 
-Phase 1 was approved by the user on 2026-06-21. T002 has partial official-store
-evidence but is blocked on written customer reviews plus complete Android and
-web comparisons. No customer validation, detailed product definition, design,
-architecture, or application implementation is complete yet.
+Phase 1 was approved by the user on 2026-06-21. T002 validated a narrow problem
+and competitor gap with explicit evidence limits. T003 is ready to turn that
+direction into measurable requirements. Design, architecture, and application
+implementation have not started.

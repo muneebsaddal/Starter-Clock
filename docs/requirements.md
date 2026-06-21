@@ -1,6 +1,6 @@
 # Starter Clock Requirements
 
-**Status:** Seeded; T002 evidence partial and blocked, pending T003
+**Status:** T002 evidence incorporated; pending measurable definition in T003
 **Last updated:** 2026-06-21
 
 This document is the canonical owner of product requirements and constraints.
@@ -47,8 +47,8 @@ T003 must define measurable acceptance thresholds, missing-input behavior,
 history limits, entitlement semantics, accessibility criteria, performance and
 reliability targets, privacy requirements, and platform-specific constraints.
 
-T002's partial evidence does not authorize a scope change. If its remaining
-research supports the apparent gap, T003 should give highest priority to an
-explainable peak window, observed-peak capture and personalization, reliable
-reminders, and feeding entry under 15 seconds. Pricing and history limits remain
-unvalidated decisions rather than requirements.
+T002 does not authorize a scope change. Its evidence directs T003 to give
+highest priority to an explainable peak window, observed-peak capture and
+personalization, reliable reminders, retroactive editing, unit flexibility, and
+feeding entry under 15 seconds. Pricing and history limits remain unvalidated
+decisions rather than requirements.
