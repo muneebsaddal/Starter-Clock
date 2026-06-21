@@ -1,8 +1,8 @@
 # Starter Clock UX Flow
 
-**Status:** T004 complete; representative validation waived with accepted risk
+**Status:** T006 native owner review complete with accepted follow-ups
 
-**Last updated:** 2026-06-21
+**Last updated:** 2026-06-22
 
 This document is the canonical owner of screens, user flows, interaction
 states, responsive behavior, and accessibility decisions. Product constraints
@@ -197,3 +197,20 @@ communication clear, requested default-on automatic reminders, and explicitly
 waived the unavailable five-participant study on 2026-06-21. The original
 protocol remains in `docs/prototypes/t004/usability-test.md` for later use.
 NFR-001 and NFR-002 are not reported as passed; their uncertainty is accepted.
+
+## T006 Native Owner Feedback
+
+The 2026-06-22 Android review established these priorities for the current
+native flow:
+
+- Switching between Today and History must preserve the themed application
+  surface without an intermediate white flash. Navigation should feel
+  continuous rather than like a new page load.
+- Today should present every unfinished feeding for the selected starter, not
+  only the newest feeding. History should contain completed feedings. Before
+  implementation, define “completed” explicitly; the current model does not
+  establish whether completion is time-based, follows an observed peak, or is
+  a deliberate user action. Do not infer this rule from elapsed time alone.
+- Easier feeding-input controls are deferred until the core behavior and flow
+  are correct. Optional aesthetic changes follow functional-flow validation
+  rather than interrupting it.

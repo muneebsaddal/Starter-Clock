@@ -1,0 +1,153 @@
+import type { Feeding, PeakEstimate, Photo, Starter, StarterStatus } from "@/domain/models";
+import type { StarterRepository } from "@/application/ports";
+import { z } from "zod";
+import { migrateDatabase, type MigrationDatabase } from "./migrations";
+
+type BindValue = string | number | null;
+interface SqlExecutor {
+  runAsync(sql: string, ...params: BindValue[]): Promise<unknown>;
+  getFirstAsync<T>(sql: string, ...params: BindValue[]): Promise<T | null>;
+  getAllAsync<T>(sql: string, ...params: BindValue[]): Promise<T[]>;
+}
+
+export interface AppDatabase extends SqlExecutor {
+  execAsync(sql: string): Promise<void>;
+  withExclusiveTransactionAsync(task: (transaction: SqlExecutor & { execAsync(sql: string): Promise<void> }) => Promise<void>): Promise<void>;
+}
+
+const starterRowSchema = z.object({
+  id: z.string().uuid(), name: z.string(), status: z.enum(["active", "archived"]), created_at_ms: z.number(), updated_at_ms: z.number(),
+});
+
+const feedingRowSchema = z.object({
+  id: z.string().uuid(), starter_id: z.string().uuid(), fed_at_ms: z.number(), entry_zone: z.string(), entry_offset_minutes: z.number(),
+  starter_tenths_g: z.number(), flour_tenths_g: z.number(), water_tenths_g: z.number(), flour_type: z.enum(["white", "whole_wheat", "rye", "blend", "other"]).nullable(),
+  temperature_tenths_c: z.number().nullable(), notes: z.string().nullable(), created_at_ms: z.number(), updated_at_ms: z.number(), model_version: z.literal("baseline-v1"),
+  earliest_at_ms: z.number(), midpoint_at_ms: z.number(), latest_at_ms: z.number(), mode: z.enum(["baseline", "widened", "personalized"]), factors_json: z.string(),
+  missing_inputs_json: z.string(), personalization_json: z.string(), observed_at_ms: z.number().nullable(), relative_path: z.string().nullable(), mime_type: z.string().nullable(), byte_size: z.number().nullable(),
+});
+
+const feedingSelect = `
+  SELECT f.*, e.model_version, e.earliest_at_ms, e.midpoint_at_ms, e.latest_at_ms,
+    e.mode, e.factors_json, e.missing_inputs_json, e.personalization_json,
+    o.observed_at_ms, p.relative_path, p.mime_type, p.byte_size
+  FROM feedings f
+  JOIN peak_estimates e ON e.feeding_id = f.id
+  LEFT JOIN peak_observations o ON o.feeding_id = f.id
+  LEFT JOIN photos p ON p.feeding_id = f.id`;
+
+export class SQLiteStarterRepository implements StarterRepository {
+  constructor(private readonly database: AppDatabase, private readonly now: () => number = Date.now) {}
+
+  initialize() { return migrateDatabase(this.database as unknown as MigrationDatabase, this.now()); }
+
+  async listStarters(status?: StarterStatus) {
+    const rows = status
+      ? await this.database.getAllAsync<unknown>("SELECT * FROM starters WHERE status = ? ORDER BY updated_at_ms DESC", status)
+      : await this.database.getAllAsync<unknown>("SELECT * FROM starters ORDER BY updated_at_ms DESC");
+    return rows.map(mapStarter);
+  }
+
+  async getStarter(id: string) {
+    const row = await this.database.getFirstAsync<unknown>("SELECT * FROM starters WHERE id = ?", id);
+    return row ? mapStarter(row) : null;
+  }
+
+  async saveStarter(starter: Starter) {
+    const parsed = starterRowSchema.parse(toStarterRow(starter));
+    await this.database.runAsync(
+      `INSERT INTO starters(id,name,status,created_at_ms,updated_at_ms) VALUES(?,?,?,?,?)
+       ON CONFLICT(id) DO UPDATE SET name=excluded.name,status=excluded.status,updated_at_ms=excluded.updated_at_ms`,
+      parsed.id, parsed.name, parsed.status, parsed.created_at_ms, parsed.updated_at_ms,
+    );
+  }
+
+  async deleteStarter(id: string) { await this.database.runAsync("DELETE FROM starters WHERE id = ?", id); }
+
+  async listFeedings(starterId: string, limit?: number) {
+    const appliedLimit = Math.min(limit ?? 10_000, 10_000);
+    const rows = await this.database.getAllAsync<unknown>(`${feedingSelect} WHERE f.starter_id = ? ORDER BY f.fed_at_ms DESC LIMIT ?`, starterId, appliedLimit);
+    return rows.map(mapFeeding);
+  }
+
+  async getFeeding(id: string) {
+    const row = await this.database.getFirstAsync<unknown>(`${feedingSelect} WHERE f.id = ?`, id);
+    return row ? mapFeeding(row) : null;
+  }
+
+  async saveFeeding(feeding: Feeding) {
+    await this.database.withExclusiveTransactionAsync(async (tx) => {
+      await tx.runAsync(
+        `INSERT INTO feedings(id,starter_id,fed_at_ms,entry_zone,entry_offset_minutes,starter_tenths_g,flour_tenths_g,water_tenths_g,flour_type,temperature_tenths_c,notes,created_at_ms,updated_at_ms)
+         VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET starter_id=excluded.starter_id,fed_at_ms=excluded.fed_at_ms,entry_zone=excluded.entry_zone,
+         entry_offset_minutes=excluded.entry_offset_minutes,starter_tenths_g=excluded.starter_tenths_g,flour_tenths_g=excluded.flour_tenths_g,water_tenths_g=excluded.water_tenths_g,
+         flour_type=excluded.flour_type,temperature_tenths_c=excluded.temperature_tenths_c,notes=excluded.notes,updated_at_ms=excluded.updated_at_ms`,
+        feeding.id, feeding.starterId, feeding.fedAtMs, feeding.entryZone, feeding.entryOffsetMinutes, feeding.starterTenthsGrams, feeding.flourTenthsGrams,
+        feeding.waterTenthsGrams, feeding.flourType ?? null, feeding.temperatureTenthsC ?? null, feeding.notes ?? null, feeding.createdAtMs, feeding.updatedAtMs,
+      );
+      const estimate = feeding.estimate;
+      await tx.runAsync(
+        `INSERT INTO peak_estimates(feeding_id,model_version,earliest_at_ms,midpoint_at_ms,latest_at_ms,mode,factors_json,missing_inputs_json,personalization_json,created_at_ms,updated_at_ms)
+         VALUES(?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(feeding_id) DO UPDATE SET model_version=excluded.model_version,earliest_at_ms=excluded.earliest_at_ms,
+         midpoint_at_ms=excluded.midpoint_at_ms,latest_at_ms=excluded.latest_at_ms,mode=excluded.mode,factors_json=excluded.factors_json,missing_inputs_json=excluded.missing_inputs_json,
+         personalization_json=excluded.personalization_json,updated_at_ms=excluded.updated_at_ms`,
+        feeding.id, estimate.modelVersion, estimate.earliestAtMs, estimate.midpointAtMs, estimate.latestAtMs, estimate.mode, JSON.stringify(estimate.factors),
+        JSON.stringify(estimate.missingInputs), JSON.stringify(estimate.personalization), feeding.createdAtMs, feeding.updatedAtMs,
+      );
+      if (feeding.observation) {
+        await tx.runAsync(
+          `INSERT INTO peak_observations(feeding_id,observed_at_ms,created_at_ms,updated_at_ms) VALUES(?,?,?,?)
+           ON CONFLICT(feeding_id) DO UPDATE SET observed_at_ms=excluded.observed_at_ms,updated_at_ms=excluded.updated_at_ms`,
+          feeding.id, feeding.observation.observedAtMs, feeding.createdAtMs, feeding.updatedAtMs,
+        );
+      } else {
+        await tx.runAsync("DELETE FROM peak_observations WHERE feeding_id = ?", feeding.id);
+      }
+    });
+  }
+
+  async deleteFeeding(id: string) { await this.database.runAsync("DELETE FROM feedings WHERE id = ?", id); }
+
+  async savePhoto(feedingId: string, photo: Photo | null) {
+    if (!photo) { await this.database.runAsync("DELETE FROM photos WHERE feeding_id = ?", feedingId); return; }
+    const now = this.now();
+    await this.database.runAsync(
+      `INSERT INTO photos(feeding_id,relative_path,mime_type,byte_size,created_at_ms,updated_at_ms) VALUES(?,?,?,?,?,?)
+       ON CONFLICT(feeding_id) DO UPDATE SET relative_path=excluded.relative_path,mime_type=excluded.mime_type,byte_size=excluded.byte_size,updated_at_ms=excluded.updated_at_ms`,
+      feedingId, photo.relativePath, photo.mimeType, photo.byteSize, now, now,
+    );
+  }
+}
+
+function mapStarter(row: unknown): Starter {
+  const parsed = starterRowSchema.parse(row);
+  return { id: parsed.id, name: parsed.name, status: parsed.status, createdAtMs: parsed.created_at_ms, updatedAtMs: parsed.updated_at_ms };
+}
+
+function toStarterRow(starter: Starter) {
+  return { id: starter.id, name: starter.name, status: starter.status, created_at_ms: starter.createdAtMs, updated_at_ms: starter.updatedAtMs };
+}
+
+function mapFeeding(row: unknown): Feeding {
+  const parsed = feedingRowSchema.parse(row);
+  const estimate: PeakEstimate = {
+    modelVersion: parsed.model_version,
+    earliestAtMs: parsed.earliest_at_ms,
+    midpointAtMs: parsed.midpoint_at_ms,
+    latestAtMs: parsed.latest_at_ms,
+    mode: parsed.mode,
+    factors: JSON.parse(parsed.factors_json) as PeakEstimate["factors"],
+    missingInputs: JSON.parse(parsed.missing_inputs_json) as PeakEstimate["missingInputs"],
+    personalization: JSON.parse(parsed.personalization_json) as PeakEstimate["personalization"],
+  };
+  return {
+    id: parsed.id, starterId: parsed.starter_id, fedAtMs: parsed.fed_at_ms, entryZone: parsed.entry_zone, entryOffsetMinutes: parsed.entry_offset_minutes,
+    starterTenthsGrams: parsed.starter_tenths_g, flourTenthsGrams: parsed.flour_tenths_g, waterTenthsGrams: parsed.water_tenths_g,
+    ...(parsed.flour_type === null ? {} : { flourType: parsed.flour_type }),
+    ...(parsed.temperature_tenths_c === null ? {} : { temperatureTenthsC: parsed.temperature_tenths_c }),
+    ...(parsed.notes === null ? {} : { notes: parsed.notes }),
+    ...(parsed.observed_at_ms === null ? {} : { observation: { observedAtMs: parsed.observed_at_ms } }),
+    ...(parsed.relative_path === null || parsed.mime_type === null || parsed.byte_size === null ? {} : { photo: { relativePath: parsed.relative_path, mimeType: parsed.mime_type, byteSize: parsed.byte_size } }),
+    estimate, createdAtMs: parsed.created_at_ms, updatedAtMs: parsed.updated_at_ms,
+  };
+}

@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Starter Clock",
+    "slug": "starter-clock",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "starterclock",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.starterclock.app"
+    },
+    "android": {
+      "package": "com.starterclock.app",
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Starter Clock uses a selected photo only for your local feeding history."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

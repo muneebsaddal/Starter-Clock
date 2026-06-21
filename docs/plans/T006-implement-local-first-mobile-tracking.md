@@ -52,8 +52,38 @@ and denial paths; keep schema migrations reversible and feature commits focused.
 
 ## Completion Record
 
-- Outcome: Not started
-- Summary: —
-- Actual files changed: —
-- Verification: —
-- Remaining risks or blocker: T005 and Phase 3 approval are required.
+- Outcome: Done with explicit iOS device-test waiver
+- Summary: Implemented the Expo SDK 56 mobile foundation, deterministic domain
+  model, transactional versioned SQLite storage, starter and feeding lifecycle,
+  peak dashboard, history/edit/delete, observed peaks, managed local photos,
+  light/dark tokens, accessible recovery states, and a web tracking boundary.
+  During Android verification, fixed an infinite render loop caused by an
+  uncached `Date.now()` external-store snapshot and added a regression test.
+  Native owner-review findings and prioritization are recorded in the
+  canonical `docs/ux-flow.md` T006 feedback section.
+- Actual files changed: Root Expo/TypeScript/test configuration and lockfile;
+  `src/app/`, `src/domain/`, `src/application/`, `src/infrastructure/`,
+  `src/ui/`; `test/`; this plan, the task ledger, and `HANDOFF.md`.
+- Verification: Strict TypeScript passed; Expo lint passed; 32/32 Vitest tests
+  passed; coverage passed at 93.16% statements and 86.88% branches overall,
+  with domain at 98.18%/95.65% and database modules at 85%/86.84%; Expo Doctor
+  passed 21/21 checks; production exports passed for iOS, Android, and web;
+  `git diff --check` and source secret/TODO scan passed. `npm audit --omit=dev`
+  reported 10 moderate transitive findings in Expo's CLI/config `uuid` chain
+  and no high or critical finding; the suggested forced fix would downgrade
+  Expo and was not applied.
+- Device evidence and waiver: The owner completed the Android device review and
+  accepted its recorded feedback as non-blocking follow-up work on 2026-06-22.
+  iOS device execution was unavailable because the installed Expo app version
+  did not match the project. The owner explicitly waived iOS device testing for
+  T006 and directed completion using the Android review and feedback only. The
+  successful iOS production export is build evidence, not device evidence.
+- Remaining risks: iOS runtime behavior, native SQLite recovery, photo/files,
+  permissions, accessibility semantics, and critical-flow parity remain
+  unverified on an iOS device and must be covered before release. The Android
+  navigation/active-feeding findings and deferred input improvements remain
+  canonically recorded in `docs/ux-flow.md`; they are accepted follow-ups, not
+  evidence that the current behavior passed those UX expectations.
+- Phase 3 audit verdict: `APPROVE WITH FOLLOW-UPS`. Architecture boundaries,
+  automated quality gates, Git scope, and canonical records are coherent. The
+  explicit iOS waiver and Android UX findings prevent an unqualified approval.

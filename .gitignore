@@ -1,0 +1,15 @@
+node_modules/
+.expo/
+dist/
+dist-android/
+dist-ios/
+dist-all/
+coverage/
+expo-env.d.ts
+*.tsbuildinfo
+.env*.local
+ios/
+android/
+.scaffold-t006/
+*.db
+*.db-journal

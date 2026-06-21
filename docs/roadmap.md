@@ -1,7 +1,7 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 2 complete; awaiting user approval of Phase 3
-**Last updated:** 2026-06-21
+**Status:** Phase 3 complete; awaiting user approval of Phase 4
+**Last updated:** 2026-06-22
 
 This document owns milestone intent and phase outcomes. Task status and order
 are canonical in `docs/tasks.md`.
@@ -25,5 +25,9 @@ audit. The user approved Phase 2 and assigned T004 on 2026-06-21. Its core UX
 and interactive prototype are complete. The user explicitly waived unavailable
 representative testing and accepted the recorded validation risk. T005 defined
 the tested deterministic model and implementation-ready architecture. The Phase
-2 audit verdict is `APPROVE WITH FOLLOW-UPS`; Phase 3 remains gated on explicit
-user approval and assignment of T006.
+2 audit verdict is `APPROVE WITH FOLLOW-UPS`. The user approved Phase 3 and
+assigned T006 on 2026-06-21. T006 delivered the local-first tracking loop and
+passed automated quality gates. Android owner review completed with recorded
+follow-ups; iOS device testing was explicitly waived because of an Expo app
+version mismatch. The Phase 3 audit verdict is `APPROVE WITH FOLLOW-UPS`.
+Phase 4 remains gated on explicit user approval and assignment of T007.
