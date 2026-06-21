@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Feeding, Starter } from "@/domain/models";
 import { estimatePeak } from "@/domain/peak-model";
-import { migrateDatabase, SCHEMA_VERSION } from "@/infrastructure/db/migrations";
+import { migrateDatabase, migrations, SCHEMA_VERSION } from "@/infrastructure/db/migrations";
 import { SQLiteStarterRepository } from "@/infrastructure/db/sqlite-repository";
 import { NodeDatabase } from "./helpers/node-database";
 
@@ -15,6 +15,7 @@ function makeFeeding(overrides: Partial<Feeding> = {}): Feeding {
     id: feedingId, starterId, fedAtMs: now, entryZone: "Asia/Karachi", entryOffsetMinutes: 300,
     starterTenthsGrams: 250, flourTenthsGrams: 500, waterTenthsGrams: 500, flourType: "white", temperatureTenthsC: 240,
     notes: "Rounded top", estimate: estimatePeak({ fedAtMs: now, starterGrams: 25, flourGrams: 50, waterGrams: 50, flourType: "white", temperatureC: 24 }),
+    reminder: { enabled: true, status: "pending", targetAtMs: now + 6 * 3_600_000, updatedAtMs: now },
     createdAtMs: now, updatedAtMs: now, ...overrides,
   };
 }
@@ -27,7 +28,7 @@ describe("SQLite migrations and repository", () => {
   it("migrates atomically and is idempotent", async () => {
     const version = await database.getFirstAsync<{ user_version: number }>("PRAGMA user_version");
     expect(version?.user_version).toBe(SCHEMA_VERSION); expect(await database.getFirstAsync("SELECT * FROM preferences WHERE id = 1")).not.toBeNull();
-    await migrateDatabase(database, now + 1); expect((await database.getAllAsync("SELECT * FROM schema_meta")).length).toBe(1);
+    await migrateDatabase(database, now + 1); expect((await database.getAllAsync("SELECT * FROM schema_meta")).length).toBe(SCHEMA_VERSION);
   });
 
   it("rejects a database created by a newer app", async () => {
@@ -45,6 +46,15 @@ describe("SQLite migrations and repository", () => {
     failing.close();
   });
 
+  it("migrates existing version-one feedings with reminder intent intact", async () => {
+    const prior = new NodeDatabase(); await prior.execAsync(migrations[0].sql); await prior.execAsync(`INSERT INTO schema_meta(version,migrated_at_ms) VALUES(1,${now}); PRAGMA user_version = 1;`);
+    await prior.runAsync("INSERT INTO starters(id,name,status,created_at_ms,updated_at_ms) VALUES(?,?,?,?,?)", starterId, "Mabel", "active", now, now);
+    await prior.runAsync("INSERT INTO feedings(id,starter_id,fed_at_ms,entry_zone,entry_offset_minutes,starter_tenths_g,flour_tenths_g,water_tenths_g,created_at_ms,updated_at_ms) VALUES(?,?,?,?,?,?,?,?,?,?)", feedingId, starterId, now, "UTC", 0, 250, 500, 500, now, now);
+    await prior.runAsync("INSERT INTO peak_estimates(feeding_id,model_version,earliest_at_ms,midpoint_at_ms,latest_at_ms,mode,factors_json,missing_inputs_json,personalization_json,created_at_ms,updated_at_ms) VALUES(?,?,?,?,?,?,?,?,?,?,?)", feedingId, "baseline-v1", now + 3_600_000, now + 4_000_000, now + 5_000_000, "widened", "[]", "[]", JSON.stringify({ applied: false, validObservationCount: 0, reason: "not_enough_observations" }), now, now);
+    const priorRepository = new SQLiteStarterRepository(prior, () => now); await priorRepository.initialize();
+    expect((await priorRepository.getFeeding(feedingId))?.reminder).toMatchObject({ enabled: true, status: "pending", targetAtMs: now + 3_600_000 }); prior.close();
+  });
+
   it("persists starter lifecycle", async () => {
     await repository.saveStarter(starter); expect(await repository.getStarter(starterId)).toEqual(starter); expect(await repository.listStarters("active")).toHaveLength(1);
     await repository.saveStarter({ ...starter, name: "Mabel II", status: "archived", updatedAtMs: now + 1 }); expect((await repository.listStarters())[0]).toMatchObject({ name: "Mabel II", status: "archived" });
@@ -53,6 +63,9 @@ describe("SQLite migrations and repository", () => {
 
   it("saves, edits and maps a complete feeding transaction", async () => {
     await repository.saveStarter(starter); const original = makeFeeding(); await repository.saveFeeding(original);
+    expect((await repository.getFeeding(feedingId))?.reminder).toMatchObject({ enabled: true, status: "pending" });
+    await repository.updateReminder(feedingId, { ...original.reminder, status: "scheduled", notificationId: "native-1" });
+    expect((await repository.getFeeding(feedingId))?.reminder).toMatchObject({ status: "scheduled", notificationId: "native-1" });
     await repository.savePhoto(feedingId, { relativePath: "photo.jpg", mimeType: "image/jpeg", byteSize: 42 });
     expect(await repository.getFeeding(feedingId)).toMatchObject({ notes: "Rounded top", photo: { relativePath: "photo.jpg" }, estimate: { modelVersion: "baseline-v1" } });
     const withNotes = makeFeeding(); const { notes: _notes, ...withoutNotes } = withNotes;
@@ -61,6 +74,16 @@ describe("SQLite migrations and repository", () => {
     await repository.savePhoto(feedingId, null); expect((await repository.getFeeding(feedingId))?.photo).toBeUndefined();
     const { observation: _observation, ...withoutObservation } = edited;
     await repository.saveFeeding(withoutObservation); expect((await repository.getFeeding(feedingId))?.observation).toBeUndefined();
+  });
+
+  it("persists reminder preference and the derived entitlement cache", async () => {
+    expect(await repository.getReminderDefault()).toBe(true);
+    await repository.setReminderDefault(false); expect(await repository.getReminderDefault()).toBe(false);
+    expect(await repository.getSelectedStarterId()).toBeNull();
+    await repository.saveStarter(starter); await repository.setSelectedStarterId(starterId); expect(await repository.getSelectedStarterId()).toBe(starterId);
+    expect(await repository.getEntitlementCache()).toMatchObject({ level: "free", store: "unknown", lastVerifiedAtMs: null });
+    await repository.saveEntitlementCache({ productId: "starter_clock_pro_lifetime", level: "pro", store: "ios", lastVerifiedAtMs: now });
+    expect(await repository.getEntitlementCache()).toMatchObject({ level: "pro", store: "ios", lastVerifiedAtMs: now });
   });
 
   it("orders, limits, cascades and survives reopening", async () => {

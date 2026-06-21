@@ -23,9 +23,31 @@ export interface Feeding {
   notes?: string;
   photo?: Photo;
   observation?: PeakObservationRecord;
+  reminder: Reminder;
   estimate: PeakEstimate;
   createdAtMs: number;
   updatedAtMs: number;
+}
+
+export type ReminderStatus = "disabled" | "pending" | "scheduled" | "denied" | "failed" | "expired";
+
+export interface Reminder {
+  enabled: boolean;
+  status: ReminderStatus;
+  targetAtMs: number;
+  notificationId?: string;
+  errorCode?: "NOTIFICATION_DENIED" | "NOTIFICATION_UNAVAILABLE" | "NOTIFICATION_SCHEDULE_FAILED";
+  updatedAtMs: number;
+}
+
+export type EntitlementLevel = "free" | "pro";
+export type EntitlementStore = "ios" | "android" | "unknown";
+
+export interface EntitlementCache {
+  productId: string;
+  level: EntitlementLevel;
+  store: EntitlementStore;
+  lastVerifiedAtMs: number | null;
 }
 
 export interface Photo {

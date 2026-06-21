@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { TrackingService } from "@/application/tracking-service";
 import { SQLiteStarterRepository } from "@/infrastructure/db/sqlite-repository";
 import { NodeDatabase } from "./helpers/node-database";
+import type { EntitlementService } from "@/application/entitlement-service";
 
 const ids = ["11111111-1111-4111-8111-111111111111", "22222222-2222-4222-8222-222222222222", "33333333-3333-4333-8333-333333333333", "44444444-4444-4444-8444-444444444444", "55555555-5555-4555-8555-555555555555", "66666666-6666-4666-8666-666666666666", "77777777-7777-4777-8777-777777777777"];
 const now = Date.parse("2026-06-21T08:00:00Z");
@@ -22,6 +23,13 @@ describe("tracking application service", () => {
     await expect(service.createStarter("Audrey")).rejects.toThrow("FREE_STARTER_LIMIT");
     await service.setStarterArchived(starter.id, true);
     await expect(service.createStarter("Audrey")).resolves.toMatchObject({ name: "Audrey" });
+  });
+
+  it("unlocks multiple active starters only for a verified Pro cache", async () => {
+    const proDb = new NodeDatabase(); const repository = new SQLiteStarterRepository(proDb, () => now);
+    const proEntitlement = { getCached: async () => ({ productId: "starter_clock_pro_lifetime", level: "pro" as const, store: "ios" as const, lastVerifiedAtMs: now, offline: false }), refresh: async () => ({ productId: "starter_clock_pro_lifetime", level: "pro" as const, store: "ios" as const, lastVerifiedAtMs: now, offline: false }) } as EntitlementService;
+    const proService = new TrackingService(repository, { now: () => now }, { next: () => ids[nextId++]! }, undefined, undefined, proEntitlement);
+    await proService.initialize(); await proService.createStarter("Mabel"); await expect(proService.createStarter("Audrey")).resolves.toMatchObject({ name: "Audrey" }); proDb.close();
   });
 
   it("creates and edits a feeding while retaining the original creation time", async () => {

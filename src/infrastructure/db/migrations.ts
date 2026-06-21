@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export const migrations = [
   {
@@ -67,6 +67,33 @@ export const migrations = [
         version INTEGER PRIMARY KEY,
         migrated_at_ms INTEGER NOT NULL
       );
+    `,
+  },
+  {
+    version: 2,
+    name: "002_reminders_entitlement",
+    sql: `
+      CREATE TABLE reminders (
+        feeding_id TEXT PRIMARY KEY NOT NULL REFERENCES feedings(id) ON DELETE CASCADE,
+        enabled INTEGER NOT NULL CHECK(enabled IN (0,1)),
+        status TEXT NOT NULL CHECK(status IN ('disabled','pending','scheduled','denied','failed','expired')),
+        target_at_ms INTEGER NOT NULL,
+        notification_id TEXT,
+        error_code TEXT CHECK(error_code IN ('NOTIFICATION_DENIED','NOTIFICATION_UNAVAILABLE','NOTIFICATION_SCHEDULE_FAILED')),
+        updated_at_ms INTEGER NOT NULL
+      );
+      INSERT INTO reminders(feeding_id, enabled, status, target_at_ms, updated_at_ms)
+        SELECT f.id, 1, 'pending', e.earliest_at_ms, f.updated_at_ms
+        FROM feedings f JOIN peak_estimates e ON e.feeding_id = f.id;
+      CREATE TABLE entitlement_cache (
+        id INTEGER PRIMARY KEY CHECK(id = 1),
+        product_id TEXT NOT NULL,
+        state TEXT NOT NULL CHECK(state IN ('free','pro')),
+        store TEXT NOT NULL CHECK(store IN ('ios','android','unknown')),
+        last_verified_at_ms INTEGER
+      );
+      INSERT INTO entitlement_cache(id, product_id, state, store, last_verified_at_ms)
+        VALUES(1, 'starter_clock_pro_lifetime', 'free', 'unknown', NULL);
     `,
   },
 ] as const;

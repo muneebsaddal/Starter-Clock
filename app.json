@@ -20,10 +20,14 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
+      "expo-notifications",
+      "react-native-iap",
       [
         "expo-image-picker",
         {
-          "photosPermission": "Starter Clock uses a selected photo only for your local feeding history."
+          "photosPermission": "Starter Clock uses a selected photo only for your local feeding history.",
+          "cameraPermission": false,
+          "microphonePermission": false
         }
       ]
     ],

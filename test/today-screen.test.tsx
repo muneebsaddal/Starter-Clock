@@ -2,6 +2,7 @@ import React from "react";
 import { act, create, type ReactTestInstance } from "react-test-renderer";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { estimatePeak } from "@/domain/peak-model";
+import { formatTime } from "@/domain/presentation";
 
 vi.mock("@/ui/components/bottom-navigation.native", () => ({ BottomNavigation: () => React.createElement("Navigation", { accessibilityLabel: "Primary navigation" }) }));
 vi.mock("@/ui/components/feeding-modal.native", () => ({ FeedingModal: () => null }));
@@ -34,12 +35,14 @@ describe("Today screen contract", () => {
     tracking.feedings = [{
       id: "22222222-2222-4222-8222-222222222222", starterId: starter.id, fedAtMs, entryZone: "UTC", entryOffsetMinutes: 0,
       starterTenthsGrams: 250, flourTenthsGrams: 500, waterTenthsGrams: 500, flourType: "white" as const, temperatureTenthsC: 240,
+      reminder: { enabled: true, status: "scheduled" as const, targetAtMs: fedAtMs + 6 * 3_600_000, notificationId: "native-1", updatedAtMs: fedAtMs },
       estimate: estimatePeak({ fedAtMs, starterGrams: 25, flourGrams: 50, waterGrams: 50, flourType: "white", temperatureC: 24 }), createdAtMs: fedAtMs, updatedAtMs: fedAtMs,
     }] as never[];
     const root = renderScreen();
     expect(hasText(root, "Estimated peak")).toBe(true);
     expect(hasAccessible(root, "button", "Explain this peak window")).toBe(true);
     expect(hasAccessible(root, "button", "Manage starter")).toBe(true);
+    expect(hasAccessible(root, undefined, `Peak reminder scheduled for ${formatTime(fedAtMs + 6 * 3_600_000)}`)).toBe(true);
   });
 
   it("keeps storage recovery actionable", () => {

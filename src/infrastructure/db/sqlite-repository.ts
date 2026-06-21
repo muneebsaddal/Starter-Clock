@@ -1,4 +1,4 @@
-import type { Feeding, PeakEstimate, Photo, Starter, StarterStatus } from "@/domain/models";
+import type { EntitlementCache, Feeding, PeakEstimate, Photo, Reminder, Starter, StarterStatus } from "@/domain/models";
 import type { StarterRepository } from "@/application/ports";
 import { z } from "zod";
 import { migrateDatabase, type MigrationDatabase } from "./migrations";
@@ -25,16 +25,23 @@ const feedingRowSchema = z.object({
   temperature_tenths_c: z.number().nullable(), notes: z.string().nullable(), created_at_ms: z.number(), updated_at_ms: z.number(), model_version: z.literal("baseline-v1"),
   earliest_at_ms: z.number(), midpoint_at_ms: z.number(), latest_at_ms: z.number(), mode: z.enum(["baseline", "widened", "personalized"]), factors_json: z.string(),
   missing_inputs_json: z.string(), personalization_json: z.string(), observed_at_ms: z.number().nullable(), relative_path: z.string().nullable(), mime_type: z.string().nullable(), byte_size: z.number().nullable(),
+  reminder_enabled: z.number().int().min(0).max(1), reminder_status: z.enum(["disabled", "pending", "scheduled", "denied", "failed", "expired"]),
+  reminder_target_at_ms: z.number(), notification_id: z.string().nullable(), reminder_error_code: z.enum(["NOTIFICATION_DENIED", "NOTIFICATION_UNAVAILABLE", "NOTIFICATION_SCHEDULE_FAILED"]).nullable(), reminder_updated_at_ms: z.number(),
 });
+
+const entitlementRowSchema = z.object({ product_id: z.string().min(1), state: z.enum(["free", "pro"]), store: z.enum(["ios", "android", "unknown"]), last_verified_at_ms: z.number().nullable() });
 
 const feedingSelect = `
   SELECT f.*, e.model_version, e.earliest_at_ms, e.midpoint_at_ms, e.latest_at_ms,
     e.mode, e.factors_json, e.missing_inputs_json, e.personalization_json,
-    o.observed_at_ms, p.relative_path, p.mime_type, p.byte_size
+    o.observed_at_ms, p.relative_path, p.mime_type, p.byte_size,
+    r.enabled AS reminder_enabled, r.status AS reminder_status, r.target_at_ms AS reminder_target_at_ms,
+    r.notification_id, r.error_code AS reminder_error_code, r.updated_at_ms AS reminder_updated_at_ms
   FROM feedings f
   JOIN peak_estimates e ON e.feeding_id = f.id
   LEFT JOIN peak_observations o ON o.feeding_id = f.id
-  LEFT JOIN photos p ON p.feeding_id = f.id`;
+  LEFT JOIN photos p ON p.feeding_id = f.id
+  JOIN reminders r ON r.feeding_id = f.id`;
 
 export class SQLiteStarterRepository implements StarterRepository {
   constructor(private readonly database: AppDatabase, private readonly now: () => number = Date.now) {}
@@ -103,6 +110,13 @@ export class SQLiteStarterRepository implements StarterRepository {
       } else {
         await tx.runAsync("DELETE FROM peak_observations WHERE feeding_id = ?", feeding.id);
       }
+      await tx.runAsync(
+        `INSERT INTO reminders(feeding_id,enabled,status,target_at_ms,notification_id,error_code,updated_at_ms) VALUES(?,?,?,?,?,?,?)
+         ON CONFLICT(feeding_id) DO UPDATE SET enabled=excluded.enabled,status=excluded.status,target_at_ms=excluded.target_at_ms,
+         notification_id=excluded.notification_id,error_code=excluded.error_code,updated_at_ms=excluded.updated_at_ms`,
+        feeding.id, feeding.reminder.enabled ? 1 : 0, feeding.reminder.status, feeding.reminder.targetAtMs,
+        feeding.reminder.notificationId ?? null, feeding.reminder.errorCode ?? null, feeding.reminder.updatedAtMs,
+      );
     });
   }
 
@@ -116,6 +130,41 @@ export class SQLiteStarterRepository implements StarterRepository {
        ON CONFLICT(feeding_id) DO UPDATE SET relative_path=excluded.relative_path,mime_type=excluded.mime_type,byte_size=excluded.byte_size,updated_at_ms=excluded.updated_at_ms`,
       feedingId, photo.relativePath, photo.mimeType, photo.byteSize, now, now,
     );
+  }
+
+  async updateReminder(feedingId: string, reminder: Reminder) {
+    await this.database.runAsync(
+      `UPDATE reminders SET enabled=?,status=?,target_at_ms=?,notification_id=?,error_code=?,updated_at_ms=? WHERE feeding_id=?`,
+      reminder.enabled ? 1 : 0, reminder.status, reminder.targetAtMs, reminder.notificationId ?? null, reminder.errorCode ?? null, reminder.updatedAtMs, feedingId,
+    );
+  }
+
+  async listReminderFeedings() {
+    const rows = await this.database.getAllAsync<unknown>(`${feedingSelect} ORDER BY f.fed_at_ms DESC`);
+    return rows.map(mapFeeding);
+  }
+
+  async getReminderDefault() {
+    const row = await this.database.getFirstAsync<{ reminder_default: number }>("SELECT reminder_default FROM preferences WHERE id = 1");
+    return row?.reminder_default !== 0;
+  }
+
+  async setReminderDefault(enabled: boolean) { await this.database.runAsync("UPDATE preferences SET reminder_default = ? WHERE id = 1", enabled ? 1 : 0); }
+
+  async getSelectedStarterId() {
+    const row = await this.database.getFirstAsync<{ selected_starter_id: string | null }>("SELECT selected_starter_id FROM preferences WHERE id = 1");
+    return row?.selected_starter_id ?? null;
+  }
+
+  async setSelectedStarterId(id: string | null) { await this.database.runAsync("UPDATE preferences SET selected_starter_id = ? WHERE id = 1", id); }
+
+  async getEntitlementCache(): Promise<EntitlementCache> {
+    const row = entitlementRowSchema.parse(await this.database.getFirstAsync<unknown>("SELECT product_id,state,store,last_verified_at_ms FROM entitlement_cache WHERE id = 1"));
+    return { productId: row.product_id, level: row.state, store: row.store, lastVerifiedAtMs: row.last_verified_at_ms };
+  }
+
+  async saveEntitlementCache(cache: EntitlementCache) {
+    await this.database.runAsync("UPDATE entitlement_cache SET product_id=?,state=?,store=?,last_verified_at_ms=? WHERE id=1", cache.productId, cache.level, cache.store, cache.lastVerifiedAtMs);
   }
 }
 
@@ -148,6 +197,11 @@ function mapFeeding(row: unknown): Feeding {
     ...(parsed.notes === null ? {} : { notes: parsed.notes }),
     ...(parsed.observed_at_ms === null ? {} : { observation: { observedAtMs: parsed.observed_at_ms } }),
     ...(parsed.relative_path === null || parsed.mime_type === null || parsed.byte_size === null ? {} : { photo: { relativePath: parsed.relative_path, mimeType: parsed.mime_type, byteSize: parsed.byte_size } }),
+    reminder: {
+      enabled: parsed.reminder_enabled === 1, status: parsed.reminder_status, targetAtMs: parsed.reminder_target_at_ms, updatedAtMs: parsed.reminder_updated_at_ms,
+      ...(parsed.notification_id === null ? {} : { notificationId: parsed.notification_id }),
+      ...(parsed.reminder_error_code === null ? {} : { errorCode: parsed.reminder_error_code }),
+    },
     estimate, createdAtMs: parsed.created_at_ms, updatedAtMs: parsed.updated_at_ms,
   };
 }

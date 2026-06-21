@@ -51,8 +51,35 @@ without compromising local tracking if rollback is needed.
 
 ## Completion Record
 
-- Outcome: Not started
-- Summary: —
-- Actual files changed: —
-- Verification: —
-- Remaining risks or blocker: T006 and Phase 4 approval are required.
+- Outcome: BLOCKED after implementation and host verification
+- Summary: Added schema-v2 reminder intent and derived entitlement cache,
+  deterministic reminder reconciliation, Expo local-notification and direct
+  store adapters, Lifetime Pro purchase/restore UI, remembered reminder
+  preference, application-level Free/Pro limits, loss-safe selected-starter
+  handling, official platform evidence, and failure/recovery tests.
+- Actual files changed: `app.json`, dependency manifests, notification and
+  purchase application/infrastructure modules, schema/repository/tracking
+  modules, native tracking UI, T007 tests, `docs/architecture.md`,
+  `docs/ux-flow.md`, ledger, plan, and handoff.
+- Verification: strict TypeScript and Expo lint passed; 44/44 tests passed;
+  coverage passed at 87.02% statements and 81.71% branches overall, with
+  domain at 98.18%/95.65% and database at 82.89%/87.93%; migration from schema
+  v1 passed; Expo Doctor passed 21/21; public/introspected config includes the
+  notification and IAP plugins, Google Billing permission, and removal of
+  unused camera/microphone permission; iOS, Android, and web production exports
+  passed; dependency audit has no high/critical issue (the existing 10 moderate
+  Expo toolchain findings remain); source secret/TODO scan and
+  `git diff --check` passed.
+- Remaining risks or blocker: Required device/store verification cannot run on
+  this Windows host: no Android SDK/ADB or Android device is available, iOS
+  execution requires macOS/Xcode and an iOS device/simulator, and the
+  `starter_clock_pro_lifetime` non-consumable plus sandbox/test accounts are not
+  configured in App Store Connect or Play Console. Resume by configuring the
+  same product ID in both stores, provisioning development builds and sandbox
+  accounts, then exercise on iOS and Android: first permission grant, denial
+  and Settings recovery; schedule/edit/reschedule/delete; restart/resume and
+  time-zone change reconciliation; purchase success, pending/deferred,
+  cancellation, failure, offline cached Pro, restore, and refund/revocation.
+  Record evidence here, rerun the full verification suite, audit Phase 4, and
+  mark DONE only if the matrix passes. Current Phase 4 audit verdict: `CHANGES
+  REQUIRED`.

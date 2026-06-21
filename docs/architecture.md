@@ -1,7 +1,7 @@
 # Starter Clock Architecture
 
-**Status:** T005 implementation contract
-**Last updated:** 2026-06-21
+**Status:** T007 capability implementation contract
+**Last updated:** 2026-06-22
 
 This document is the canonical owner of technical decisions and boundaries.
 Product behavior remains in `requirements.md`; screen behavior remains in
@@ -76,8 +76,9 @@ tests do not depend on ambient time or random values.
 
 ## Package Baseline and Capability Evidence
 
-The package snapshot was checked on 2026-06-21. T006 must create the app with
-the current Expo SDK 56 template and use `npx expo install` for Expo-owned
+The package snapshot was checked on 2026-06-21 and the T007 native capability
+versions were rechecked on 2026-06-22. The app uses
+the current Expo SDK 56 template and uses `npx expo install` for Expo-owned
 packages so compatible patch versions are resolved. Do not manually combine
 the standalone latest React Native package with Expo.
 
@@ -113,6 +114,36 @@ Primary capability evidence:
 - Package versions above came from the public npm registry on the access date;
   they are an evidence snapshot, not a reason to bypass Expo compatibility
   resolution.
+
+### T007 notification and store implementation evidence
+
+Checked 2026-06-22:
+
+- [Expo Notifications](https://docs.expo.dev/versions/latest/sdk/notifications/)
+  supports one-off local date notifications and requires an Android channel
+  before the Android 13 permission prompt can appear. The adapter creates the
+  `peak-reminders` channel before checking or requesting permission. Starter
+  Clock does not request Android exact-alarm access: this is a near-window
+  reminder, not an alarm-clock guarantee, and exact delivery still requires
+  later device verification.
+- [Expo in-app purchases](https://docs.expo.dev/guides/in-app-purchases/)
+  requires custom native code and therefore a development build rather than
+  Expo Go. `react-native-iap` and its Nitro peer are linked through app config.
+- [Google Play Billing integration](https://developer.android.com/google/play/billing/integrate)
+  requires pending purchases to remain ungranted, completed purchases to be
+  queried when the app reconnects, and delivery to be acknowledged within
+  three days to avoid automatic refund and revocation. The adapter grants Pro
+  only for `purchased`, finalizes the non-consumable, and refreshes on launch,
+  resume, and explicit restore.
+- [Apple StoreKit current entitlements](https://developer.apple.com/documentation/storekit/transaction/currententitlements)
+  is the store-owned source used by the IAP library for restorable current
+  ownership. [Apple sandbox testing](https://developer.apple.com/documentation/storekit/testing-in-app-purchases-with-sandbox)
+  remains required before release.
+
+The public non-consumable identifier is
+`starter_clock_pro_lifetime`. No receipt, purchase token, account identifier,
+or user-entered value is persisted or logged. SQLite stores only the derived
+`free`/`pro` result, store family, and last successful verification time.
 
 No state-management, ORM, date-time, analytics, or remote data package is
 approved. React state/reducers, `Intl`, and small repository mappings cover the

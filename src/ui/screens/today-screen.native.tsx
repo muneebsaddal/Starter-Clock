@@ -8,12 +8,14 @@ import { Body, Button, IconButton, Label, Title } from "../components/primitives
 import { FeedingModal } from "../components/feeding-modal.native";
 import { StarterModal } from "../components/starter-modal.native";
 import { BottomNavigation } from "../components/bottom-navigation.native";
+import { ProModal } from "../components/pro-modal.native";
 import { useNow } from "../use-now";
 
 export function TodayScreen() {
   const theme = useTheme();
   const { loading, error, starters, selectedStarter, feedings, refresh, clearError, reactivateStarter } = useTracking();
   const [feedingOpen, setFeedingOpen] = useState(false); const [feedingNowMs, setFeedingNowMs] = useState(0); const [starterOpen, setStarterOpen] = useState(false); const [editing, setEditing] = useState<Feeding | undefined>(); const [explaining, setExplaining] = useState(false);
+  const [proOpen, setProOpen] = useState(false);
   const latest = feedings[0]; const now = useNow();
   function openFeeding(feeding?: Feeding) { setEditing(feeding); setFeedingNowMs(Date.now()); setFeedingOpen(true); }
 
@@ -33,6 +35,8 @@ export function TodayScreen() {
             {(() => { const state = describePeakState(latest.estimate, selectedStarter.name, now); return <><View style={[styles.state, { backgroundColor: theme.sageSoft }]}><Text style={{ color: theme.sage, fontWeight: "800" }}>◔  {state.label}</Text></View><Title style={[styles.peakTitle, { color: theme.accent }]}>{formatPeakWindow(latest.estimate, now)}</Title><Body style={{ color: theme.muted, fontWeight: "700" }}>{state.detail}</Body></>; })()}
             <View accessibilityLabel={`Fed at ${formatTime(latest.fedAtMs)}. Estimated peak ${formatTime(latest.estimate.earliestAtMs)} to ${formatTime(latest.estimate.latestAtMs)}.`} style={[styles.timeline, { backgroundColor: theme.line }]}><View style={[styles.timelineFill, { backgroundColor: theme.accent }]} /><View style={[styles.timelineWindow, { backgroundColor: theme.sage }]} /></View>
             <View style={styles.timelineLabels}><Body style={{ color: theme.muted, fontSize: 12 }}>Fed {formatTime(latest.fedAtMs)}</Body><Body style={{ color: theme.muted, fontSize: 12 }}>Peak window</Body></View>
+            {latest.reminder.status === "scheduled" ? <Body accessibilityLabel={`Peak reminder scheduled for ${formatTime(latest.reminder.targetAtMs)}`} style={{ color: theme.sage, fontWeight: "700", marginTop: 14 }}>Reminder set for {formatTime(latest.reminder.targetAtMs)}</Body> : null}
+            {latest.reminder.status === "denied" || latest.reminder.status === "failed" ? <Body accessibilityRole="alert" style={{ color: theme.warning, fontWeight: "700", marginTop: 14 }}>{latest.reminder.status === "denied" ? "Reminder not set · notifications are off" : "Reminder not set · tap Edit to retry"}</Body> : null}
             <Button variant="quiet" accessibilityLabel="Explain this peak window" onPress={() => setExplaining((open) => !open)}>{explaining ? "Hide explanation" : "Why this window?"}</Button>
             {explaining ? <View style={[styles.explanation, { borderColor: theme.line }]}><Body style={{ fontWeight: "800" }}>An estimate, not a guarantee.</Body><Body style={{ color: theme.muted }}>Your starter may peak earlier or later. Look for a rounded top, bubbles, and maximum rise.</Body><Body style={{ color: theme.muted, marginTop: 8 }}>{latest.estimate.factors.filter((factor) => !factor.code.startsWith("missing")).map((factor) => `• ${factor.code.replaceAll("_", " ")}`).join("\n")}</Body>{latest.estimate.missingInputs.length ? <Body style={{ color: theme.warning, marginTop: 8 }}>The window is wider because {latest.estimate.missingInputs.join(" and ").replaceAll("_", " ")} was not recorded.</Body> : null}</View> : null}
           </View>
@@ -46,8 +50,9 @@ export function TodayScreen() {
       </View>}
     </ScrollView>
     <BottomNavigation />
-    {starterOpen ? <StarterModal visible mode={selectedStarter ? "manage" : "create"} onClose={() => setStarterOpen(false)} onCreated={() => openFeeding()} /> : null}
+    {starterOpen ? <StarterModal visible mode={selectedStarter ? "manage" : "create"} onClose={() => setStarterOpen(false)} onCreated={() => openFeeding()} onUpgrade={() => setProOpen(true)} /> : null}
     {feedingOpen ? <FeedingModal visible nowMs={feedingNowMs} feeding={editing} onClose={() => { setFeedingOpen(false); setEditing(undefined); }} /> : null}
+    {proOpen ? <ProModal visible onClose={() => setProOpen(false)} /> : null}
   </View>;
 }
 

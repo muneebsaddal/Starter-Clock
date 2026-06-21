@@ -2,6 +2,8 @@ import type { Feeding, PeakObservation, Photo, Starter } from "@/domain/models";
 import { estimatePeak } from "@/domain/peak-model";
 import { feedingDraftSchema, starterNameSchema, type FeedingDraft } from "@/domain/validation";
 import type { Clock, IdGenerator, PhotoStore, StarterRepository } from "./ports";
+import type { ReminderService } from "./reminder-service";
+import type { EntitlementService } from "./entitlement-service";
 
 export class TrackingService {
   constructor(
@@ -9,15 +11,37 @@ export class TrackingService {
     private readonly clock: Clock,
     private readonly ids: IdGenerator,
     private readonly photoStore?: PhotoStore,
+    private readonly reminders?: ReminderService,
+    private readonly entitlements?: EntitlementService,
   ) {}
 
-  initialize() { return this.repository.initialize(); }
+  async initialize() {
+    await this.repository.initialize();
+    await this.reconcileCapabilities();
+  }
+  async reconcileCapabilities() { await Promise.all([this.reminders?.reconcile().catch(() => undefined), this.entitlements?.refresh()]); }
   listStarters() { return this.repository.listStarters(); }
-  listFeedings(starterId: string, limit = 30) { return this.repository.listFeedings(starterId, limit); }
+  async listFeedings(starterId: string, limit?: number) {
+    const pro = (await this.getEntitlement()).level === "pro";
+    return this.repository.listFeedings(starterId, pro ? limit : Math.min(limit ?? 30, 30));
+  }
   getFeeding(id: string) { return this.repository.getFeeding(id); }
+  getReminderDefault() { return this.repository.getReminderDefault(); }
+  getSelectedStarterId() { return this.repository.getSelectedStarterId(); }
+  setSelectedStarterId(id: string | null) { return this.repository.setSelectedStarterId(id); }
+
+  async getEntitlement() {
+    return this.entitlements?.getCached() ?? { productId: "starter_clock_pro_lifetime", level: "free" as const, store: "unknown" as const, lastVerifiedAtMs: null, offline: false };
+  }
+  async refreshEntitlement() { return this.entitlements?.refresh() ?? this.getEntitlement(); }
+  async purchaseLifetime() {
+    if (!this.entitlements) return { state: "failed" as const };
+    return this.entitlements.purchaseLifetime();
+  }
+  async restorePurchases() { return this.entitlements?.restorePurchases() ?? this.getEntitlement(); }
 
   async createStarter(nameInput: string) {
-    if ((await this.repository.listStarters("active")).length >= 1) throw new Error("FREE_STARTER_LIMIT");
+    if ((await this.getEntitlement()).level !== "pro" && (await this.repository.listStarters("active")).length >= 1) throw new Error("FREE_STARTER_LIMIT");
     const name = starterNameSchema.parse(nameInput);
     const now = this.clock.now();
     const starter: Starter = { id: this.ids.next(), name, status: "active", createdAtMs: now, updatedAtMs: now };
@@ -59,6 +83,7 @@ export class TrackingService {
       ...(draft.temperatureTenthsC === undefined ? {} : { temperatureC: draft.temperatureTenthsC / 10 }),
     }, observations);
     const now = this.clock.now();
+    const reminderEnabled = draft.reminderEnabled ?? await this.repository.getReminderDefault();
     const feeding: Feeding = {
       id: existing?.id ?? this.ids.next(),
       starterId: draft.starterId,
@@ -73,17 +98,31 @@ export class TrackingService {
       ...(draft.notes === undefined || draft.notes.trim() === "" ? {} : { notes: draft.notes.trim() }),
       ...(existing?.photo === undefined ? {} : { photo: existing.photo }),
       ...(draft.observedAtMs === undefined ? {} : { observation: { observedAtMs: draft.observedAtMs } }),
+      reminder: {
+        enabled: reminderEnabled,
+        status: reminderEnabled ? "pending" : "disabled",
+        targetAtMs: estimate.earliestAtMs,
+        ...(existing?.reminder.notificationId === undefined ? {} : { notificationId: existing.reminder.notificationId }),
+        updatedAtMs: now,
+      },
       estimate,
       createdAtMs: existing?.createdAtMs ?? now,
       updatedAtMs: now,
     };
     await this.repository.saveFeeding(feeding);
+    await this.repository.setReminderDefault(reminderEnabled);
+    if (this.reminders) {
+      const starter = await this.requireStarter(feeding.starterId);
+      try { await this.reminders.sync(feeding, starter.name); } catch { return feeding; }
+      return (await this.repository.getFeeding(feeding.id)) ?? feeding;
+    }
     return feeding;
   }
 
   async deleteFeeding(id: string) {
     const feeding = await this.requireFeeding(id);
     await this.repository.deleteFeeding(id);
+    if (this.reminders) await this.reminders.cancel(feeding.reminder);
     await this.removePhotosBestEffort(feeding.photo ? [feeding.photo.relativePath] : []);
   }
 
@@ -140,5 +179,6 @@ export function toDraft(feeding: Feeding): FeedingDraft {
     ...(feeding.temperatureTenthsC === undefined ? {} : { temperatureTenthsC: feeding.temperatureTenthsC }),
     ...(feeding.notes === undefined ? {} : { notes: feeding.notes }),
     ...(feeding.observation === undefined ? {} : { observedAtMs: feeding.observation.observedAtMs }),
+    reminderEnabled: feeding.reminder.enabled,
   };
 }

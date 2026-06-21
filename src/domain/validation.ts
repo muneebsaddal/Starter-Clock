@@ -16,6 +16,7 @@ export const feedingDraftSchema = z.object({
   temperatureTenthsC: z.number().int().min(-500).max(800).optional(),
   notes: z.string().max(500).optional(),
   observedAtMs: z.number().int().finite().optional(),
+  reminderEnabled: z.boolean().optional(),
 });
 
 export type FeedingDraft = z.infer<typeof feedingDraftSchema>;

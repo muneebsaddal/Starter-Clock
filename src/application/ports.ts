@@ -1,4 +1,4 @@
-import type { Feeding, Photo, Starter, StarterStatus } from "@/domain/models";
+import type { EntitlementCache, EntitlementLevel, EntitlementStore, Feeding, Photo, Reminder, Starter, StarterStatus } from "@/domain/models";
 
 export interface Clock { now(): number }
 export interface IdGenerator { next(): string }
@@ -14,6 +14,14 @@ export interface StarterRepository {
   saveFeeding(feeding: Feeding): Promise<void>;
   deleteFeeding(id: string): Promise<void>;
   savePhoto(feedingId: string, photo: Photo | null): Promise<void>;
+  updateReminder(feedingId: string, reminder: Reminder): Promise<void>;
+  listReminderFeedings(): Promise<Feeding[]>;
+  getReminderDefault(): Promise<boolean>;
+  setReminderDefault(enabled: boolean): Promise<void>;
+  getSelectedStarterId(): Promise<string | null>;
+  setSelectedStarterId(id: string | null): Promise<void>;
+  getEntitlementCache(): Promise<EntitlementCache>;
+  saveEntitlementCache(cache: EntitlementCache): Promise<void>;
 }
 
 export interface PhotoCandidate { uri: string; mimeType: string; byteSize: number }
@@ -22,4 +30,24 @@ export interface PhotoStore {
   stage(candidate: PhotoCandidate, feedingId: string): Promise<{ temporaryPath: string; finalPath: string }>;
   commit(temporaryPath: string, finalPath: string): Promise<Photo>;
   remove(relativePath: string): Promise<void>;
+}
+
+export type NotificationPermission = "granted" | "denied" | "undetermined";
+export interface NotificationRequest { feedingId: string; starterName: string; targetAtMs: number }
+export interface ScheduledNotification { id: string; feedingId?: string }
+export interface NotificationPort {
+  prepare(): Promise<void>;
+  getPermission(): Promise<NotificationPermission>;
+  requestPermission(): Promise<NotificationPermission>;
+  schedule(request: NotificationRequest): Promise<string>;
+  cancel(notificationId: string): Promise<void>;
+  listScheduled(): Promise<ScheduledNotification[]>;
+}
+
+export type StorePurchaseResult =
+  | { state: "purchased"; store: EntitlementStore }
+  | { state: "pending" | "cancelled" | "failed" };
+export interface PurchasePort {
+  getEntitlement(): Promise<{ level: EntitlementLevel; store: EntitlementStore }>;
+  purchaseLifetime(): Promise<StorePurchaseResult>;
 }

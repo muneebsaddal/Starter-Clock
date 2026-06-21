@@ -1,5 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from "react";
+import { AppState } from "react-native";
 import type { Feeding, Starter } from "@/domain/models";
+import type { EntitlementSnapshot } from "@/application/entitlement-service";
+import type { StorePurchaseResult } from "@/application/ports";
 import type { FeedingDraft } from "@/domain/validation";
 import { getTrackingService } from "@/infrastructure/db/expo-database";
 
@@ -9,6 +12,8 @@ interface TrackingContextValue {
   starters: Starter[];
   selectedStarter: Starter | null;
   feedings: Feeding[];
+  entitlement: EntitlementSnapshot;
+  reminderDefault: boolean;
   createStarter(name: string): Promise<Starter>;
   renameStarter(name: string): Promise<void>;
   archiveStarter(): Promise<void>;
@@ -18,6 +23,9 @@ interface TrackingContextValue {
   deleteFeeding(id: string): Promise<void>;
   recordObservedPeak(id: string, observedAtMs: number): Promise<void>;
   attachPhoto(id: string, photo: Feeding["photo"] | null): Promise<void>;
+  selectStarter(id: string): Promise<void>;
+  purchaseLifetime(): Promise<StorePurchaseResult>;
+  restorePurchases(): Promise<EntitlementSnapshot>;
   refresh(): Promise<void>;
   clearError(): void;
 }
@@ -30,17 +38,23 @@ export function TrackingProvider({ children }: PropsWithChildren) {
   const [starters, setStarters] = useState<Starter[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [feedings, setFeedings] = useState<Feeding[]>([]);
+  const [entitlement, setEntitlement] = useState<EntitlementSnapshot>({ productId: "starter_clock_pro_lifetime", level: "free", store: "unknown", lastVerifiedAtMs: null, offline: false });
+  const [reminderDefault, setReminderDefault] = useState(true);
   const selectedStarter = starters.find((starter) => starter.id === selectedId) ?? starters.find((starter) => starter.status === "active") ?? null;
 
   const refresh = useCallback(async () => {
     try {
       const service = await getTrackingService();
       const nextStarters = await service.listStarters();
-      const nextSelected = nextStarters.find((starter) => starter.id === selectedId && starter.status === "active") ?? nextStarters.find((starter) => starter.status === "active") ?? null;
-      const nextFeedings = nextSelected ? await service.listFeedings(nextSelected.id, 30) : [];
+      const persistedSelectedId = selectedId ?? await service.getSelectedStarterId();
+      const nextSelected = nextStarters.find((starter) => starter.id === persistedSelectedId && starter.status === "active") ?? nextStarters.find((starter) => starter.status === "active") ?? null;
+      const [nextFeedings, nextEntitlement, nextReminderDefault] = await Promise.all([nextSelected ? service.listFeedings(nextSelected.id) : [], service.getEntitlement(), service.getReminderDefault()]);
       setStarters(nextStarters);
       setSelectedId(nextSelected?.id ?? null);
+      await service.setSelectedStarterId(nextSelected?.id ?? null);
       setFeedings(nextFeedings);
+      setEntitlement(nextEntitlement);
+      setReminderDefault(nextReminderDefault);
       setError(null);
     } catch {
       setError("Starter Clock couldn’t open local data. Try again.");
@@ -50,6 +64,12 @@ export function TrackingProvider({ children }: PropsWithChildren) {
   }, [selectedId]);
 
   useEffect(() => { const timer = setTimeout(() => void refresh(), 0); return () => clearTimeout(timer); }, [refresh]);
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") void getTrackingService().then((service) => service.reconcileCapabilities()).then(refresh);
+    });
+    return () => subscription.remove();
+  }, [refresh]);
 
   const perform = useCallback(async <T,>(task: () => Promise<T>) => {
     try {
@@ -57,15 +77,15 @@ export function TrackingProvider({ children }: PropsWithChildren) {
       await refresh();
       return result;
     } catch (caught) {
-      setError(caught instanceof Error && caught.message.startsWith("Enter") ? caught.message : "Couldn’t save your change. Your entries are still here. Try again.");
+      setError(caught instanceof Error && caught.message === "FREE_STARTER_LIMIT" ? "Free includes one active starter. Lifetime Pro unlocks more." : caught instanceof Error && caught.message.startsWith("Enter") ? caught.message : "Couldn’t save your change. Your entries are still here. Try again.");
       throw caught;
     }
   }, [refresh]);
 
   const value = useMemo<TrackingContextValue>(() => ({
-    loading, error, starters, selectedStarter, feedings, refresh,
+    loading, error, starters, selectedStarter, feedings, entitlement, reminderDefault, refresh,
     clearError: () => setError(null),
-    createStarter: (name) => perform(async () => { const service = await getTrackingService(); const starter = await service.createStarter(name); setSelectedId(starter.id); return starter; }),
+    createStarter: (name) => perform(async () => { const service = await getTrackingService(); const starter = await service.createStarter(name); await service.setSelectedStarterId(starter.id); setSelectedId(starter.id); return starter; }),
     renameStarter: async (name) => { if (!selectedStarter) return; await perform(async () => (await getTrackingService()).renameStarter(selectedStarter.id, name)); },
     archiveStarter: async () => { if (!selectedStarter) return; await perform(async () => (await getTrackingService()).setStarterArchived(selectedStarter.id, true)); },
     reactivateStarter: async (id) => { await perform(async () => { await (await getTrackingService()).setStarterArchived(id, false); setSelectedId(id); }); },
@@ -74,7 +94,10 @@ export function TrackingProvider({ children }: PropsWithChildren) {
     deleteFeeding: (id) => perform(async () => (await getTrackingService()).deleteFeeding(id)),
     recordObservedPeak: async (id, observedAtMs) => { await perform(async () => (await getTrackingService()).recordObservedPeak(id, observedAtMs)); },
     attachPhoto: async (id, photo) => { await perform(async () => (await getTrackingService()).attachPhoto(id, photo ?? null)); },
-  }), [error, feedings, loading, perform, refresh, selectedStarter, starters]);
+    selectStarter: async (id) => { if (entitlement.level !== "pro") return; const service = await getTrackingService(); await service.setSelectedStarterId(id); setSelectedId(id); },
+    purchaseLifetime: async () => { const result = await (await getTrackingService()).purchaseLifetime(); await refresh(); return result; },
+    restorePurchases: async () => { const result = await (await getTrackingService()).restorePurchases(); await refresh(); return result; },
+  }), [entitlement, error, feedings, loading, perform, refresh, reminderDefault, selectedStarter, starters]);
 
   return <TrackingContext.Provider value={value}>{children}</TrackingContext.Provider>;
 }

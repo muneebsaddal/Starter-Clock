@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Alert, Image, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Image, KeyboardAvoidingView, Linking, Modal, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import type { Feeding, FlourType } from "@/domain/models";
 import { calculateFeedingRatio, calculateHydrationPercent } from "@/domain/peak-model";
 import { formatNumber } from "@/domain/presentation";
@@ -16,7 +16,7 @@ const flourOptions: { value: FlourType; label: string }[] = [
 
 export function FeedingModal({ visible, nowMs, feeding, onClose, onSaved }: Props) {
   const theme = useTheme();
-  const { selectedStarter, saveFeeding, deleteFeeding, attachPhoto } = useTracking();
+  const { selectedStarter, saveFeeding, deleteFeeding, attachPhoto, reminderDefault } = useTracking();
   const [starter, setStarter] = useState(feeding ? String(feeding.starterTenthsGrams / 10) : "25");
   const [flour, setFlour] = useState(feeding ? String(feeding.flourTenthsGrams / 10) : "50");
   const [water, setWater] = useState(feeding ? String(feeding.waterTenthsGrams / 10) : "50");
@@ -30,6 +30,7 @@ export function FeedingModal({ visible, nowMs, feeding, onClose, onSaved }: Prop
   const [error, setError] = useState<string | null>(null);
   const [photoCandidate, setPhotoCandidate] = useState<Awaited<ReturnType<ManagedPhotoStore["select"]>>>(null);
   const [removePhoto, setRemovePhoto] = useState(false);
+  const [reminderEnabled, setReminderEnabled] = useState(feeding?.reminder.enabled ?? reminderDefault);
 
   const preview = useMemo(() => {
     try {
@@ -64,6 +65,7 @@ export function FeedingModal({ visible, nowMs, feeding, onClose, onSaved }: Prop
         ...(temperatureValue === undefined ? {} : { temperatureTenthsC: Math.round(temperatureValue * 10) }),
         ...(notes.trim() === "" ? {} : { notes }),
         ...(observedAtMs === undefined ? {} : { observedAtMs }),
+        reminderEnabled,
       }, feeding?.id);
       if (photoCandidate) {
         try {
@@ -106,6 +108,12 @@ export function FeedingModal({ visible, nowMs, feeding, onClose, onSaved }: Prop
             <View><Body style={{ color: theme.muted, fontSize: 13 }}>Feeding ratio</Body><Text style={[styles.metric, { color: theme.ink }]}>{preview.ratio}</Text></View>
             <View><Body style={{ color: theme.muted, fontSize: 13 }}>Hydration</Body><Text style={[styles.metric, { color: theme.ink }]}>{preview.hydration}</Text></View>
           </View>
+          <View style={[styles.reminderRow, { borderColor: theme.line }]}>
+            <View style={{ flex: 1 }}><Body style={{ fontWeight: "800" }}>Remind me near peak</Body><Body style={{ color: theme.muted, fontSize: 13 }}>Schedules at the start of the estimated window.</Body></View>
+            <Switch accessibilityLabel="Remind me near peak" value={reminderEnabled} onValueChange={setReminderEnabled} />
+          </View>
+          {feeding?.reminder.status === "denied" ? <View style={{ marginBottom: 12 }}><Body accessibilityRole="alert" style={{ color: theme.warning }}>Notifications are off. The feeding stays saved.</Body><Button variant="quiet" onPress={() => void Linking.openSettings()}>Open notification settings</Button></View> : null}
+          {feeding?.reminder.status === "failed" ? <Body accessibilityRole="alert" style={{ color: theme.warning, marginBottom: 12 }}>The reminder could not be scheduled. Your feeding is safe; edit and save to try again.</Body> : null}
           <Pressable accessibilityRole="button" accessibilityState={{ expanded: optionalOpen }} onPress={() => setOptionalOpen((current) => !current)} style={[styles.optionalButton, { borderColor: theme.line }]}>
             <Body style={{ fontWeight: "800" }}>Flour, temperature, photo & notes</Body><Body style={{ color: theme.muted }}>{optionalOpen ? "Hide" : "Optional"}</Body>
           </Pressable>
@@ -151,6 +159,7 @@ const styles = StyleSheet.create({
   amounts: { flexDirection: "row", gap: 8 }, amountInput: { flexDirection: "row", alignItems: "center", minHeight: 52, borderWidth: 1, borderRadius: 12, paddingRight: 8, marginTop: 6 },
   amountText: { flex: 1, minWidth: 0, padding: 10, fontSize: 18, fontWeight: "800" },
   calculation: { flexDirection: "row", justifyContent: "space-around", borderRadius: 16, padding: 16, marginVertical: 18 }, metric: { fontSize: 21, fontWeight: "800", marginTop: 3 },
+  reminderRow: { minHeight: 64, flexDirection: "row", alignItems: "center", gap: 14, borderBottomWidth: 1, marginBottom: 12, paddingBottom: 12 },
   optionalButton: { minHeight: 52, flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, marginBottom: 16 },
   optional: { gap: 4, marginBottom: 18 }, chips: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginVertical: 8 }, chip: { minHeight: 44, justifyContent: "center", borderWidth: 1, borderRadius: 22, paddingHorizontal: 13 },
   error: { fontSize: 14, lineHeight: 20, fontWeight: "700", marginVertical: 12 },

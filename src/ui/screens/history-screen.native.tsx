@@ -8,14 +8,15 @@ import { BottomNavigation } from "../components/bottom-navigation.native";
 import { FeedingModal } from "../components/feeding-modal.native";
 import { Body, Button, Label, Title } from "../components/primitives";
 import { useNow } from "../use-now";
+import { ProModal } from "../components/pro-modal.native";
 
 export function HistoryScreen() {
-  const theme = useTheme(); const { selectedStarter, feedings } = useTracking(); const [editing, setEditing] = useState<Feeding | undefined>(); const now = useNow();
+  const theme = useTheme(); const { selectedStarter, feedings, entitlement } = useTracking(); const [editing, setEditing] = useState<Feeding | undefined>(); const [proOpen, setProOpen] = useState(false); const now = useNow();
   const groups = useMemo(() => groupByDate(feedings), [feedings]);
   return <View style={[styles.root, { backgroundColor: theme.paper }]}>
     <ScrollView contentContainerStyle={styles.content}>
       <Label>{selectedStarter?.name ?? "Starter Clock"}</Label><Title>Feeding history</Title>
-      <View style={[styles.freeNote, { backgroundColor: theme.sageSoft }]}><Body style={{ color: theme.sage, fontSize: 13 }}>Showing your 30 most recent feedings on Free.</Body></View>
+      {entitlement.level === "free" ? <Button variant="secondary" onPress={() => setProOpen(true)} style={styles.freeNote}><Body style={{ color: theme.sage, fontSize: 13 }}>Showing the 30 most recent feedings on Free. Unlock complete retained history.</Body></Button> : <View style={[styles.freeNote, { backgroundColor: theme.sageSoft }]}><Body style={{ color: theme.sage, fontSize: 13 }}>Complete retained history · Lifetime Pro</Body></View>}
       {feedings.length === 0 ? <View style={styles.empty}><Title style={{ fontSize: 25 }}>No feedings yet.</Title><Body style={{ color: theme.muted }}>Your saved feedings will appear here, newest first.</Body></View> : groups.map(([date, entries]) => <View key={date} style={styles.group}>
         <Label>{date}</Label>
         {entries.map((feeding) => <Button key={feeding.id} variant="secondary" accessibilityLabel={`Open feeding from ${formatTime(feeding.fedAtMs)}`} onPress={() => setEditing(feeding)} style={styles.row}>
@@ -25,6 +26,7 @@ export function HistoryScreen() {
     </ScrollView>
     <BottomNavigation />
     {editing ? <FeedingModal visible nowMs={now} feeding={editing} onClose={() => setEditing(undefined)} /> : null}
+    {proOpen ? <ProModal visible onClose={() => setProOpen(false)} /> : null}
   </View>;
 }
 

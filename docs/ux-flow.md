@@ -1,6 +1,6 @@
 # Starter Clock UX Flow
 
-**Status:** T006 native owner review complete with accepted follow-ups
+**Status:** T007 reminder and Lifetime Pro states implemented
 
 **Last updated:** 2026-06-22
 
@@ -37,10 +37,12 @@ Mobile has two persistent destinations:
 2. **History** — newest-first feedings, estimate-versus-observed result, and
    entry detail/editing.
 
-The active-starter switcher opens starter management. Settings owns units,
-appearance, notification status, export, delete-all-data, Pro purchase, and
-restore. Creation and editing use focused sheets so Today remains the stable
-place users return to. Web does not use this tracking IA in MVP (CON-002).
+The active-starter switcher opens starter management. The T007 Lifetime Pro
+sheet is reachable from the starter-limit action and Free history notice, and
+contains purchase and restore. Later Settings work owns units, appearance,
+export, and delete-all-data without moving purchase behind a paid gate.
+Creation and editing use focused sheets so Today remains the stable place users
+return to. Web does not use this tracking IA in MVP (CON-002).
 
 ```text
 First use -> Create starter -> Log feeding -> Today / peak interval
@@ -49,7 +51,7 @@ First use -> Create starter -> Log feeding -> Today / peak interval
                                       |          |-> Record observed peak
                                       +-> History -> Feeding detail -> Edit/delete
 Today -> Starter switcher -> create/rename/archive/delete or free-limit choice
-Today -> Settings -> units/appearance/data controls/notification/Pro restore
+Today/History -> Lifetime Pro -> purchase or restore
 ```
 
 ## Primary Flow Decisions
@@ -111,6 +113,12 @@ Denial or scheduling failure shows a recoverable status, never false success,
 and never blocks feeding. Editing or deleting the source feeding previews and
 applies the reminder consequence (FR-006, FR-014; NFR-011).
 
+The implemented first-use sequence is save feeding, show a local rationale,
+then show the OS prompt only after the user continues. **Not now** leaves intent
+pending without opening system permission UI. A denied reminder links to system
+notification settings; editing and saving retries scheduling. Today shows
+“Reminder set” only after the OS returns a scheduled identifier.
+
 **Record observed peak** asks for an absolute date/time, defaulted within the
 estimated interval. History then displays estimated versus observed time. The
 copy says this records what happened; it does not claim that later estimates
@@ -130,6 +138,12 @@ At the starter limit, users may archive the current starter or view the
 one-time Pro offer. Entitlement loss never implies deletion. Export and delete
 all data are always visible in Settings and never presented as paid features
 (FR-011, FR-013).
+
+The Lifetime Pro sheet distinguishes purchased, pending, cancelled, failed,
+restored, not-found, and offline-cache results. It does not hardcode an
+unapproved price; the store sheet displays the current localized price before
+confirmation. After entitlement loss, the last selected starter remains the
+single browsable Free starter and other retained starters are not deleted.
 
 ## Screen and State Contract
 
