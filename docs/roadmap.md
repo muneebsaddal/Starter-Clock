@@ -1,7 +1,7 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 3 complete; awaiting user approval of Phase 4
-**Last updated:** 2026-06-22
+**Status:** Phase 4 in progress; T007 blocked on deferred Android store-sandbox verification
+**Last updated:** 2026-06-25
 
 This document owns milestone intent and phase outcomes. Task status and order
 are canonical in `docs/tasks.md`.
@@ -29,5 +29,10 @@ the tested deterministic model and implementation-ready architecture. The Phase
 assigned T006 on 2026-06-21. T006 delivered the local-first tracking loop and
 passed automated quality gates. Android owner review completed with recorded
 follow-ups; iOS device testing was explicitly waived because of an Expo app
-version mismatch. The Phase 3 audit verdict is `APPROVE WITH FOLLOW-UPS`.
-Phase 4 remains gated on explicit user approval and assignment of T007.
+version mismatch. The Phase 3 audit verdict is `APPROVE WITH FOLLOW-UPS`. The
+user approved Phase 4 and assigned T007 on 2026-06-22. T007 implementation and
+host-executable verification are complete, but representative store-sandbox
+verification is blocked. On 2026-06-25, the user postponed Apple testing for
+cost reasons and approved resuming T007 after seven days with Google
+Play/Android-only verification. iOS verification remains a deferred release
+risk before any iOS store-readiness claim.

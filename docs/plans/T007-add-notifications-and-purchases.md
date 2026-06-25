@@ -23,6 +23,10 @@ without weakening the free core tracking experience.
   states meet requirements on both mobile platforms.
 - Free users retain the chartered experience; Pro gates only approved benefits.
 - Current official platform/store requirements are cited and satisfied.
+- Owner waiver, 2026-06-25: Apple Developer/App Store Connect testing is
+  deferred for cost reasons. T007 may complete with representative Google
+  Play/Android store-sandbox evidence only, provided the iOS gap is recorded as
+  a deferred release risk rather than treated as verified.
 
 ## Expected Files
 
@@ -42,6 +46,10 @@ ledger, this plan, and handoff.
 - Run notification/rescheduling and entitlement unit/integration tests.
 - Exercise representative permission and purchase states on iOS/Android.
 - Run typecheck, lint, build, security audit, and inspect the diff.
+- Owner waiver, 2026-06-25: for T007 completion, replace the representative
+  iOS/Android store-sandbox matrix with a representative Android/Google Play
+  matrix after the seven-day postponement, around 2026-07-02. Keep iOS
+  verification open for release readiness.
 
 ## Risks and Rollback
 
@@ -83,3 +91,9 @@ without compromising local tracking if rollback is needed.
   Record evidence here, rerun the full verification suite, audit Phase 4, and
   mark DONE only if the matrix passes. Current Phase 4 audit verdict: `CHANGES
   REQUIRED`.
+- Owner update, 2026-06-25: paid Apple Developer/App Store Connect testing is
+  postponed. Resume T007 after seven days, around 2026-07-02, by configuring
+  only Google Play for `starter_clock_pro_lifetime`, adding license testers,
+  publishing a signed Android build to an internal test track, and running the
+  Android notification and purchase matrix. T007 may be marked `DONE` if that
+  Android matrix passes and the iOS gap is preserved as a deferred release risk.

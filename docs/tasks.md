@@ -1,6 +1,6 @@
 # Starter Clock Task Ledger
 
-**Last updated:** 2026-06-22
+**Last updated:** 2026-06-25
 
 This is the authoritative task index and status ledger. IDs are permanent and
 never reused. The user selects tasks explicitly and approves phase changes.
@@ -37,5 +37,8 @@ FOLLOW-UPS`. The user approved Phase 3 and explicitly assigned T006 on
 owner waiver of iOS device testing due to an Expo app version mismatch. The
 Phase 3 audit verdict is `APPROVE WITH FOLLOW-UPS`. The user approved Phase 4
 and explicitly assigned T007 on 2026-06-22. T007 implementation and host
-verification are complete, but the task is blocked on required iOS/Android
-notification and store-sandbox evidence.
+verification are complete. On 2026-06-25, the user postponed paid Apple
+Developer/App Store Connect testing and approved resuming after seven days with
+Google Play/Android-only store-sandbox verification as the T007 completion
+matrix. iOS evidence remains a deferred release risk before iOS store
+readiness.

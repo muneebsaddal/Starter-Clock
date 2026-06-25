@@ -1,13 +1,20 @@
 # Starter Clock Handoff
 
-**Updated:** 2026-06-22
+**Updated:** 2026-06-25
 
 ## Current State
 
 T007 is `BLOCKED`. Phase 4 was approved and the notification/purchase
 implementation plus host-executable verification are complete. The Phase 4
-audit verdict is `CHANGES REQUIRED` because the required representative
-iOS/Android notification and store-sandbox matrix has not run.
+audit verdict is `CHANGES REQUIRED` because representative mobile notification
+and store-sandbox evidence has not run.
+
+On 2026-06-25, the owner deferred paid Apple Developer/App Store Connect work
+for cost reasons and approved resuming T007 with Google Play/Android-only
+store-sandbox verification after a seven-day pause, around 2026-07-02. This is
+an explicit verification waiver for completing T007, not a change to the
+long-term iOS target; iOS notification and purchase evidence remains a release
+risk to resolve before claiming iOS store readiness.
 
 ## Implemented
 
@@ -42,18 +49,20 @@ iOS/Android notification and store-sandbox matrix has not run.
 
 ## Exact Blocker and Resumption
 
-This host has no Android SDK/ADB and cannot execute iOS. The App Store Connect
-and Play Console non-consumable `starter_clock_pro_lifetime`, sandbox/test
-accounts, and signed development builds are not configured in repository
-context.
+This host has no Android SDK/ADB and cannot execute iOS. The Google Play
+non-consumable `starter_clock_pro_lifetime`, license testers, internal testing
+track, and signed Android build are not configured in repository context. Apple
+Developer/App Store Connect setup is intentionally postponed.
 
-To resume T007, configure that product ID in both stores and provision sandbox
-builds/accounts. On representative iOS and Android targets, verify permission
-grant, denial and Settings recovery; schedule/edit/reschedule/delete;
-restart/resume and time-zone reconciliation; purchase success,
-pending/deferred, cancellation, failure, offline cached Pro, restore, and
-refund/revocation. Record evidence in the T007 plan, rerun all checks, inspect
-the diff, audit Phase 4, and mark T007 `DONE` only when the matrix passes.
+To resume T007 around 2026-07-02, configure `starter_clock_pro_lifetime` in
+Google Play, add license testers, publish a signed Android build to an internal
+test track, and verify on a representative Android target: permission grant,
+denial and Settings recovery; schedule/edit/reschedule/delete; restart/resume
+and time-zone reconciliation; purchase success, pending/deferred, cancellation,
+failure, offline cached Pro, restore, and refund/revocation. Record evidence in
+the T007 plan, rerun all checks, inspect the diff, audit Phase 4, and mark T007
+`DONE` only if the Android matrix passes with the owner-approved iOS waiver
+clearly preserved.
 
 ## Next Action
 
