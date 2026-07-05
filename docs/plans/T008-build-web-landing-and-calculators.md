@@ -64,6 +64,9 @@ keep landing/calculator routes independently removable.
   clipping cause was the React Native Web root `ScrollView` and compact card
   flex sizing. Replaced the web root with content-sized `View` containers and
   set compact calculator panels to automatic height.
+- Update, 2026-07-05: Manual QA found page scrolling was broken after the
+  content-sized root change. Restored `ScrollView` as the React Native Web
+  scroll container while keeping compact calculator panels at automatic height.
 - Actual files changed: `src/app/index.web.tsx`, `src/domain/calculators.ts`,
   `test/calculators.test.ts`, dependency manifests for Playwright QA,
   task/handoff records.
@@ -75,8 +78,10 @@ keep landing/calculator routes independently removable.
   viewport exercised the feeding-ratio calculator with starter 25 g, flour
   75 g, and water 50 g; the screenshot showed `Ratio 1:3:2` and
   `Hydration: 66.7%` inside the card, document width equaled viewport width
-  (390 px), and console errors/warnings were empty. Phase 5 audit verdict:
-  `APPROVE WITH FOLLOW-UPS`.
+  (390 px), and console errors/warnings were empty. Follow-up Playwright/Chrome
+  mobile verification confirmed the scroll container moved from `scrollTop`
+  881 to 1881 after a wheel event and lower page sections were reachable.
+  Phase 5 audit verdict: `APPROVE WITH FOLLOW-UPS`.
 - Remaining risks or blocker: T007 native device/store verification remains
   deferred to T009 by owner approval. Broader cross-browser visual QA remains a
   release-readiness concern, but T008 acceptance criteria passed.

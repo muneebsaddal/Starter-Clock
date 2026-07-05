@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { Pressable, StyleSheet, Text, TextInput, useWindowDimensions, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { calculateFeedingRatioView, calculateHydrationView } from "@/domain/calculators";
 
 const initialRatio = { starter: "25", flour: "50", water: "50" };
@@ -20,8 +20,7 @@ export default function PublicLanding() {
   }, []);
 
   return (
-    <View style={styles.page}>
-      <View style={[styles.content, compact ? styles.contentCompact : null]}>
+    <ScrollView style={styles.page} contentContainerStyle={[styles.content, compact ? styles.contentCompact : null]}>
       <View style={[styles.header, compact ? styles.headerCompact : null]}>
         <Text style={styles.brand}>Starter Clock</Text>
         <View style={styles.nav}>
@@ -113,8 +112,7 @@ export default function PublicLanding() {
           Starter behavior changes with temperature, flour, hydration, inoculation, and starter health. Starter Clock shows an estimated window and encourages observation; it does not make food-safety claims.
         </Text>
       </View>
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -186,7 +184,7 @@ function setMeta(name: string, content: string) {
 }
 
 const styles = StyleSheet.create({
-  page: { minHeight: "100%", backgroundColor: "#F7F2E9" },
+  page: { flex: 1, backgroundColor: "#F7F2E9" },
   content: { paddingHorizontal: 24, paddingBottom: 52 },
   contentCompact: { paddingHorizontal: 16 },
   header: { width: "100%", maxWidth: 1120, marginHorizontal: "auto", paddingTop: 24, paddingBottom: 18, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 16 },

@@ -8,7 +8,8 @@ T008 is `DONE`. On 2026-07-05, the owner approved T007 as complete despite
 missing representative Android/Google Play and iOS store-sandbox/device
 evidence, approved Phase 5, and explicitly assigned T008. The web landing page
 and calculators are implemented and verified, including Playwright/Chrome
-mobile coverage for the reported feeding-ratio result overflow.
+mobile coverage for the reported feeding-ratio result overflow and follow-up
+scroll regression.
 
 The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
 representative mobile notification and store-sandbox evidence has not run. This
@@ -22,7 +23,8 @@ native notification or purchase behavior is release-ready.
   purchase UI.
 - Web calculators use shared domain formulas and boundary validation. Mobile
   web verification confirmed `Ratio 1:3:2` and `Hydration: 66.7%` render inside
-  the feeding-ratio card without horizontal overflow.
+  the feeding-ratio card without horizontal overflow, and that the React Native
+  Web scroll container moves on mobile wheel scrolling.
 - Schema v2 persists reminder intent/status and a derived lifetime-Pro cache.
 - Feeding save commits before permission or scheduling; edit/delete and
   launch/resume reconciliation replace, cancel, expire, or retry OS requests.
@@ -53,7 +55,8 @@ native notification or purchase behavior is release-ready.
 - Source secret/TODO scan and `git diff --check` passed.
 - T008 web verification passed on 2026-07-05: `npm run typecheck`,
   `npm test`, `npm run test:coverage`, `npm run lint`, `npm run build:web`,
-  `git diff --check`, and Playwright/Chrome mobile screenshot/DOM checks.
+  `git diff --check`, and Playwright/Chrome mobile screenshot/DOM/scroll
+  checks.
 
 ## Deferred Release-Risk Evidence
 
