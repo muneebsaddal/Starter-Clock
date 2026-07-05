@@ -9,7 +9,7 @@ missing representative Android/Google Play and iOS store-sandbox/device
 evidence, approved Phase 5, and explicitly assigned T008. The web landing page
 and calculators are implemented and verified, including Playwright/Chrome
 mobile coverage for the reported feeding-ratio result overflow and follow-up
-scroll regression.
+scroll regression. The owner manually accepted T008 on 2026-07-05.
 
 The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
 representative mobile notification and store-sandbox evidence has not run. This

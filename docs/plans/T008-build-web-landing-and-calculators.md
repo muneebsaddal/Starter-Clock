@@ -67,6 +67,9 @@ keep landing/calculator routes independently removable.
 - Update, 2026-07-05: Manual QA found page scrolling was broken after the
   content-sized root change. Restored `ScrollView` as the React Native Web
   scroll container while keeping compact calculator panels at automatic height.
+- Owner acceptance, 2026-07-05: manual recheck found the web page acceptable;
+  no further T008-specific testing is required before moving to the next
+  approved phase.
 - Actual files changed: `src/app/index.web.tsx`, `src/domain/calculators.ts`,
   `test/calculators.test.ts`, dependency manifests for Playwright QA,
   task/handoff records.
