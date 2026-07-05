@@ -52,11 +52,14 @@ keep landing/calculator routes independently removable.
 
 ## Completion Record
 
-- Outcome: BLOCKED on manual browser/visual QA as of 2026-07-05
+- Outcome: BLOCKED on manual mobile recheck as of 2026-07-05
 - Summary: Implemented the public web landing page and free feeding-ratio and
   hydration calculators using shared domain math, boundary validation,
   account-free copy, metadata, responsive layout styles, and no web tracking
   dashboard.
+- Update, 2026-07-05: Fixed manual mobile QA finding where the feeding-ratio
+  result text could overflow its calculator panel by removing the compact-mode
+  fixed panel minimum and making result rows content-sized/wrapping.
 - Actual files changed: `src/app/index.web.tsx`, `src/domain/calculators.ts`,
   `test/calculators.test.ts`, task/handoff records.
 - Verification: `npm test` passed 48/48; `npm run test:coverage` passed at
@@ -73,3 +76,5 @@ keep landing/calculator routes independently removable.
   and copy boundaries, then rerun the quality gates and update this record.
   T007 native device/store verification remains deferred to T009 by owner
   approval.
+- Manual recheck needed: verify the feeding-ratio result block on mobile no
+  longer clips or overflows for `Ratio 1:3:2` and `Hydration: 66.7%`.

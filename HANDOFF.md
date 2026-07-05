@@ -4,7 +4,9 @@
 
 ## Current State
 
-T008 is `BLOCKED` on manual browser/visual QA. On 2026-07-05, the owner
+T008 is `BLOCKED` on manual mobile recheck. A manual QA finding that the
+feeding-ratio result text overflowed on mobile has been fixed in code, but the
+fixed mobile viewport has not yet been owner-verified. On 2026-07-05, the owner
 approved T007 as complete despite missing representative Android/Google Play
 and iOS store-sandbox/device evidence, approved Phase 5, and explicitly
 assigned T008.
@@ -67,11 +69,12 @@ dotslash cache error, `python.exe` was unavailable for static serving, and
 headless Chrome/Edge screenshot attempts produced invalid or missing captures.
 
 To resume, serve the exported `dist` folder or run the web app, then manually
-check desktop and mobile viewports for layout, text fit, calculator interaction,
-validation, metadata/copy boundaries, and accessibility basics. If the manual
-review passes, rerun `npm test`, `npm run test:coverage`, `npm run typecheck`,
-`npm run lint`, `npm run build:web`, and `git diff --check`; then mark T008
-`DONE`.
+recheck mobile feeding-ratio results for the `Ratio 1:3:2` and
+`Hydration: 66.7%` overflow case, plus desktop/mobile layout, calculator
+interaction, validation, metadata/copy boundaries, and accessibility basics. If
+the manual review passes, rerun `npm test`, `npm run test:coverage`,
+`npm run typecheck`, `npm run lint`, `npm run build:web`, and
+`git diff --check`; then mark T008 `DONE`.
 
 ## Next Action
 

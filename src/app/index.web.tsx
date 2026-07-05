@@ -68,6 +68,7 @@ export default function PublicLanding() {
         </View>
         <View style={[styles.calculatorGrid, compact ? styles.calculatorGridCompact : null]}>
           <CalculatorPanel
+            compact={compact}
             title="Feeding ratio"
             description="Compare starter, flour, and water as a simple starter:flour:water ratio."
             resultLabel="Ratio"
@@ -81,6 +82,7 @@ export default function PublicLanding() {
           </CalculatorPanel>
 
           <CalculatorPanel
+            compact={compact}
             title="Hydration"
             description="Calculate water as a percentage of flour for a starter feeding or dough mix."
             resultLabel="Hydration"
@@ -115,6 +117,7 @@ export default function PublicLanding() {
 }
 
 function CalculatorPanel(props: {
+  compact: boolean;
   title: string;
   description: string;
   resultLabel: string;
@@ -124,7 +127,7 @@ function CalculatorPanel(props: {
   children: ReactNode;
 }) {
   return (
-    <View style={styles.panel}>
+    <View style={[styles.panel, props.compact ? styles.panelCompact : null]}>
       <Text style={styles.panelTitle}>{props.title}</Text>
       <Text style={styles.panelCopy}>{props.description}</Text>
       <View style={styles.fields}>{props.children}</View>
@@ -222,6 +225,7 @@ const styles = StyleSheet.create({
   calculatorGrid: { flexDirection: "row", gap: 20, alignItems: "stretch" },
   calculatorGridCompact: { flexDirection: "column" },
   panel: { flex: 1, minWidth: 310, borderWidth: 1, borderColor: "#D8CCBB", borderRadius: 8, backgroundColor: "#FFFDF8", padding: 22 },
+  panelCompact: { minWidth: 0, width: "100%", alignSelf: "stretch" },
   panelTitle: { color: "#2D2925", fontSize: 25, lineHeight: 31, fontWeight: "900" },
   panelCopy: { color: "#635D54", fontSize: 15, lineHeight: 23, marginTop: 8 },
   fields: { gap: 12, marginTop: 20 },
@@ -230,10 +234,10 @@ const styles = StyleSheet.create({
   input: { minHeight: 48, borderWidth: 1, borderColor: "#CFC3B3", borderRadius: 8, paddingHorizontal: 12, color: "#2D2925", backgroundColor: "#FFFCF6", fontSize: 18, lineHeight: 24, fontWeight: "700" },
   inputError: { borderColor: "#A33A32", backgroundColor: "#FFF7F4" },
   error: { color: "#A33A32", fontSize: 13, lineHeight: 18, fontWeight: "700" },
-  resultBox: { marginTop: 20, paddingTop: 18, borderTopWidth: 1, borderTopColor: "#E5DCCE" },
+  resultBox: { width: "100%", minWidth: 0, marginTop: 20, paddingTop: 18, borderTopWidth: 1, borderTopColor: "#E5DCCE", alignSelf: "stretch" },
   resultLabel: { color: "#716A62", fontSize: 13, lineHeight: 18, fontWeight: "900", textTransform: "uppercase" },
-  resultValue: { color: "#8D432D", fontSize: 34, lineHeight: 42, fontWeight: "900", marginTop: 2 },
-  resultSmall: { color: "#58705D", fontSize: 16, lineHeight: 22, fontWeight: "800", marginTop: 6 },
+  resultValue: { width: "100%", minWidth: 0, color: "#8D432D", fontSize: 34, lineHeight: 42, fontWeight: "900", marginTop: 2, flexShrink: 1 },
+  resultSmall: { width: "100%", minWidth: 0, color: "#58705D", fontSize: 16, lineHeight: 22, fontWeight: "800", marginTop: 6, flexShrink: 1 },
   mobileSection: { width: "100%", maxWidth: 1120, marginHorizontal: "auto", paddingVertical: 44 },
   mobileRows: { marginTop: 20, gap: 12 },
   mobileRow: { flexDirection: "row", alignItems: "flex-start", gap: 12, borderBottomWidth: 1, borderBottomColor: "#DED5C8", paddingBottom: 14 },
