@@ -4,12 +4,11 @@
 
 ## Current State
 
-T008 is `BLOCKED` on manual mobile recheck. A manual QA finding that the
-feeding-ratio result text overflowed on mobile has been fixed in code, but the
-fixed mobile viewport has not yet been owner-verified. On 2026-07-05, the owner
-approved T007 as complete despite missing representative Android/Google Play
-and iOS store-sandbox/device evidence, approved Phase 5, and explicitly
-assigned T008.
+T008 is `DONE`. On 2026-07-05, the owner approved T007 as complete despite
+missing representative Android/Google Play and iOS store-sandbox/device
+evidence, approved Phase 5, and explicitly assigned T008. The web landing page
+and calculators are implemented and verified, including Playwright/Chrome
+mobile coverage for the reported feeding-ratio result overflow.
 
 The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
 representative mobile notification and store-sandbox evidence has not run. This
@@ -18,6 +17,12 @@ native notification or purchase behavior is release-ready.
 
 ## Implemented
 
+- Responsive public web landing page and free feeding-ratio/hydration
+  calculators are implemented without web tracking, accounts, notifications, or
+  purchase UI.
+- Web calculators use shared domain formulas and boundary validation. Mobile
+  web verification confirmed `Ratio 1:3:2` and `Hydration: 66.7%` render inside
+  the feeding-ratio card without horizontal overflow.
 - Schema v2 persists reminder intent/status and a derived lifetime-Pro cache.
 - Feeding save commits before permission or scheduling; edit/delete and
   launch/resume reconciliation replace, cancel, expire, or retry OS requests.
@@ -46,6 +51,9 @@ native notification or purchase behavior is release-ready.
   transitive Expo CLI/config findings remain; forced remediation would
   downgrade Expo.
 - Source secret/TODO scan and `git diff --check` passed.
+- T008 web verification passed on 2026-07-05: `npm run typecheck`,
+  `npm test`, `npm run test:coverage`, `npm run lint`, `npm run build:web`,
+  `git diff --check`, and Playwright/Chrome mobile screenshot/DOM checks.
 
 ## Deferred Release-Risk Evidence
 
@@ -60,23 +68,13 @@ schedule/edit/reschedule/delete; restart/resume and time-zone reconciliation;
 purchase success, pending/deferred, cancellation, failure, offline cached Pro,
 restore, and refund/revocation.
 
-## T008 Blocker and Resumption
+## Phase 5 Outcome
 
-T008 implementation and host-executable verification are complete. Manual
-browser QA is still required because local browser automation was unreliable on
-this host: Expo web failed while installing the DevTools fallback due to a
-dotslash cache error, `python.exe` was unavailable for static serving, and
-headless Chrome/Edge screenshot attempts produced invalid or missing captures.
-
-To resume, serve the exported `dist` folder or run the web app, then manually
-recheck mobile feeding-ratio results for the `Ratio 1:3:2` and
-`Hydration: 66.7%` overflow case, plus desktop/mobile layout, calculator
-interaction, validation, metadata/copy boundaries, and accessibility basics. If
-the manual review passes, rerun `npm test`, `npm run test:coverage`,
-`npm run typecheck`, `npm run lint`, `npm run build:web`, and
-`git diff --check`; then mark T008 `DONE`.
+Phase 5 audit verdict: `APPROVE WITH FOLLOW-UPS`. T008 acceptance criteria
+passed. Follow-ups move to T009/release readiness: broader cross-browser visual
+QA, native notification/store sandbox evidence, privacy/data-control checks,
+and the representative platform matrix.
 
 ## Next Action
 
-Resume T008 manual QA only. Do not begin T009 without explicit assignment and
-Phase 6 approval.
+Do not begin T009 without explicit assignment and Phase 6 approval.

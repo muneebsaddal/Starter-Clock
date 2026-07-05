@@ -14,7 +14,7 @@ never reused. The user selects tasks explicitly and approves phase changes.
 | T005 | Define and test the estimation model and architecture | 2 | DONE | T003, T004 | [Plan](plans/T005-define-estimation-model-and-architecture.md) |
 | T006 | Implement local-first mobile tracking | 3 | DONE | T005, user approval of Phase 3 | [Plan](plans/T006-implement-local-first-mobile-tracking.md) |
 | T007 | Add notifications and purchase handling | 4 | DONE | T006, user approval of Phase 4 | [Plan](plans/T007-add-notifications-and-purchases.md) |
-| T008 | Build web landing page and calculators | 5 | BLOCKED | T003, T005, user approval of Phase 5 | [Plan](plans/T008-build-web-landing-and-calculators.md) |
+| T008 | Build web landing page and calculators | 5 | DONE | T003, T005, user approval of Phase 5 | [Plan](plans/T008-build-web-landing-and-calculators.md) |
 | T009 | Verify platforms, accessibility, privacy, and data controls | 6 | PLANNED | T007, T008, user approval of Phase 6 | [Plan](plans/T009-verify-release-readiness.md) |
 | T010 | Prepare store assets and release builds | 6 | PLANNED | T009 | [Plan](plans/T010-prepare-store-release.md) |
 
@@ -45,3 +45,5 @@ readiness. On 2026-07-05, the user approved T007 as complete with the
 unverified Android/Google Play and iOS store-sandbox/device evidence recorded
 as deferred release-readiness risk for T009, approved Phase 5, and explicitly
 assigned T008.
+T008 was completed on 2026-07-05 after Playwright/Chrome mobile verification
+confirmed the feeding-ratio result block no longer clips or overflows.

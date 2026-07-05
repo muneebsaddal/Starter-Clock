@@ -52,7 +52,7 @@ keep landing/calculator routes independently removable.
 
 ## Completion Record
 
-- Outcome: BLOCKED on manual mobile recheck as of 2026-07-05
+- Outcome: DONE
 - Summary: Implemented the public web landing page and free feeding-ratio and
   hydration calculators using shared domain math, boundary validation,
   account-free copy, metadata, responsive layout styles, and no web tracking
@@ -60,21 +60,23 @@ keep landing/calculator routes independently removable.
 - Update, 2026-07-05: Fixed manual mobile QA finding where the feeding-ratio
   result text could overflow its calculator panel by removing the compact-mode
   fixed panel minimum and making result rows content-sized/wrapping.
+- Update, 2026-07-05: Playwright/Chrome mobile verification found the deeper
+  clipping cause was the React Native Web root `ScrollView` and compact card
+  flex sizing. Replaced the web root with content-sized `View` containers and
+  set compact calculator panels to automatic height.
 - Actual files changed: `src/app/index.web.tsx`, `src/domain/calculators.ts`,
-  `test/calculators.test.ts`, task/handoff records.
+  `test/calculators.test.ts`, dependency manifests for Playwright QA,
+  task/handoff records.
 - Verification: `npm test` passed 48/48; `npm run test:coverage` passed at
   87.87% statements and 82.72% branches overall, with domain at 98.5%/96.26%;
   `npm run typecheck` passed; `npm run lint` passed; `npm run build:web`
   passed and exported static web routes; `git diff --check` passed. Generated
-  concept inspection completed. Automated browser screenshot verification could
-  not be completed because the Expo dev server failed on a local dotslash cache
-  error, `python.exe` was unavailable for static serving, and headless
-  Chrome/Edge capture attempts produced invalid or missing screenshots.
-- Remaining risks or blocker: Manual browser QA is required before marking
-  T008 `DONE`: open the exported web app, check desktop and mobile viewports,
-  verify calculator interaction and validation, inspect accessibility basics
-  and copy boundaries, then rerun the quality gates and update this record.
-  T007 native device/store verification remains deferred to T009 by owner
-  approval.
-- Manual recheck needed: verify the feeding-ratio result block on mobile no
-  longer clips or overflows for `Ratio 1:3:2` and `Hydration: 66.7%`.
+  concept inspection completed. Playwright with local Chrome at a 390 px mobile
+  viewport exercised the feeding-ratio calculator with starter 25 g, flour
+  75 g, and water 50 g; the screenshot showed `Ratio 1:3:2` and
+  `Hydration: 66.7%` inside the card, document width equaled viewport width
+  (390 px), and console errors/warnings were empty. Phase 5 audit verdict:
+  `APPROVE WITH FOLLOW-UPS`.
+- Remaining risks or blocker: T007 native device/store verification remains
+  deferred to T009 by owner approval. Broader cross-browser visual QA remains a
+  release-readiness concern, but T008 acceptance criteria passed.

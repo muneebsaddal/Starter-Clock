@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { calculateFeedingRatioView, calculateHydrationView } from "@/domain/calculators";
 
 const initialRatio = { starter: "25", flour: "50", water: "50" };
@@ -20,7 +20,8 @@ export default function PublicLanding() {
   }, []);
 
   return (
-    <ScrollView style={styles.page} contentContainerStyle={[styles.content, compact ? styles.contentCompact : null]}>
+    <View style={styles.page}>
+      <View style={[styles.content, compact ? styles.contentCompact : null]}>
       <View style={[styles.header, compact ? styles.headerCompact : null]}>
         <Text style={styles.brand}>Starter Clock</Text>
         <View style={styles.nav}>
@@ -112,7 +113,8 @@ export default function PublicLanding() {
           Starter behavior changes with temperature, flour, hydration, inoculation, and starter health. Starter Clock shows an estimated window and encourages observation; it does not make food-safety claims.
         </Text>
       </View>
-    </ScrollView>
+      </View>
+    </View>
   );
 }
 
@@ -184,7 +186,7 @@ function setMeta(name: string, content: string) {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: "#F7F2E9" },
+  page: { minHeight: "100%", backgroundColor: "#F7F2E9" },
   content: { paddingHorizontal: 24, paddingBottom: 52 },
   contentCompact: { paddingHorizontal: 16 },
   header: { width: "100%", maxWidth: 1120, marginHorizontal: "auto", paddingTop: 24, paddingBottom: 18, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 16 },
@@ -225,8 +227,8 @@ const styles = StyleSheet.create({
   sectionCopy: { color: "#635D54", fontSize: 17, lineHeight: 27, marginTop: 10 },
   calculatorGrid: { flexDirection: "row", gap: 20, alignItems: "stretch" },
   calculatorGridCompact: { flexDirection: "column" },
-  panel: { flex: 1, minWidth: 0, maxWidth: "100%", borderWidth: 1, borderColor: "#D8CCBB", borderRadius: 8, backgroundColor: "#FFFDF8", padding: 22 },
-  panelCompact: { width: "100%", alignSelf: "stretch", padding: 18 },
+  panel: { flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0, maxWidth: "100%", borderWidth: 1, borderColor: "#D8CCBB", borderRadius: 8, backgroundColor: "#FFFDF8", padding: 22 },
+  panelCompact: { flexGrow: 0, flexShrink: 0, flexBasis: "auto", width: "100%", alignSelf: "stretch", padding: 18, overflow: "visible" },
   panelTitle: { color: "#2D2925", fontSize: 25, lineHeight: 31, fontWeight: "900" },
   panelCopy: { color: "#635D54", fontSize: 15, lineHeight: 23, marginTop: 8 },
   fields: { gap: 12, marginTop: 20 },
