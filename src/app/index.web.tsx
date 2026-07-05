@@ -20,7 +20,7 @@ export default function PublicLanding() {
   }, []);
 
   return (
-    <ScrollView style={styles.page} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.page} contentContainerStyle={[styles.content, compact ? styles.contentCompact : null]}>
       <View style={[styles.header, compact ? styles.headerCompact : null]}>
         <Text style={styles.brand}>Starter Clock</Text>
         <View style={styles.nav}>
@@ -186,6 +186,7 @@ function setMeta(name: string, content: string) {
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: "#F7F2E9" },
   content: { paddingHorizontal: 24, paddingBottom: 52 },
+  contentCompact: { paddingHorizontal: 16 },
   header: { width: "100%", maxWidth: 1120, marginHorizontal: "auto", paddingTop: 24, paddingBottom: 18, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 16 },
   headerCompact: { alignItems: "flex-start", flexDirection: "column" },
   brand: { color: "#2D2925", fontSize: 22, lineHeight: 28, fontWeight: "900" },
@@ -224,8 +225,8 @@ const styles = StyleSheet.create({
   sectionCopy: { color: "#635D54", fontSize: 17, lineHeight: 27, marginTop: 10 },
   calculatorGrid: { flexDirection: "row", gap: 20, alignItems: "stretch" },
   calculatorGridCompact: { flexDirection: "column" },
-  panel: { flex: 1, minWidth: 310, borderWidth: 1, borderColor: "#D8CCBB", borderRadius: 8, backgroundColor: "#FFFDF8", padding: 22 },
-  panelCompact: { minWidth: 0, width: "100%", alignSelf: "stretch" },
+  panel: { flex: 1, minWidth: 0, maxWidth: "100%", borderWidth: 1, borderColor: "#D8CCBB", borderRadius: 8, backgroundColor: "#FFFDF8", padding: 22 },
+  panelCompact: { width: "100%", alignSelf: "stretch", padding: 18 },
   panelTitle: { color: "#2D2925", fontSize: 25, lineHeight: 31, fontWeight: "900" },
   panelCopy: { color: "#635D54", fontSize: 15, lineHeight: 23, marginTop: 8 },
   fields: { gap: 12, marginTop: 20 },
