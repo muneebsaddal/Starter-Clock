@@ -52,8 +52,24 @@ keep landing/calculator routes independently removable.
 
 ## Completion Record
 
-- Outcome: Not started
-- Summary: —
-- Actual files changed: —
-- Verification: —
-- Remaining risks or blocker: T003, T005, and Phase 5 approval are required.
+- Outcome: BLOCKED on manual browser/visual QA as of 2026-07-05
+- Summary: Implemented the public web landing page and free feeding-ratio and
+  hydration calculators using shared domain math, boundary validation,
+  account-free copy, metadata, responsive layout styles, and no web tracking
+  dashboard.
+- Actual files changed: `src/app/index.web.tsx`, `src/domain/calculators.ts`,
+  `test/calculators.test.ts`, task/handoff records.
+- Verification: `npm test` passed 48/48; `npm run test:coverage` passed at
+  87.87% statements and 82.72% branches overall, with domain at 98.5%/96.26%;
+  `npm run typecheck` passed; `npm run lint` passed; `npm run build:web`
+  passed and exported static web routes; `git diff --check` passed. Generated
+  concept inspection completed. Automated browser screenshot verification could
+  not be completed because the Expo dev server failed on a local dotslash cache
+  error, `python.exe` was unavailable for static serving, and headless
+  Chrome/Edge capture attempts produced invalid or missing screenshots.
+- Remaining risks or blocker: Manual browser QA is required before marking
+  T008 `DONE`: open the exported web app, check desktop and mobile viewports,
+  verify calculator interaction and validation, inspect accessibility basics
+  and copy boundaries, then rerun the quality gates and update this record.
+  T007 native device/store verification remains deferred to T009 by owner
+  approval.

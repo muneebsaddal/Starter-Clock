@@ -59,7 +59,8 @@ without compromising local tracking if rollback is needed.
 
 ## Completion Record
 
-- Outcome: BLOCKED after implementation and host verification
+- Outcome: DONE by owner approval on 2026-07-05 with deferred
+  release-readiness verification risk
 - Summary: Added schema-v2 reminder intent and derived entitlement cache,
   deterministic reminder reconciliation, Expo local-notification and direct
   store adapters, Lifetime Pro purchase/restore UI, remembered reminder
@@ -78,7 +79,7 @@ without compromising local tracking if rollback is needed.
   passed; dependency audit has no high/critical issue (the existing 10 moderate
   Expo toolchain findings remain); source secret/TODO scan and
   `git diff --check` passed.
-- Remaining risks or blocker: Required device/store verification cannot run on
+- Remaining risks or blocker: Required device/store verification did not run on
   this Windows host: no Android SDK/ADB or Android device is available, iOS
   execution requires macOS/Xcode and an iOS device/simulator, and the
   `starter_clock_pro_lifetime` non-consumable plus sandbox/test accounts are not
@@ -88,12 +89,15 @@ without compromising local tracking if rollback is needed.
   and Settings recovery; schedule/edit/reschedule/delete; restart/resume and
   time-zone change reconciliation; purchase success, pending/deferred,
   cancellation, failure, offline cached Pro, restore, and refund/revocation.
-  Record evidence here, rerun the full verification suite, audit Phase 4, and
-  mark DONE only if the matrix passes. Current Phase 4 audit verdict: `CHANGES
-  REQUIRED`.
+  Record evidence during T009 before claiming release readiness. Current Phase
+  4 audit verdict remains `CHANGES REQUIRED` for representative native
+  notification and store-sandbox evidence.
 - Owner update, 2026-06-25: paid Apple Developer/App Store Connect testing is
   postponed. Resume T007 after seven days, around 2026-07-02, by configuring
   only Google Play for `starter_clock_pro_lifetime`, adding license testers,
   publishing a signed Android build to an internal test track, and running the
   Android notification and purchase matrix. T007 may be marked `DONE` if that
   Android matrix passes and the iOS gap is preserved as a deferred release risk.
+- Owner update, 2026-07-05: the user approved closing T007 without the Android
+  matrix and approved carrying both Android/Google Play and iOS store-sandbox
+  device verification forward as T009 release-readiness risk.

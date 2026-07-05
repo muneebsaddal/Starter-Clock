@@ -1,20 +1,18 @@
 # Starter Clock Handoff
 
-**Updated:** 2026-06-25
+**Updated:** 2026-07-05
 
 ## Current State
 
-T007 is `BLOCKED`. Phase 4 was approved and the notification/purchase
-implementation plus host-executable verification are complete. The Phase 4
-audit verdict is `CHANGES REQUIRED` because representative mobile notification
-and store-sandbox evidence has not run.
+T008 is `BLOCKED` on manual browser/visual QA. On 2026-07-05, the owner
+approved T007 as complete despite missing representative Android/Google Play
+and iOS store-sandbox/device evidence, approved Phase 5, and explicitly
+assigned T008.
 
-On 2026-06-25, the owner deferred paid Apple Developer/App Store Connect work
-for cost reasons and approved resuming T007 with Google Play/Android-only
-store-sandbox verification after a seven-day pause, around 2026-07-02. This is
-an explicit verification waiver for completing T007, not a change to the
-long-term iOS target; iOS notification and purchase evidence remains a release
-risk to resolve before claiming iOS store readiness.
+The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
+representative mobile notification and store-sandbox evidence has not run. This
+is an explicit verification waiver for task sequencing only, not evidence that
+native notification or purchase behavior is release-ready.
 
 ## Implemented
 
@@ -47,24 +45,35 @@ risk to resolve before claiming iOS store readiness.
   downgrade Expo.
 - Source secret/TODO scan and `git diff --check` passed.
 
-## Exact Blocker and Resumption
+## Deferred Release-Risk Evidence
 
 This host has no Android SDK/ADB and cannot execute iOS. The Google Play
 non-consumable `starter_clock_pro_lifetime`, license testers, internal testing
 track, and signed Android build are not configured in repository context. Apple
-Developer/App Store Connect setup is intentionally postponed.
+Developer/App Store Connect setup remains postponed.
 
-To resume T007 around 2026-07-02, configure `starter_clock_pro_lifetime` in
-Google Play, add license testers, publish a signed Android build to an internal
-test track, and verify on a representative Android target: permission grant,
-denial and Settings recovery; schedule/edit/reschedule/delete; restart/resume
-and time-zone reconciliation; purchase success, pending/deferred, cancellation,
-failure, offline cached Pro, restore, and refund/revocation. Record evidence in
-the T007 plan, rerun all checks, inspect the diff, audit Phase 4, and mark T007
-`DONE` only if the Android matrix passes with the owner-approved iOS waiver
-clearly preserved.
+Before claiming release readiness in T009, verify on representative Android and
+iOS targets: permission grant, denial and Settings recovery;
+schedule/edit/reschedule/delete; restart/resume and time-zone reconciliation;
+purchase success, pending/deferred, cancellation, failure, offline cached Pro,
+restore, and refund/revocation.
+
+## T008 Blocker and Resumption
+
+T008 implementation and host-executable verification are complete. Manual
+browser QA is still required because local browser automation was unreliable on
+this host: Expo web failed while installing the DevTools fallback due to a
+dotslash cache error, `python.exe` was unavailable for static serving, and
+headless Chrome/Edge screenshot attempts produced invalid or missing captures.
+
+To resume, serve the exported `dist` folder or run the web app, then manually
+check desktop and mobile viewports for layout, text fit, calculator interaction,
+validation, metadata/copy boundaries, and accessibility basics. If the manual
+review passes, rerun `npm test`, `npm run test:coverage`, `npm run typecheck`,
+`npm run lint`, `npm run build:web`, and `git diff --check`; then mark T008
+`DONE`.
 
 ## Next Action
 
-Resume T007 only. Do not begin T008 while T007 is blocked or without a later
-explicit assignment and phase approval.
+Resume T008 manual QA only. Do not begin T009 without explicit assignment and
+Phase 6 approval.
