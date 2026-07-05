@@ -20,11 +20,13 @@ native notification or purchase behavior is release-ready.
 
 - Responsive public web landing page and free feeding-ratio/hydration
   calculators are implemented without web tracking, accounts, notifications, or
-  purchase UI.
+  purchase UI. The web root layout intentionally omits the mobile tracking
+  provider.
 - Web calculators use shared domain formulas and boundary validation. Mobile
   web verification confirmed `Ratio 1:3:2` and `Hydration: 66.7%` render inside
-  the feeding-ratio card without horizontal overflow, and that the React Native
-  Web scroll container moves on mobile wheel scrolling.
+  the feeding-ratio card without horizontal overflow, the React Native Web
+  scroll container remains scrollable, and the live web console is clean for
+  the reported mobile tracking, favicon, and deprecated shadow warnings.
 - Schema v2 persists reminder intent/status and a derived lifetime-Pro cache.
 - Feeding save commits before permission or scheduling; edit/delete and
   launch/resume reconciliation replace, cancel, expire, or retry OS requests.
@@ -56,7 +58,9 @@ native notification or purchase behavior is release-ready.
 - T008 web verification passed on 2026-07-05: `npm run typecheck`,
   `npm test`, `npm run test:coverage`, `npm run lint`, `npm run build:web`,
   `git diff --check`, and Playwright/Chrome mobile screenshot/DOM/scroll
-  checks.
+  checks. A follow-up regression check on live `localhost:8081` confirmed no
+  console warnings/errors, no failed requests, and `favicon.ico` served with
+  200 `image/x-icon` on mobile and desktop Chrome.
 
 ## Deferred Release-Risk Evidence
 

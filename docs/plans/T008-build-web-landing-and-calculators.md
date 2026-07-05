@@ -67,11 +67,16 @@ keep landing/calculator routes independently removable.
 - Update, 2026-07-05: Manual QA found page scrolling was broken after the
   content-sized root change. Restored `ScrollView` as the React Native Web
   scroll container while keeping compact calculator panels at automatic height.
+- Update, 2026-07-05: Fixed web console regressions reported after acceptance:
+  the web root layout no longer mounts the mobile tracking provider, web-only
+  decorative shadows use `boxShadow`, and `/favicon.ico` is served as a static
+  asset.
 - Owner acceptance, 2026-07-05: manual recheck found the web page acceptable;
   no further T008-specific testing is required before moving to the next
   approved phase.
 - Actual files changed: `src/app/index.web.tsx`, `src/domain/calculators.ts`,
-  `test/calculators.test.ts`, dependency manifests for Playwright QA,
+  `src/app/_layout.web.tsx`, `public/favicon.ico`, `app.json`,
+  `test/calculators.test.ts`, dependency manifests for Playwright QA, and
   task/handoff records.
 - Verification: `npm test` passed 48/48; `npm run test:coverage` passed at
   87.87% statements and 82.72% branches overall, with domain at 98.5%/96.26%;
@@ -84,7 +89,11 @@ keep landing/calculator routes independently removable.
   (390 px), and console errors/warnings were empty. Follow-up Playwright/Chrome
   mobile verification confirmed the scroll container moved from `scrollTop`
   881 to 1881 after a wheel event and lower page sections were reachable.
-  Phase 5 audit verdict: `APPROVE WITH FOLLOW-UPS`.
+  Regression verification on live `localhost:8081` with Playwright/Chrome at
+  390x844 and 1280x900 confirmed no console warnings/errors, no failed
+  requests, `favicon.ico` returned 200 `image/x-icon`, the calculator still
+  showed `Ratio 1:3:2` and `Hydration: 66.7%`, and the RN Web scroll container
+  remained scrollable. Phase 5 audit verdict: `APPROVE WITH FOLLOW-UPS`.
 - Remaining risks or blocker: T007 native device/store verification remains
   deferred to T009 by owner approval. Broader cross-browser visual QA remains a
   release-readiness concern, but T008 acceptance criteria passed.
