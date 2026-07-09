@@ -1,7 +1,7 @@
 import type { EntitlementCache, Feeding, PeakEstimate, Photo, Reminder, Starter, StarterStatus } from "@/domain/models";
-import type { StarterRepository } from "@/application/ports";
+import type { StarterClockExport, StarterRepository } from "@/application/ports";
 import { z } from "zod";
-import { migrateDatabase, type MigrationDatabase } from "./migrations";
+import { migrateDatabase, SCHEMA_VERSION, type MigrationDatabase } from "./migrations";
 
 type BindValue = string | number | null;
 interface SqlExecutor {
@@ -165,6 +165,39 @@ export class SQLiteStarterRepository implements StarterRepository {
 
   async saveEntitlementCache(cache: EntitlementCache) {
     await this.database.runAsync("UPDATE entitlement_cache SET product_id=?,state=?,store=?,last_verified_at_ms=? WHERE id=1", cache.productId, cache.level, cache.store, cache.lastVerifiedAtMs);
+  }
+
+  async exportAllData(): Promise<StarterClockExport> {
+    const starters = await this.listStarters();
+    const feedings = (await Promise.all(starters.map((starter) => this.listFeedings(starter.id)))).flat();
+    return {
+      format: "starter-clock-export/v1",
+      exportedAtMs: this.now(),
+      schemaVersion: SCHEMA_VERSION,
+      modelVersions: Array.from(new Set(feedings.map((feeding) => feeding.estimate.modelVersion))).sort(),
+      preferences: {
+        selectedStarterId: await this.getSelectedStarterId(),
+        reminderDefault: await this.getReminderDefault(),
+      },
+      starters,
+      feedings: feedings.map((feeding) => {
+        const { notificationId: _notificationId, ...reminder } = feeding.reminder;
+        return { ...feeding, reminder };
+      }),
+    };
+  }
+
+  async deleteAllData() {
+    await this.database.withExclusiveTransactionAsync(async (tx) => {
+      await tx.runAsync("DELETE FROM starters");
+      await tx.runAsync("DELETE FROM preferences");
+      await tx.runAsync("INSERT INTO preferences(id) VALUES(1)");
+      await tx.runAsync("DELETE FROM entitlement_cache");
+      await tx.runAsync(
+        "INSERT INTO entitlement_cache(id, product_id, state, store, last_verified_at_ms) VALUES(1, ?, 'free', 'unknown', NULL)",
+        "starter_clock_pro_lifetime",
+      );
+    });
   }
 }
 

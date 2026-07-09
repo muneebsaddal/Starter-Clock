@@ -4,12 +4,16 @@
 
 ## Current State
 
-T008 is `DONE`. On 2026-07-05, the owner approved T007 as complete despite
+T009 is `BLOCKED`. On 2026-07-05, the owner approved T007 as complete despite
 missing representative Android/Google Play and iOS store-sandbox/device
 evidence, approved Phase 5, and explicitly assigned T008. The web landing page
 and calculators are implemented and verified, including Playwright/Chrome
 mobile coverage for the reported feeding-ratio result overflow and follow-up
 scroll regression. The owner manually accepted T008 on 2026-07-05.
+The owner then approved Phase 6 and explicitly assigned T009 on 2026-07-05.
+Host verification and in-scope data-control fixes are complete, but release
+readiness remains blocked on representative native device/store-sandbox
+verification and final post-`expo-sharing` escalated audit/doctor reruns.
 
 The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
 representative mobile notification and store-sandbox evidence has not run. This
@@ -22,6 +26,11 @@ native notification or purchase behavior is release-ready.
   calculators are implemented without web tracking, accounts, notifications, or
   purchase UI. The web root layout intentionally omits the mobile tracking
   provider.
+- Mobile data controls now expose export and delete-all actions to Free and Pro
+  users. Export writes `starter-clock-export/v1` JSON, excludes OS notification
+  IDs, and opens the native share sheet through `expo-sharing`. Delete-all
+  clears local records, preferences, derived entitlement cache, reminders, and
+  managed photos without deleting store ownership.
 - Web calculators use shared domain formulas and boundary validation. Mobile
   web verification confirmed `Ratio 1:3:2` and `Hydration: 66.7%` render inside
   the feeding-ratio card without horizontal overflow, the React Native Web
@@ -61,6 +70,12 @@ native notification or purchase behavior is release-ready.
   checks. A follow-up regression check on live `localhost:8081` confirmed no
   console warnings/errors, no failed requests, and `favicon.ico` served with
   200 `image/x-icon` on mobile and desktop Chrome.
+- T009 host verification on 2026-07-05 passed: `npm run typecheck`,
+  `npm test` (51/51), `npm run test:coverage`, `npm run lint`,
+  `npm run build:web`, `npx expo export --platform ios`,
+  `npx expo export --platform android`, `npx expo config --type public`,
+  `git diff --check`, source secret/TODO scan, and Playwright Chromium rendered
+  web checks at 1366x900 and 390x844 before adding `expo-sharing`.
 
 ## Deferred Release-Risk Evidence
 
@@ -74,6 +89,10 @@ iOS targets: permission grant, denial and Settings recovery;
 schedule/edit/reschedule/delete; restart/resume and time-zone reconciliation;
 purchase success, pending/deferred, cancellation, failure, offline cached Pro,
 restore, and refund/revocation.
+Also verify the export share sheet and delete-all flow on Android and iOS.
+After the escalation limit resets, rerun `npx expo-doctor`,
+`npm audit --audit-level=high`, and the Playwright rendered web check against
+the final dependency graph.
 
 ## Phase 5 Outcome
 
@@ -84,4 +103,6 @@ and the representative platform matrix.
 
 ## Next Action
 
-Do not begin T009 without explicit assignment and Phase 6 approval.
+Resume T009 by executing the blocked verification matrix in
+`docs/release-readiness.md`; do not begin T010 until T009 is unblocked and
+completed.

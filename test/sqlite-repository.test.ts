@@ -94,6 +94,42 @@ describe("SQLite migrations and repository", () => {
     await repository.deleteStarter(starterId); expect(await repository.listFeedings(starterId)).toEqual([]);
   });
 
+  it("exports portable local data without OS notification identifiers", async () => {
+    await repository.saveStarter(starter);
+    await repository.saveFeeding(makeFeeding({ reminder: { enabled: true, status: "scheduled", targetAtMs: now + 6 * 3_600_000, notificationId: "os-secret", updatedAtMs: now } }));
+    await repository.savePhoto(feedingId, { relativePath: "photo.jpg", mimeType: "image/jpeg", byteSize: 42 });
+    await repository.setSelectedStarterId(starterId);
+    await repository.setReminderDefault(false);
+
+    const exported = await repository.exportAllData();
+
+    expect(exported).toMatchObject({
+      format: "starter-clock-export/v1",
+      schemaVersion: SCHEMA_VERSION,
+      preferences: { selectedStarterId: starterId, reminderDefault: false },
+      starters: [{ id: starterId, name: "Mabel" }],
+    });
+    expect(exported.feedings).toHaveLength(1);
+    expect(exported.feedings[0]?.photo).toMatchObject({ relativePath: "photo.jpg" });
+    expect(exported.feedings[0]?.reminder).toMatchObject({ enabled: true, status: "scheduled" });
+    expect("notificationId" in (exported.feedings[0]?.reminder ?? {})).toBe(false);
+  });
+
+  it("deletes all local data and resets free preferences without deleting schema", async () => {
+    await repository.saveStarter(starter);
+    await repository.saveFeeding(makeFeeding());
+    await repository.setReminderDefault(false);
+    await repository.saveEntitlementCache({ productId: "starter_clock_pro_lifetime", level: "pro", store: "android", lastVerifiedAtMs: now });
+
+    await repository.deleteAllData();
+
+    expect(await repository.listStarters()).toEqual([]);
+    expect(await repository.getReminderDefault()).toBe(true);
+    expect(await repository.getSelectedStarterId()).toBeNull();
+    expect(await repository.getEntitlementCache()).toMatchObject({ productId: "starter_clock_pro_lifetime", level: "free", store: "unknown", lastVerifiedAtMs: null });
+    expect((await database.getFirstAsync<{ user_version: number }>("PRAGMA user_version"))?.user_version).toBe(SCHEMA_VERSION);
+  });
+
   it("rejects corrupt persisted rows at the boundary", async () => {
     await database.execAsync("PRAGMA ignore_check_constraints = ON");
     await database.runAsync("INSERT INTO starters(id,name,status,created_at_ms,updated_at_ms) VALUES(?,?,?,?,?)", "not-a-uuid", "Bad", "active", now, now);

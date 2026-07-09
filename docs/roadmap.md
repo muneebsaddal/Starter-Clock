@@ -1,7 +1,7 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 4 in progress; T007 blocked on deferred Android store-sandbox verification
-**Last updated:** 2026-06-25
+**Status:** Phase 6 in progress; T009 blocked on representative release-readiness evidence
+**Last updated:** 2026-07-05
 
 This document owns milestone intent and phase outcomes. Task status and order
 are canonical in `docs/tasks.md`.
@@ -36,3 +36,8 @@ verification is blocked. On 2026-06-25, the user postponed Apple testing for
 cost reasons and approved resuming T007 after seven days with Google
 Play/Android-only verification. iOS verification remains a deferred release
 risk before any iOS store-readiness claim.
+The user approved Phase 5 and completed T008 on 2026-07-05. The user then
+approved Phase 6 and assigned T009. T009 completed host-executable checks and
+data-control fixes, but remains blocked on representative Android/iOS device,
+store-sandbox, export/share, delete-all, and final escalated audit/doctor
+evidence.

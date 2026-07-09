@@ -3,6 +3,7 @@ import { TrackingService } from "@/application/tracking-service";
 import { SQLiteStarterRepository } from "@/infrastructure/db/sqlite-repository";
 import { NodeDatabase } from "./helpers/node-database";
 import type { EntitlementService } from "@/application/entitlement-service";
+import type { Reminder } from "@/domain/models";
 
 const ids = ["11111111-1111-4111-8111-111111111111", "22222222-2222-4222-8222-222222222222", "33333333-3333-4333-8333-333333333333", "44444444-4444-4444-8444-444444444444", "55555555-5555-4555-8555-555555555555", "66666666-6666-4666-8666-666666666666", "77777777-7777-4777-8777-777777777777"];
 const now = Date.parse("2026-06-21T08:00:00Z");
@@ -43,6 +44,41 @@ describe("tracking application service", () => {
     await service.recordObservedPeak(feeding.id, now + 8 * 3_600_000); expect((await service.getFeeding(feeding.id))?.observation).toBeDefined();
     await service.attachPhoto(feeding.id, { relativePath: "one.jpg", mimeType: "image/jpeg", byteSize: 12 }); expect((await service.getFeeding(feeding.id))?.photo).toBeDefined();
     await service.deleteFeeding(feeding.id); expect(await service.getFeeding(feeding.id)).toBeNull();
+  });
+
+  it("exports and deletes all local data while cleaning optional capability state", async () => {
+    const removedPhotos: string[] = [];
+    const cancelledReminders: string[] = [];
+    const repository = new SQLiteStarterRepository(db, () => now);
+    service = new TrackingService(
+      repository,
+      { now: () => now },
+      { next: () => ids[nextId++]! },
+      {
+        select: async () => null,
+        stage: async () => ({ temporaryPath: "tmp", finalPath: "photo.jpg" }),
+        commit: async () => ({ relativePath: "photo.jpg", mimeType: "image/jpeg", byteSize: 12 }),
+        remove: async (path) => { removedPhotos.push(path); },
+      },
+      {
+        cancel: async (reminder: Reminder) => { if (reminder.notificationId) cancelledReminders.push(reminder.notificationId); },
+        reconcile: async () => undefined,
+        sync: async () => undefined,
+      } as never,
+    );
+    const starter = await service.createStarter("Mabel");
+    const feeding = await service.saveFeeding(draft(starter.id));
+    await repository.updateReminder(feeding.id, { ...feeding.reminder, status: "scheduled", notificationId: "native-1" });
+    await service.attachPhoto(feeding.id, { relativePath: "photo.jpg", mimeType: "image/jpeg", byteSize: 12 });
+
+    const exported = await service.exportData();
+    expect(exported.feedings[0]?.photo?.relativePath).toBe("photo.jpg");
+    expect("notificationId" in (exported.feedings[0]?.reminder ?? {})).toBe(false);
+
+    await service.deleteAllData();
+    expect(await service.listStarters()).toEqual([]);
+    expect(cancelledReminders).toEqual(["native-1"]);
+    expect(removedPhotos).toEqual(["photo.jpg"]);
   });
 
   it("uses five stable observations before personalizing", async () => {

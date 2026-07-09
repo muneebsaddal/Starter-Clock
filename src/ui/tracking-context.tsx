@@ -26,6 +26,8 @@ interface TrackingContextValue {
   selectStarter(id: string): Promise<void>;
   purchaseLifetime(): Promise<StorePurchaseResult>;
   restorePurchases(): Promise<EntitlementSnapshot>;
+  exportData(): Promise<string>;
+  deleteAllData(): Promise<void>;
   refresh(): Promise<void>;
   clearError(): void;
 }
@@ -97,6 +99,14 @@ export function TrackingProvider({ children }: PropsWithChildren) {
     selectStarter: async (id) => { if (entitlement.level !== "pro") return; const service = await getTrackingService(); await service.setSelectedStarterId(id); setSelectedId(id); },
     purchaseLifetime: async () => { const result = await (await getTrackingService()).purchaseLifetime(); await refresh(); return result; },
     restorePurchases: async () => { const result = await (await getTrackingService()).restorePurchases(); await refresh(); return result; },
+    exportData: async () => {
+      const { shareStarterClockExport } = await import("@/infrastructure/files/data-export");
+      return shareStarterClockExport(await (await getTrackingService()).exportData());
+    },
+    deleteAllData: async () => {
+      await perform(async () => (await getTrackingService()).deleteAllData());
+      setSelectedId(null);
+    },
   }), [entitlement, error, feedings, loading, perform, refresh, reminderDefault, selectedStarter, starters]);
 
   return <TrackingContext.Provider value={value}>{children}</TrackingContext.Provider>;

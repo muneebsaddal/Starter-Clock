@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { formatHydration, formatPeakWindow, formatRatio, formatTime, describePeakState } from "@/domain/presentation";
 import type { Feeding } from "@/domain/models";
 import { useTracking } from "../tracking-context";
@@ -13,11 +13,26 @@ import { useNow } from "../use-now";
 
 export function TodayScreen() {
   const theme = useTheme();
-  const { loading, error, starters, selectedStarter, feedings, refresh, clearError, reactivateStarter } = useTracking();
+  const { loading, error, starters, selectedStarter, feedings, refresh, clearError, reactivateStarter, exportData, deleteAllData } = useTracking();
   const [feedingOpen, setFeedingOpen] = useState(false); const [feedingNowMs, setFeedingNowMs] = useState(0); const [starterOpen, setStarterOpen] = useState(false); const [editing, setEditing] = useState<Feeding | undefined>(); const [explaining, setExplaining] = useState(false);
   const [proOpen, setProOpen] = useState(false);
+  const [dataStatus, setDataStatus] = useState<string | null>(null);
   const latest = feedings[0]; const now = useNow();
   function openFeeding(feeding?: Feeding) { setEditing(feeding); setFeedingNowMs(Date.now()); setFeedingOpen(true); }
+  async function runExport() {
+    try {
+      const uri = await exportData();
+      setDataStatus(`Export sheet opened. File: ${uri}`);
+    } catch {
+      setDataStatus("Couldn’t create an export. Try again.");
+    }
+  }
+  function confirmDeleteAll() {
+    Alert.alert("Delete all Starter Clock data?", "This removes starters, feedings, observations, reminder intent, and local photos from this device. Store purchases can still be restored.", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete all data", style: "destructive", onPress: () => void deleteAllData().then(() => setDataStatus("All local Starter Clock data was deleted.")).catch(() => setDataStatus("Couldn’t delete all local data. Try again.")) },
+    ]);
+  }
 
   if (loading) return <View style={[styles.root, { backgroundColor: theme.paper }]}><View style={styles.loading}><View style={[styles.skeletonTall, { backgroundColor: theme.line }]} /><View style={[styles.skeleton, { backgroundColor: theme.line }]} /></View><BottomNavigation /></View>;
 
@@ -48,6 +63,15 @@ export function TodayScreen() {
         <Label>Welcome to Starter Clock</Label><Title style={{ textAlign: "center" }}>Meet your starter{"\n"}at its best.</Title><Body style={{ textAlign: "center", color: theme.muted }}>Name your starter, log a feeding, and get an understandable peak window.</Body><Button onPress={() => setStarterOpen(true)} style={{ alignSelf: "stretch", marginTop: 18 }}>Create my starter</Button><Body style={{ color: theme.muted, fontSize: 13, marginTop: 14 }}>No account needed. Your data stays on this device.</Body>
         {starters.filter((starter) => starter.status === "archived").map((starter) => <Button key={starter.id} variant="quiet" onPress={() => void reactivateStarter(starter.id)} style={{ marginTop: 12 }}>Restore {starter.name}</Button>)}
       </View>}
+      <View style={[styles.dataControls, { borderColor: theme.line }]}>
+        <Label>Data controls</Label>
+        <Body style={{ color: theme.muted, marginTop: 8 }}>Export or permanently delete the local data on this device. These actions are available on Free and Pro.</Body>
+        {dataStatus ? <Body accessibilityRole="alert" style={{ color: dataStatus.startsWith("Couldn’t") ? theme.warning : theme.sage, marginTop: 10 }}>{dataStatus}</Body> : null}
+        <View style={styles.dataActions}>
+          <Button variant="secondary" onPress={() => void runExport()}>Export data</Button>
+          <Button variant="danger" onPress={confirmDeleteAll}>Delete all data</Button>
+        </View>
+      </View>
     </ScrollView>
     <BottomNavigation />
     {starterOpen ? <StarterModal visible mode={selectedStarter ? "manage" : "create"} onClose={() => setStarterOpen(false)} onCreated={() => openFeeding()} onUpgrade={() => setProOpen(true)} /> : null}
@@ -63,6 +87,7 @@ const styles = StyleSheet.create({
   state: { alignSelf: "flex-start", paddingHorizontal: 11, paddingVertical: 7, borderRadius: 99, marginBottom: 18 }, peakTitle: { fontSize: 39, lineHeight: 44 },
   timeline: { height: 8, borderRadius: 99, marginTop: 26, overflow: "hidden" }, timelineFill: { width: "58%", height: "100%" }, timelineWindow: { position: "absolute", left: "68%", right: "8%", height: "100%", borderRadius: 99 }, timelineLabels: { flexDirection: "row", justifyContent: "space-between", marginTop: 8 },
   explanation: { borderTopWidth: 1, paddingTop: 14, marginTop: 8 }, logButton: { minHeight: 58, marginVertical: 18 }, section: { borderTopWidth: 1, paddingTop: 20 }, latestRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  dataControls: { borderTopWidth: 1, marginTop: 26, paddingTop: 20 }, dataActions: { flexDirection: "row", gap: 10, flexWrap: "wrap", marginTop: 14 },
   empty: { alignItems: "center", paddingTop: 72 }, noFeeding: { paddingTop: 60 }, jar: { width: 110, height: 115, borderWidth: 4, borderRadius: 22, justifyContent: "flex-end", padding: 8, marginBottom: 30 }, jarFill: { height: "54%", borderRadius: 15 },
   loading: { flex: 1, width: "100%", maxWidth: 620, alignSelf: "center", padding: 22 }, skeletonTall: { height: 350, borderRadius: 28, marginTop: 70 }, skeleton: { height: 64, borderRadius: 16, marginTop: 18 },
 });

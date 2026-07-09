@@ -22,7 +22,26 @@ export interface StarterRepository {
   setSelectedStarterId(id: string | null): Promise<void>;
   getEntitlementCache(): Promise<EntitlementCache>;
   saveEntitlementCache(cache: EntitlementCache): Promise<void>;
+  exportAllData(): Promise<StarterClockExport>;
+  deleteAllData(): Promise<void>;
 }
+
+export interface StarterClockExport {
+  format: "starter-clock-export/v1";
+  exportedAtMs: number;
+  schemaVersion: number;
+  modelVersions: string[];
+  preferences: {
+    selectedStarterId: string | null;
+    reminderDefault: boolean;
+  };
+  starters: Starter[];
+  feedings: ExportedFeeding[];
+}
+
+export type ExportedFeeding = Omit<Feeding, "reminder"> & {
+  reminder: Omit<Reminder, "notificationId">;
+};
 
 export interface PhotoCandidate { uri: string; mimeType: string; byteSize: number }
 export interface PhotoStore {

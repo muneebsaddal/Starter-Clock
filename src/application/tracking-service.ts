@@ -1,7 +1,7 @@
 import type { Feeding, PeakObservation, Photo, Starter } from "@/domain/models";
 import { estimatePeak } from "@/domain/peak-model";
 import { feedingDraftSchema, starterNameSchema, type FeedingDraft } from "@/domain/validation";
-import type { Clock, IdGenerator, PhotoStore, StarterRepository } from "./ports";
+import type { Clock, IdGenerator, PhotoStore, StarterClockExport, StarterRepository } from "./ports";
 import type { ReminderService } from "./reminder-service";
 import type { EntitlementService } from "./entitlement-service";
 
@@ -135,6 +135,17 @@ export class TrackingService {
   async attachPhoto(id: string, photo: Photo | null) {
     await this.requireFeeding(id);
     await this.repository.savePhoto(id, photo);
+  }
+
+  exportData(): Promise<StarterClockExport> {
+    return this.repository.exportAllData();
+  }
+
+  async deleteAllData() {
+    const feedings = (await Promise.all((await this.repository.listStarters()).map((starter) => this.repository.listFeedings(starter.id)))).flat();
+    await this.repository.deleteAllData();
+    if (this.reminders) await Promise.all(feedings.map((feeding) => this.reminders?.cancel(feeding.reminder).catch(() => undefined)));
+    await this.removePhotosBestEffort(feedings.flatMap((feeding) => feeding.photo ? [feeding.photo.relativePath] : []));
   }
 
   private async personalizationObservations(starterId: string, excludedId?: string): Promise<PeakObservation[]> {

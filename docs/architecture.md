@@ -1,7 +1,7 @@
 # Starter Clock Architecture
 
-**Status:** T007 capability implementation contract
-**Last updated:** 2026-06-22
+**Status:** T009 release-readiness contract
+**Last updated:** 2026-07-05
 
 This document is the canonical owner of technical decisions and boundaries.
 Product behavior remains in `requirements.md`; screen behavior remains in
@@ -84,14 +84,14 @@ the standalone latest React Native package with Expo.
 
 | Package | Checked version | Decision |
 |---|---:|---|
-| `expo` | 56.0.12 | Platform/runtime baseline |
-| `expo-router` | 56.2.11 | File-based navigation and web route splitting |
+| `expo` | 56.0.14 | Platform/runtime baseline |
+| `expo-router` | 56.2.13 | File-based navigation and web route splitting |
 | `expo-sqlite` | 56.0.5 | Structured local persistence |
-| `expo-notifications` | 56.0.18 | One-off local peak notifications |
+| `expo-notifications` | 56.0.19 | One-off local peak notifications |
 | `expo-file-system` | 56.0.8 | Managed photo and export files |
-| `expo-image-picker` | 56.0.18 | System photo/camera picker |
+| `expo-image-picker` | 56.0.19 | System photo/camera picker |
 | `expo-crypto` | 56.0.4 | UUID generation |
-| `expo-sharing` | 56.0.18 | System export share sheet |
+| `expo-sharing` | 56.0.20 | System export share sheet |
 | `react-native-iap` | 15.3.2 | Direct StoreKit / Google Play Billing entitlement adapter |
 | `zod` | 4.4.3 | Runtime boundary schemas |
 | `vitest` | 4.1.9 | Domain and non-rendered integration tests |
