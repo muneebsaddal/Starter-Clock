@@ -7,9 +7,9 @@ and a final launch package ready for explicit user approval.
 
 ## Dependencies and Context
 
-- Dependencies: T009 and T012
-- Read: all canonical documents, T009 release-readiness evidence, and T012
-  groundwork/completion evidence
+- Dependencies: T009, T012, and T013
+- Read: all canonical documents, T009 release-readiness evidence, T012
+  groundwork/completion evidence, and T013 final-interface evidence
 
 ## Scope
 
@@ -59,4 +59,4 @@ sources and external secret storage; do not submit if disclosures or builds drif
 - Summary: —
 - Actual files changed: —
 - Verification: —
-- Remaining risks or blocker: T009 and T012 must be complete.
+- Remaining risks or blocker: T009, T012, and T013 must be complete.

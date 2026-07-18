@@ -179,11 +179,24 @@ not rely on red alone (FR-010, FR-014).
 
 ## Accessibility and Visual System
 
-The visual direction is warm paper, earthen red, and fermentation green: calm
-and tactile without decorative analytics. Information hierarchy, text, shape,
-and labels carry meaning independently of color. Implementation tokens should
-support semantic surface, text, muted text, accent, success, warning, danger,
-line, and focus colors in both appearances.
+The approved mobile tracking direction is a Cool Quiet Instrument: cool mist
+and paper surfaces, deep ink, restrained sage, and supporting slate. It is calm
+and tactile without warm amber dominance or decorative analytics. DM Sans is
+bundled locally; Regular and Medium carry most interface text, while Semibold
+is reserved for titles, actions, and essential status emphasis. The revised
+layouts use 24 px screen margins, smaller peak modules, 50 px primary actions,
+and more deliberate vertical rhythm.
+
+The implementation source is the five-page Affinity-ready package at
+`output/pdf/starter-clock-v2-affinity.pdf`, with editable SVGs, tokens, font
+files, and proofs under `output/design/starter-clock-v2/`. This direction
+supersedes the earlier warm paper/earthen red mobile prototype styling. T013
+owns production integration. T008's public web visual identity is unchanged by
+this mobile design approval.
+
+Information hierarchy, text, shape, and labels carry meaning independently of
+color. Implementation tokens support semantic surface, text, muted text,
+accent, success, warning, danger, line, and focus colors in both appearances.
 
 - Minimum targets are 44×44 pt on iOS/web and 48×48 dp on Android.
 - Every icon-only action has a text accessibility label. Visible labels name

@@ -7,7 +7,7 @@ close functional, accessibility, privacy, security, and data-control gaps.
 
 ## Dependencies and Context
 
-- Dependencies: T007, T008, and explicit user approval of Phase 6
+- Dependencies: T007, T008, T013, and explicit user approval of Phase 6
 - Read: all canonical product, UX, architecture, research, and roadmap documents
 
 ## Scope
@@ -71,7 +71,8 @@ environments; isolate fixes and block release rather than waiving critical gaps.
   check before `expo-sharing`; `npm audit --audit-level=high` and
   `npx expo-doctor` before adding `expo-sharing`. Final audit and Expo Doctor
   reruns after SDK patch alignment passed in T011.
-- Remaining risks or blocker: Resume by running the matrix in
+- Remaining risks or blocker: Complete T013 so verification covers the final
+  approved interface, then resume by running the matrix in
   `docs/release-readiness.md` on representative Android and iOS devices/store
   sandboxes after Google Play account verification, and run the final rendered
   post-`expo-sharing` Playwright web check. T012 may prepare non-submission

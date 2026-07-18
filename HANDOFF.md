@@ -1,10 +1,10 @@
 # Starter Clock Handoff
 
-**Updated:** 2026-07-18
+**Updated:** 2026-07-19
 
 ## Current State
 
-T009 is `BLOCKED`, T011 is `DONE`, and T012 is `DONE`. On 2026-07-05, the owner approved T007 as complete despite
+T009 is `BLOCKED`, T012 is `DONE`, and T013 is `READY`. On 2026-07-05, the owner approved T007 as complete despite
 missing representative Android/Google Play and iOS store-sandbox/device
 evidence, approved Phase 5, and explicitly assigned T008. The web landing page
 and calculators are implemented and verified, including Playwright/Chrome
@@ -27,6 +27,10 @@ verification is in process and asked to record all useful work that can proceed
 while waiting. T012 now records non-submission Android release groundwork and
 was explicitly assigned and completed on 2026-07-18. No price decision,
 upload, submission, or other external store mutation was made.
+On 2026-07-19, the owner approved the refreshed Cool Quiet visual direction.
+The five-page Affinity/SVG package is saved locally and verified. T013 now owns
+production integration and is ready for explicit assignment. It should finish
+before T009 resumes so representative verification covers the final UI.
 
 The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
 representative mobile notification and store-sandbox evidence has not run. This
@@ -73,6 +77,11 @@ native notification or purchase behavior is release-ready.
 - The Android store draft records truthful listing copy, a local-only Data
   Safety basis, the unpriced `starter_clock_pro_lifetime` product, a real-UI
   screenshot plan, and the complete Android T009 evidence checklist.
+- The approved Cool Quiet design source is stored at
+  `output/pdf/starter-clock-v2-affinity.pdf` and
+  `output/design/starter-clock-v2/`. It specifies locally bundled DM Sans,
+  cooler sage/slate semantic colors, lighter weights, smaller controls, and
+  revised light/dark core-flow layouts. Production code is not yet updated.
 
 ## Verification Evidence
 
@@ -110,6 +119,10 @@ native notification or purchase behavior is release-ready.
   1366x900 and 320x844, source hygiene, and `git diff --check`. Dependency
   audit found no high/critical issue; 12 moderate Expo transitive findings
   remain.
+- The 2026-07-19 design package passed five-file SVG XML validation, five-page
+  PDF structure and page-size checks, embedded DM Sans Regular/Medium/Semibold
+  verification, zero out-of-page text, rendered proof review, and AA contrast
+  checks with a minimum measured ratio of 4.53:1.
 
 ## Deferred Release-Risk Evidence
 
@@ -137,6 +150,7 @@ and the representative platform matrix.
 
 ## Next Action
 
-Wait for Google Play verification, then resume T009 with Play
+Explicitly assign T013 to integrate the approved visual system while Google
+Play verification is pending. After T013 passes, resume T009 with Play
 app/product/test-track configuration and representative Android verification.
-Do not begin T010 automatically; T012 is complete but T009 remains blocked.
+Do not begin T010 automatically.

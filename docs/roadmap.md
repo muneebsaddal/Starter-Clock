@@ -1,7 +1,7 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 6 in progress; T009 blocked; T012 complete
-**Last updated:** 2026-07-18
+**Status:** Phase 6 in progress; T009 blocked; T013 ready
+**Last updated:** 2026-07-19
 
 This document owns milestone intent and phase outcomes. Task status and order
 are canonical in `docs/tasks.md`.
@@ -14,7 +14,7 @@ are canonical in `docs/tasks.md`.
 | 3. Local-first tracking | The complete offline mobile tracking loop works and is tested. | T006 | Phase audit and user approval. |
 | 4. Reminders and monetization | Notifications and purchase entitlements behave safely across mobile targets. | T007 | Phase audit and user approval. |
 | 5. Web acquisition | Responsive landing page and free calculators are usable and tested. | T008 | Phase audit and user approval. |
-| 6. Release readiness | Representative platforms, accessibility, privacy, stores, performance hardening, and release builds are verified. | T009-T012 | Release audit and explicit launch approval. |
+| 6. Release readiness | Representative platforms, accessibility, privacy, stores, performance hardening, final-interface integration, and release builds are verified. | T009-T013 | Release audit and explicit launch approval. |
 
 ## Current Position
 
@@ -57,3 +57,7 @@ listing/Data Safety drafts, screenshot planning, and the Android evidence
 checklist. T010 consumes this groundwork after T009 passes and owns final
 policy reconciliation, approved pricing, signing, store builds, and launch
 packaging.
+On 2026-07-19, the owner approved a refreshed Cool Quiet mobile visual system.
+T013 is ready to integrate the locally saved Affinity/SVG design package before
+T009 resumes, ensuring representative accessibility, device, and store evidence
+covers the final release interface rather than the superseded warm direction.

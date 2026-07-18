@@ -1,11 +1,12 @@
 # Starter Clock Release Readiness
 
 **Status:** Blocked
-**Last updated:** 2026-07-18
+**Last updated:** 2026-07-19
 
 This document records the current release-readiness evidence for T009. The
-release verdict is `CHANGES REQUIRED` because representative native device and
-store-sandbox evidence has not run.
+release verdict is `CHANGES REQUIRED` because the approved final interface is
+not integrated and representative native device/store-sandbox evidence has not
+run.
 
 ## Fixes Completed In T009
 
@@ -49,18 +50,21 @@ store-sandbox evidence has not run.
 
 ## Blockers
 
-1. Representative Android device or emulator evidence is still missing for
+1. T013 has not integrated the owner-approved Cool Quiet interface. Device and
+   accessibility evidence must cover that final UI rather than the superseded
+   warm production styling.
+2. Representative Android device or emulator evidence is still missing for
    notification permission grant, denial, Settings recovery, schedule,
    edit/reschedule, delete cancellation, restart/resume reconciliation, offline
    persistence, photo selection/denial, export share sheet, and delete-all.
-2. Google Play internal-test evidence is still missing for
+3. Google Play internal-test evidence is still missing for
    `starter_clock_pro_lifetime`: purchase success, pending, cancellation,
    failure, restore, offline cached Pro, and refund/revocation. The Play
    developer account exists, but account verification is currently in process;
    the app, product, testers, track, and signed bundle are not configured.
-3. Representative iOS device evidence is still missing for the same native
+4. Representative iOS device evidence is still missing for the same native
    notification, photo, export/delete, and StoreKit sandbox flows.
-4. The final rendered Playwright check after `expo-sharing` has not been rerun.
+5. The final rendered Playwright check after `expo-sharing` has not been rerun.
    The web UI code under test was not changed by the native export/share
    addition, and `npm run build:web` still passes.
 
@@ -74,9 +78,15 @@ checklist. Its host checks passed, but it supplies no representative native or
 store-sandbox evidence. Uploads, signing secrets, product activation/pricing,
 submission, and all representative device/store claims remain out of scope.
 
+On 2026-07-19, the owner approved the Cool Quiet mobile design package stored
+under `output/design/starter-clock-v2/` and `output/pdf/`. T013 is ready to
+integrate it while Play verification is pending. Its host and visual checks
+will not satisfy the representative native/store evidence above.
+
 ## Verdict
 
 `CHANGES REQUIRED`
 
-Do not claim release readiness until the blockers above pass on representative
-targets or are explicitly resolved by a scope decision.
+Do not claim release readiness until T013 is complete and the remaining
+blockers pass on representative targets or are explicitly resolved by a scope
+decision.

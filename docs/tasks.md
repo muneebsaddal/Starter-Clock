@@ -1,6 +1,6 @@
 # Starter Clock Task Ledger
 
-**Last updated:** 2026-07-18
+**Last updated:** 2026-07-19
 
 This is the authoritative task index and status ledger. IDs are permanent and
 never reused. The user selects tasks explicitly and approves phase changes.
@@ -15,10 +15,11 @@ never reused. The user selects tasks explicitly and approves phase changes.
 | T006 | Implement local-first mobile tracking | 3 | DONE | T005, user approval of Phase 3 | [Plan](plans/T006-implement-local-first-mobile-tracking.md) |
 | T007 | Add notifications and purchase handling | 4 | DONE | T006, user approval of Phase 4 | [Plan](plans/T007-add-notifications-and-purchases.md) |
 | T008 | Build web landing page and calculators | 5 | DONE | T003, T005, user approval of Phase 5 | [Plan](plans/T008-build-web-landing-and-calculators.md) |
-| T009 | Verify platforms, accessibility, privacy, and data controls | 6 | BLOCKED | T007, T008, user approval of Phase 6 | [Plan](plans/T009-verify-release-readiness.md) |
-| T010 | Prepare store assets and release builds | 6 | PLANNED | T009, T012 | [Plan](plans/T010-prepare-store-release.md) |
+| T009 | Verify platforms, accessibility, privacy, and data controls | 6 | BLOCKED | T007, T008, T013, user approval of Phase 6 | [Plan](plans/T009-verify-release-readiness.md) |
+| T010 | Prepare store assets and release builds | 6 | PLANNED | T009, T012, T013 | [Plan](plans/T010-prepare-store-release.md) |
 | T011 | Harden performance and architecture before store testing | 6 | DONE | T006, T008, user approval to continue non-store development while T009 is blocked | [Plan](plans/T011-performance-architecture-hardening.md) |
 | T012 | Prepare non-submission Android release groundwork | 6 | DONE | T011, explicit owner assignment to work before T009 completes | [Plan](plans/T012-prepare-android-release-groundwork.md) |
+| T013 | Integrate the approved Cool Quiet visual system | 6 | READY | T004, T006, T011, owner approval of the refreshed visual direction | [Plan](plans/T013-integrate-cool-quiet-visual-system.md) |
 
 ## Status Definitions
 
@@ -71,3 +72,8 @@ completed the local build profiles and versioning, production app assets,
 public privacy/support pages, Play listing and Data Safety drafts, screenshot
 plan, and Android evidence checklist. T009 remains the release-readiness owner
 and T010 remains the final release task.
+On 2026-07-19, the owner approved the refreshed Cool Quiet visual direction and
+asked to reconcile the project plan. T013 now owns production integration of
+that design source and is `READY`, but it has not been explicitly assigned.
+T009 must run against the final T013 interface so its eventual device,
+accessibility, and store evidence is not invalidated by a later redesign.
