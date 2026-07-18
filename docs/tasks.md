@@ -18,7 +18,7 @@ never reused. The user selects tasks explicitly and approves phase changes.
 | T009 | Verify platforms, accessibility, privacy, and data controls | 6 | BLOCKED | T007, T008, user approval of Phase 6 | [Plan](plans/T009-verify-release-readiness.md) |
 | T010 | Prepare store assets and release builds | 6 | PLANNED | T009, T012 | [Plan](plans/T010-prepare-store-release.md) |
 | T011 | Harden performance and architecture before store testing | 6 | DONE | T006, T008, user approval to continue non-store development while T009 is blocked | [Plan](plans/T011-performance-architecture-hardening.md) |
-| T012 | Prepare non-submission Android release groundwork | 6 | PLANNED | T011, explicit owner assignment to work before T009 completes | [Plan](plans/T012-prepare-android-release-groundwork.md) |
+| T012 | Prepare non-submission Android release groundwork | 6 | DONE | T011, explicit owner assignment to work before T009 completes | [Plan](plans/T012-prepare-android-release-groundwork.md) |
 
 ## Status Definitions
 
@@ -66,6 +66,8 @@ sandbox evidence.
 Later on 2026-07-18, the user reported that Google Play developer-account
 verification is in process and asked to record all useful work that can proceed
 while waiting. T012 permanently records the narrowed, non-submission Android
-release groundwork. It is `PLANNED`, not assigned or approved for execution;
-T009 remains the release-readiness owner and T010 remains the final release
-task.
+release groundwork. The owner explicitly assigned T012 on 2026-07-18. T012
+completed the local build profiles and versioning, production app assets,
+public privacy/support pages, Play listing and Data Safety drafts, screenshot
+plan, and Android evidence checklist. T009 remains the release-readiness owner
+and T010 remains the final release task.

@@ -66,13 +66,13 @@ store-sandbox evidence has not run.
 
 ## Recorded Waiting-Period Work
 
-T012 records non-submission Android release groundwork that could proceed while
-Play verification is pending: local EAS profiles/versioning, production visual
-assets, public privacy/support pages, truthful listing and Data Safety drafts,
-screenshot planning, and the Android T009 evidence checklist. T012 is not
-assigned and supplies no release-readiness evidence until executed and
-verified. Uploads, signing secrets, product activation/pricing, submission, and
-all representative device/store claims remain out of scope.
+T012 completed the non-submission Android release groundwork that could proceed
+while Play verification is pending: validated local EAS profiles/versioning,
+production visual assets, public privacy/support pages, truthful listing and
+Data Safety drafts, screenshot planning, and the Android T009 evidence
+checklist. Its host checks passed, but it supplies no representative native or
+store-sandbox evidence. Uploads, signing secrets, product activation/pricing,
+submission, and all representative device/store claims remain out of scope.
 
 ## Verdict
 

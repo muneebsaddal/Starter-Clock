@@ -1,6 +1,6 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 6 in progress; T009 blocked; T012 planned while Play verification runs
+**Status:** Phase 6 in progress; T009 blocked; T012 complete
 **Last updated:** 2026-07-18
 
 This document owns milestone intent and phase outcomes. Task status and order
@@ -51,8 +51,9 @@ regression coverage. Host checks pass; representative native performance and
 store behavior remain part of blocked T009.
 Later on 2026-07-18, the user reported that Google Play developer-account
 verification is in process and requested that all useful waiting-period work
-be recorded. T012 is the unassigned plan for non-submission Android build
-configuration, visual assets, privacy/support pages, truthful listing/Data
-Safety drafts, screenshot planning, and the Android evidence checklist. T010
-now consumes T012 after T009 passes and owns final policy reconciliation,
-approved pricing, signing, store builds, and launch packaging.
+be recorded, then explicitly assigned T012. T012 completed non-submission
+Android build configuration, visual assets, privacy/support pages, truthful
+listing/Data Safety drafts, screenshot planning, and the Android evidence
+checklist. T010 consumes this groundwork after T009 passes and owns final
+policy reconciliation, approved pricing, signing, store builds, and launch
+packaging.

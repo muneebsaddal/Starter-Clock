@@ -151,6 +151,29 @@ No state-management, ORM, date-time, analytics, or remote data package is
 approved. React state/reducers, `Intl`, and small repository mappings cover the
 MVP. Additions require a measured need and an ADR amendment.
 
+### T012 local release configuration evidence
+
+Checked against official Expo documentation on 2026-07-18:
+
+- `eas.json` defines `development`, `internal-test`, and `production` intents.
+  Development uses `expo-dev-client` and internal distribution; Android
+  internal-test produces an installable APK; production retains the default
+  store-oriented app bundle. T012 does not run EAS or create credentials.
+- Version ownership is deliberately `local` during this no-remote-mutation
+  task. App version `0.1.0`, Android `versionCode` 1, and iOS `buildNumber` 1
+  are explicit initial values. T010 may adopt Expo's recommended remote
+  auto-increment workflow only when external release configuration is
+  authorized and the current store versions can be initialized safely.
+- App/splash sources follow Expo's square PNG guidance. Android uses separate
+  adaptive foreground, monochrome, and background layers. The notification
+  plugin references a 96×96 all-white PNG with transparency, matching Expo's
+  documented Android requirement.
+
+Sources: [EAS build profiles](https://docs.expo.dev/build/eas-json/),
+[app version management](https://docs.expo.dev/build-reference/app-versions/),
+[splash and app icons](https://docs.expo.dev/develop/user-interface/splash-screen-and-app-icon/),
+and [notification configuration](https://docs.expo.dev/versions/latest/sdk/notifications/).
+
 ## Domain and Data Model
 
 All IDs are UUID strings. Every mutable record has `created_at_ms` and

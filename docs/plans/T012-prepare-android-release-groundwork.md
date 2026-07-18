@@ -120,10 +120,21 @@ material in this task.
 
 ## Completion Record
 
-- Outcome: Not started
-- Summary: —
-- Actual files changed: —
-- Verification: —
-- Remaining risks or blocker: Explicit owner assignment is required before
-  execution. Google Play verification and all release-readiness evidence remain
-  owned by T009.
+- Outcome: Done on 2026-07-18
+- Summary: Added account-free EAS profiles and explicit build versions,
+  generated and validated production app assets, added buildable public
+  privacy/support routes, and prepared truthful Play metadata, Data Safety,
+  screenshot, and Android evidence drafts without external store mutation.
+- Actual files changed: `app.json`, `eas.json`, `package.json`,
+  `package-lock.json`, `assets/branding/`, `assets/app-assets/`,
+  `scripts/`, public web routes/components, `docs/architecture.md`,
+  `docs/release/`, and canonical roadmap/task/handoff records.
+- Verification: strict TypeScript, 56/56 tests, coverage thresholds, lint, web
+  and Android exports, Expo public-config inspection, Expo Doctor 21/21,
+  release/asset validators, Playwright privacy/support checks at 1366x900 and
+  320x844, dependency audit, secret/placeholder scan, and
+  `git diff --check` passed. The dependency audit reports 12 moderate Expo
+  toolchain findings and no high/critical finding.
+- Remaining risks or blocker: Google Play verification, deployed URL/mailbox
+  checks, final pricing/policy reconciliation, signing, and all representative
+  native/store evidence remain owned by T009/T010.

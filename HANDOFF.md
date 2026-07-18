@@ -4,7 +4,7 @@
 
 ## Current State
 
-T009 is `BLOCKED`, T011 is `DONE`, and T012 is `PLANNED`. On 2026-07-05, the owner approved T007 as complete despite
+T009 is `BLOCKED`, T011 is `DONE`, and T012 is `DONE`. On 2026-07-05, the owner approved T007 as complete despite
 missing representative Android/Google Play and iOS store-sandbox/device
 evidence, approved Phase 5, and explicitly assigned T008. The web landing page
 and calculators are implemented and verified, including Playwright/Chrome
@@ -24,9 +24,9 @@ requires app/product configuration, a signed test build, license testers, and
 representative device evidence.
 Later on 2026-07-18, the owner reported that Google Play developer-account
 verification is in process and asked to record all useful work that can proceed
-while waiting. T012 now records non-submission Android release groundwork. It
-has not been assigned: no build configuration, assets, privacy/support pages,
-store drafts, price decision, upload, or submission work has begun.
+while waiting. T012 now records non-submission Android release groundwork and
+was explicitly assigned and completed on 2026-07-18. No price decision,
+upload, submission, or other external store mutation was made.
 
 The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
 representative mobile notification and store-sandbox evidence has not run. This
@@ -67,6 +67,12 @@ native notification or purchase behavior is release-ready.
   list. Personalization reads at most 12 observed feedings; reminder and delete
   cleanup queries materialize only actionable capability state. Full export
   remains complete.
+- T012 adds account-free EAS development/internal-test/production profiles,
+  explicit initial build versions, generated and validated production app
+  assets, and public Privacy and Support routes.
+- The Android store draft records truthful listing copy, a local-only Data
+  Safety basis, the unpriced `starter_clock_pro_lifetime` product, a real-UI
+  screenshot plan, and the complete Android T009 evidence checklist.
 
 ## Verification Evidence
 
@@ -98,6 +104,12 @@ native notification or purchase behavior is release-ready.
   21/21, no high/critical audit finding, and `git diff --check`. The isolated
   1,000-feeding paging/personalization/export/delete regression ran in 266 ms
   on this host.
+- T012 verification on 2026-07-18 passed: strict TypeScript, Expo lint, 56/56
+  tests, coverage thresholds, web and Android exports, Expo Doctor 21/21,
+  public config and release/asset validators, rendered Privacy/Support QA at
+  1366x900 and 320x844, source hygiene, and `git diff --check`. Dependency
+  audit found no high/critical issue; 12 moderate Expo transitive findings
+  remain.
 
 ## Deferred Release-Risk Evidence
 
@@ -125,10 +137,6 @@ and the representative platform matrix.
 
 ## Next Action
 
-While Google Play verification is pending, the owner may explicitly assign
-T012 to prepare local build profiles/versioning, production visual assets,
-privacy/support pages, store/Data Safety drafts, screenshot planning, and the
-Android evidence checklist without external mutation. Otherwise wait, then
-resume T009 with Play app/product/test-track configuration and representative
-Android verification. Do not begin T012 or T010 automatically; T010 requires
-both T009 and T012 to be complete.
+Wait for Google Play verification, then resume T009 with Play
+app/product/test-track configuration and representative Android verification.
+Do not begin T010 automatically; T012 is complete but T009 remains blocked.

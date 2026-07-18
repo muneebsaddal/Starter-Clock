@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { calculateFeedingRatioView, calculateHydrationView } from "@/domain/calculators";
+import { PublicFooter, PublicHeader } from "@/ui/web/public-navigation.web";
 
 const initialRatio = { starter: "25", flour: "50", water: "50" };
 const initialHydration = { flour: "100", water: "80" };
@@ -21,13 +22,7 @@ export default function PublicLanding() {
 
   return (
     <ScrollView style={styles.page} contentContainerStyle={[styles.content, compact ? styles.contentCompact : null]}>
-      <View style={[styles.header, compact ? styles.headerCompact : null]}>
-        <Text style={styles.brand}>Starter Clock</Text>
-        <View style={styles.nav}>
-          <Text style={styles.navItem}>Calculators</Text>
-          <Text style={styles.navItem}>Mobile tracking</Text>
-        </View>
-      </View>
+      <PublicHeader current="home" />
 
       <View style={[styles.hero, compact ? styles.heroCompact : null]}>
         <View style={[styles.heroCopy, compact ? styles.fullWidth : null]}>
@@ -112,6 +107,7 @@ export default function PublicLanding() {
           Starter behavior changes with temperature, flour, hydration, inoculation, and starter health. Starter Clock shows an estimated window and encourages observation; it does not make food-safety claims.
         </Text>
       </View>
+      <PublicFooter />
     </ScrollView>
   );
 }
@@ -187,11 +183,6 @@ const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: "#F7F2E9" },
   content: { paddingHorizontal: 24, paddingBottom: 52 },
   contentCompact: { paddingHorizontal: 16 },
-  header: { width: "100%", maxWidth: 1120, marginHorizontal: "auto", paddingTop: 24, paddingBottom: 18, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 16 },
-  headerCompact: { alignItems: "flex-start", flexDirection: "column" },
-  brand: { color: "#2D2925", fontSize: 22, lineHeight: 28, fontWeight: "900" },
-  nav: { flexDirection: "row", gap: 20, flexWrap: "wrap", justifyContent: "flex-end" },
-  navItem: { color: "#635D54", fontSize: 15, lineHeight: 20, fontWeight: "700" },
   hero: { width: "100%", maxWidth: 1120, marginHorizontal: "auto", minHeight: 580, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 52, paddingVertical: 42 },
   heroCompact: { minHeight: 0, flexDirection: "column", alignItems: "stretch", gap: 32, paddingTop: 24 },
   heroCopy: { flex: 1, minWidth: 300 },

@@ -3,15 +3,24 @@
     "name": "Starter Clock",
     "slug": "starter-clock",
     "version": "0.1.0",
+    "icon": "./assets/app-assets/icon.png",
     "orientation": "portrait",
     "scheme": "starterclock",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.starterclock.app"
+      "bundleIdentifier": "com.starterclock.app",
+      "buildNumber": "1"
     },
     "android": {
       "package": "com.starterclock.app",
+      "versionCode": 1,
+      "icon": "./assets/app-assets/icon.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/app-assets/adaptive-foreground.png",
+        "monochromeImage": "./assets/app-assets/adaptive-monochrome.png",
+        "backgroundColor": "#F7F2E9"
+      },
       "predictiveBackGestureEnabled": true
     },
     "web": {
@@ -21,7 +30,13 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/app-assets/notification-icon.png",
+          "color": "#9B4F35"
+        }
+      ],
       "react-native-iap",
       [
         "expo-image-picker",
@@ -31,7 +46,19 @@
           "microphonePermission": false
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F7F2E9",
+          "image": "./assets/app-assets/splash-icon.png",
+          "imageWidth": 190,
+          "dark": {
+            "backgroundColor": "#1F1C19",
+            "image": "./assets/app-assets/splash-icon.png"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
