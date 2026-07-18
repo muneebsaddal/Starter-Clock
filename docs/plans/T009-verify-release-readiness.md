@@ -53,8 +53,8 @@ environments; isolate fixes and block release rather than waiving critical gaps.
 - Outcome: Blocked
 - Summary: Host verification and in-scope data-control fixes completed. Release
   readiness remains blocked because representative Android/iOS native device,
-  notification, store-sandbox, export/share, delete-all, and final escalated
-  audit/doctor evidence has not run.
+  notification, store-sandbox, export/share, delete-all, and final rendered web
+  evidence has not run. The final audit and Expo Doctor reruns passed in T011.
 - Actual files changed: `docs/release-readiness.md`, `docs/tasks.md`,
   `HANDOFF.md`, `docs/architecture.md`, `docs/roadmap.md`, `app.json`,
   `package.json`, `package-lock.json`, `src/application/ports.ts`,
@@ -69,8 +69,10 @@ environments; isolate fixes and block release rather than waiving critical gaps.
   `npx expo export --platform android`; `npx expo config --type public`;
   `git diff --check`; source secret/TODO scan; Playwright Chromium rendered web
   check before `expo-sharing`; `npm audit --audit-level=high` and
-  `npx expo-doctor` before adding `expo-sharing`.
+  `npx expo-doctor` before adding `expo-sharing`. Final audit and Expo Doctor
+  reruns after SDK patch alignment passed in T011.
 - Remaining risks or blocker: Resume by running the matrix in
   `docs/release-readiness.md` on representative Android and iOS devices/store
-  sandboxes, then rerun `npx expo-doctor`, `npm audit --audit-level=high`, and
-  the rendered Playwright web check after the escalation limit resets.
+  sandboxes after Google Play account verification, and run the final rendered
+  post-`expo-sharing` Playwright web check. T012 may prepare non-submission
+  groundwork only if separately assigned; it cannot satisfy this evidence.

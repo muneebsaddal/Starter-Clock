@@ -1,6 +1,6 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 6 in progress; T011 complete; T009 blocked on native/store evidence
+**Status:** Phase 6 in progress; T009 blocked; T012 planned while Play verification runs
 **Last updated:** 2026-07-18
 
 This document owns milestone intent and phase outcomes. Task status and order
@@ -14,7 +14,7 @@ are canonical in `docs/tasks.md`.
 | 3. Local-first tracking | The complete offline mobile tracking loop works and is tested. | T006 | Phase audit and user approval. |
 | 4. Reminders and monetization | Notifications and purchase entitlements behave safely across mobile targets. | T007 | Phase audit and user approval. |
 | 5. Web acquisition | Responsive landing page and free calculators are usable and tested. | T008 | Phase audit and user approval. |
-| 6. Release readiness | Representative platforms, accessibility, privacy, stores, performance hardening, and release builds are verified. | T009-T011 | Release audit and explicit launch approval. |
+| 6. Release readiness | Representative platforms, accessibility, privacy, stores, performance hardening, and release builds are verified. | T009-T012 | Release audit and explicit launch approval. |
 
 ## Current Position
 
@@ -39,8 +39,8 @@ risk before any iOS store-readiness claim.
 The user approved Phase 5 and completed T008 on 2026-07-05. The user then
 approved Phase 6 and assigned T009. T009 completed host-executable checks and
 data-control fixes, but remains blocked on representative Android/iOS device,
-store-sandbox, export/share, delete-all, and final escalated audit/doctor
-evidence.
+store-sandbox, export/share, delete-all, and final rendered web evidence. Final
+audit and Expo Doctor reruns later passed in T011.
 On 2026-07-10, the user confirmed Apple/Google store-account blockers will
 remain temporarily and asked to continue structural and architectural testing.
 T011 covers performance and architecture hardening that can proceed without
@@ -49,3 +49,10 @@ On 2026-07-18, T011 completed Expo patch alignment, paged and virtualized Pro
 history, bounded observation/reminder/cleanup queries, and 1,000-feeding
 regression coverage. Host checks pass; representative native performance and
 store behavior remain part of blocked T009.
+Later on 2026-07-18, the user reported that Google Play developer-account
+verification is in process and requested that all useful waiting-period work
+be recorded. T012 is the unassigned plan for non-submission Android build
+configuration, visual assets, privacy/support pages, truthful listing/Data
+Safety drafts, screenshot planning, and the Android evidence checklist. T010
+now consumes T012 after T009 passes and owns final policy reconciliation,
+approved pricing, signing, store builds, and launch packaging.

@@ -16,8 +16,9 @@ never reused. The user selects tasks explicitly and approves phase changes.
 | T007 | Add notifications and purchase handling | 4 | DONE | T006, user approval of Phase 4 | [Plan](plans/T007-add-notifications-and-purchases.md) |
 | T008 | Build web landing page and calculators | 5 | DONE | T003, T005, user approval of Phase 5 | [Plan](plans/T008-build-web-landing-and-calculators.md) |
 | T009 | Verify platforms, accessibility, privacy, and data controls | 6 | BLOCKED | T007, T008, user approval of Phase 6 | [Plan](plans/T009-verify-release-readiness.md) |
-| T010 | Prepare store assets and release builds | 6 | PLANNED | T009 | [Plan](plans/T010-prepare-store-release.md) |
+| T010 | Prepare store assets and release builds | 6 | PLANNED | T009, T012 | [Plan](plans/T010-prepare-store-release.md) |
 | T011 | Harden performance and architecture before store testing | 6 | DONE | T006, T008, user approval to continue non-store development while T009 is blocked | [Plan](plans/T011-performance-architecture-hardening.md) |
+| T012 | Prepare non-submission Android release groundwork | 6 | PLANNED | T011, explicit owner assignment to work before T009 completes | [Plan](plans/T012-prepare-android-release-groundwork.md) |
 
 ## Status Definitions
 
@@ -62,3 +63,9 @@ paged/virtualized history, bounded capability queries, a 1,000-feeding
 regression, SDK-compatible patch updates, and passing host quality gates. T009
 remains blocked on console configuration and representative device/store
 sandbox evidence.
+Later on 2026-07-18, the user reported that Google Play developer-account
+verification is in process and asked to record all useful work that can proceed
+while waiting. T012 permanently records the narrowed, non-submission Android
+release groundwork. It is `PLANNED`, not assigned or approved for execution;
+T009 remains the release-readiness owner and T010 remains the final release
+task.

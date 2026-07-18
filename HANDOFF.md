@@ -4,7 +4,7 @@
 
 ## Current State
 
-T009 is `BLOCKED`, and T011 is `DONE`. On 2026-07-05, the owner approved T007 as complete despite
+T009 is `BLOCKED`, T011 is `DONE`, and T012 is `PLANNED`. On 2026-07-05, the owner approved T007 as complete despite
 missing representative Android/Google Play and iOS store-sandbox/device
 evidence, approved Phase 5, and explicitly assigned T008. The web landing page
 and calculators are implemented and verified, including Playwright/Chrome
@@ -22,6 +22,11 @@ has been created and assigned continuation of Starter Clock. T011 completed
 performance and architecture hardening. Android store verification still
 requires app/product configuration, a signed test build, license testers, and
 representative device evidence.
+Later on 2026-07-18, the owner reported that Google Play developer-account
+verification is in process and asked to record all useful work that can proceed
+while waiting. T012 now records non-submission Android release groundwork. It
+has not been assigned: no build configuration, assets, privacy/support pages,
+store drafts, price decision, upload, or submission work has begun.
 
 The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
 representative mobile notification and store-sandbox evidence has not run. This
@@ -97,7 +102,7 @@ native notification or purchase behavior is release-ready.
 ## Deferred Release-Risk Evidence
 
 This host has no Android SDK/ADB and cannot execute iOS. The Google Play Console
-developer account now exists, but the app, non-consumable
+developer account exists and its verification is in process; the app, non-consumable
 `starter_clock_pro_lifetime`, license testers, internal testing track, and
 signed Android build are not configured in repository context. Apple Developer/
 App Store Connect setup remains postponed.
@@ -120,9 +125,10 @@ and the representative platform matrix.
 
 ## Next Action
 
-Resume T009 by creating Starter Clock in Play Console for Android package
-`com.starterclock.app`, configuring the one-time product
-`starter_clock_pro_lifetime`, adding license/internal testers, and preparing a
-signed internal-test build. Representative Android verification can then run;
-iOS remains a separate deferred release risk. Do not begin T010 until T009 is
-unblocked and completed unless the owner explicitly narrows its scope.
+While Google Play verification is pending, the owner may explicitly assign
+T012 to prepare local build profiles/versioning, production visual assets,
+privacy/support pages, store/Data Safety drafts, screenshot planning, and the
+Android evidence checklist without external mutation. Otherwise wait, then
+resume T009 with Play app/product/test-track configuration and representative
+Android verification. Do not begin T012 or T010 automatically; T010 requires
+both T009 and T012 to be complete.

@@ -7,13 +7,15 @@ and a final launch package ready for explicit user approval.
 
 ## Dependencies and Context
 
-- Dependencies: T009
-- Read: all canonical documents and the T009 release-readiness evidence
+- Dependencies: T009 and T012
+- Read: all canonical documents, T009 release-readiness evidence, and T012
+  groundwork/completion evidence
 
 ## Scope
 
-- In: current store-policy verification, listing copy/assets, privacy/data
-  disclosures, purchase metadata, versioning, signed builds, release checklist.
+- In: final current-policy reconciliation; review/finalization of T012 listing,
+  asset, privacy, support, Data Safety, and versioning groundwork; purchase
+  metadata/pricing after explicit approval; signed builds; release checklist.
 - Out: submission or launch without explicit user authorization; new features.
 
 ## Acceptance Criteria
@@ -32,9 +34,11 @@ ledger, this plan, and handoff.
 
 ## Steps
 
-1. Verify current Apple, Google, and applicable web policy requirements.
-2. Produce listing copy, screenshots, disclosures, and support material.
-3. Configure versioning/signing without committing secrets.
+1. Reverify current Apple, Google, and applicable web policy requirements.
+2. Review and finalize T012 listing copy, screenshots, disclosures, assets, and
+   support material against passing T009 evidence.
+3. Finalize approved versioning/pricing and configure signing without
+   committing secrets.
 4. Build and smoke-test release artifacts.
 5. Conduct the release audit and request explicit launch authorization.
 
@@ -55,4 +59,4 @@ sources and external secret storage; do not submit if disclosures or builds drif
 - Summary: —
 - Actual files changed: —
 - Verification: —
-- Remaining risks or blocker: T009 must be complete.
+- Remaining risks or blocker: T009 and T012 must be complete.

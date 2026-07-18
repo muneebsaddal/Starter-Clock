@@ -55,12 +55,24 @@ store-sandbox evidence has not run.
    persistence, photo selection/denial, export share sheet, and delete-all.
 2. Google Play internal-test evidence is still missing for
    `starter_clock_pro_lifetime`: purchase success, pending, cancellation,
-   failure, restore, offline cached Pro, and refund/revocation.
+   failure, restore, offline cached Pro, and refund/revocation. The Play
+   developer account exists, but account verification is currently in process;
+   the app, product, testers, track, and signed bundle are not configured.
 3. Representative iOS device evidence is still missing for the same native
    notification, photo, export/delete, and StoreKit sandbox flows.
 4. The final rendered Playwright check after `expo-sharing` has not been rerun.
    The web UI code under test was not changed by the native export/share
    addition, and `npm run build:web` still passes.
+
+## Recorded Waiting-Period Work
+
+T012 records non-submission Android release groundwork that could proceed while
+Play verification is pending: local EAS profiles/versioning, production visual
+assets, public privacy/support pages, truthful listing and Data Safety drafts,
+screenshot planning, and the Android T009 evidence checklist. T012 is not
+assigned and supplies no release-readiness evidence until executed and
+verified. Uploads, signing secrets, product activation/pricing, submission, and
+all representative device/store claims remain out of scope.
 
 ## Verdict
 
