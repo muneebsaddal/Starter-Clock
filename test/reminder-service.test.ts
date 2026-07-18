@@ -11,6 +11,7 @@ function setup(permission: NotificationPermission = "granted") {
   let saved: Reminder | undefined;
   const repository = {
     updateReminder: vi.fn(async (_id: string, value: Reminder) => { saved = value; }),
+    expirePastReminders: vi.fn(async () => undefined),
     listReminderFeedings: vi.fn(async () => []),
     getStarter: vi.fn(async () => ({ id: "11111111-1111-4111-8111-111111111111", name: "Mabel", status: "active" as const, createdAtMs: now, updatedAtMs: now })),
   } as unknown as StarterRepository;
@@ -36,6 +37,16 @@ describe("reminder scheduling policy", () => {
   });
   it("does not prompt during launch reconciliation", async () => {
     const test = setup("undetermined"); vi.mocked(test.repository.listReminderFeedings).mockResolvedValue([feeding()]);
-    await test.service.reconcile(); expect(test.notifications.requestPermission).not.toHaveBeenCalled(); expect(test.saved()?.status).toBe("pending");
+    await test.service.reconcile(); expect(test.repository.expirePastReminders).toHaveBeenCalledWith(now); expect(test.notifications.requestPermission).not.toHaveBeenCalled(); expect(test.saved()?.status).toBe("pending");
+  });
+  it("keeps a valid scheduled request instead of replacing it at launch", async () => {
+    const test = setup();
+    const scheduled = feeding(reminder({ status: "scheduled", notificationId: "native-1" }));
+    vi.mocked(test.repository.listReminderFeedings).mockResolvedValue([scheduled]);
+    vi.mocked(test.notifications.listScheduled).mockResolvedValue([{ id: "native-1", feedingId: scheduled.id }]);
+    await test.service.reconcile();
+    expect(test.notifications.cancel).not.toHaveBeenCalled();
+    expect(test.notifications.schedule).not.toHaveBeenCalled();
+    expect(test.repository.updateReminder).not.toHaveBeenCalled();
   });
 });

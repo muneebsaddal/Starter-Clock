@@ -1,10 +1,10 @@
 # Starter Clock Handoff
 
-**Updated:** 2026-07-05
+**Updated:** 2026-07-18
 
 ## Current State
 
-T009 is `BLOCKED`. On 2026-07-05, the owner approved T007 as complete despite
+T009 is `BLOCKED`, and T011 is `DONE`. On 2026-07-05, the owner approved T007 as complete despite
 missing representative Android/Google Play and iOS store-sandbox/device
 evidence, approved Phase 5, and explicitly assigned T008. The web landing page
 and calculators are implemented and verified, including Playwright/Chrome
@@ -13,7 +13,15 @@ scroll regression. The owner manually accepted T008 on 2026-07-05.
 The owner then approved Phase 6 and explicitly assigned T009 on 2026-07-05.
 Host verification and in-scope data-control fixes are complete, but release
 readiness remains blocked on representative native device/store-sandbox
-verification and final post-`expo-sharing` escalated audit/doctor reruns.
+verification and the final rendered post-`expo-sharing` web check.
+On 2026-07-10, the owner confirmed the store-account blockers will remain for
+now and asked to continue development that can be done without Apple/Google
+store access. T011 was created for performance and architecture hardening.
+On 2026-07-18, the owner confirmed the Google Play Console developer account
+has been created and assigned continuation of Starter Clock. T011 completed
+performance and architecture hardening. Android store verification still
+requires app/product configuration, a signed test build, license testers, and
+representative device evidence.
 
 The Phase 4 audit verdict remains `CHANGES REQUIRED` for release readiness:
 representative mobile notification and store-sandbox evidence has not run. This
@@ -50,17 +58,21 @@ native notification or purchase behavior is release-ready.
   deletes nothing and keeps one persisted selected starter browsable.
 - Official Expo, Apple, and Google requirements checked on 2026-06-22 are cited
   in `docs/architecture.md`.
+- Pro history loads in 100-row pages and renders through a native virtualized
+  list. Personalization reads at most 12 observed feedings; reminder and delete
+  cleanup queries materialize only actionable capability state. Full export
+  remains complete.
 
 ## Verification Evidence
 
-- Strict TypeScript, Expo lint, and 44/44 tests passed.
-- Coverage passed: 87.02% statements / 81.71% branches overall;
-  98.18%/95.65% domain; 82.89%/87.93% database.
+- Strict TypeScript, Expo lint, and 56/56 tests passed.
+- Coverage passed: 90.51% statements / 84.72% branches overall;
+  98.5%/96.26% domain; 89.71%/89.55% database.
 - Expo Doctor passed 21/21. Production exports passed for iOS, Android, and web.
 - App-config introspection confirms the notification/IAP plugins, Google
   Billing permission, and removal directives for unused camera/microphone
   permissions.
-- Dependency audit has no high or critical issue. The existing ten moderate
+- Dependency audit has no high or critical issue. Eleven moderate
   transitive Expo CLI/config findings remain; forced remediation would
   downgrade Expo.
 - Source secret/TODO scan and `git diff --check` passed.
@@ -76,13 +88,19 @@ native notification or purchase behavior is release-ready.
   `npx expo export --platform android`, `npx expo config --type public`,
   `git diff --check`, source secret/TODO scan, and Playwright Chromium rendered
   web checks at 1366x900 and 390x844 before adding `expo-sharing`.
+- T011 verification on 2026-07-18 passed: strict TypeScript, Expo lint, 56/56
+  tests, 90.51% statement / 84.72% branch coverage, web export, Expo Doctor
+  21/21, no high/critical audit finding, and `git diff --check`. The isolated
+  1,000-feeding paging/personalization/export/delete regression ran in 266 ms
+  on this host.
 
 ## Deferred Release-Risk Evidence
 
-This host has no Android SDK/ADB and cannot execute iOS. The Google Play
-non-consumable `starter_clock_pro_lifetime`, license testers, internal testing
-track, and signed Android build are not configured in repository context. Apple
-Developer/App Store Connect setup remains postponed.
+This host has no Android SDK/ADB and cannot execute iOS. The Google Play Console
+developer account now exists, but the app, non-consumable
+`starter_clock_pro_lifetime`, license testers, internal testing track, and
+signed Android build are not configured in repository context. Apple Developer/
+App Store Connect setup remains postponed.
 
 Before claiming release readiness in T009, verify on representative Android and
 iOS targets: permission grant, denial and Settings recovery;
@@ -90,9 +108,8 @@ schedule/edit/reschedule/delete; restart/resume and time-zone reconciliation;
 purchase success, pending/deferred, cancellation, failure, offline cached Pro,
 restore, and refund/revocation.
 Also verify the export share sheet and delete-all flow on Android and iOS.
-After the escalation limit resets, rerun `npx expo-doctor`,
-`npm audit --audit-level=high`, and the Playwright rendered web check against
-the final dependency graph.
+The final rendered Playwright web check after `expo-sharing` remains deferred;
+the final dependency audit and Expo Doctor checks now pass.
 
 ## Phase 5 Outcome
 
@@ -103,6 +120,9 @@ and the representative platform matrix.
 
 ## Next Action
 
-Resume T009 by executing the blocked verification matrix in
-`docs/release-readiness.md`; do not begin T010 until T009 is unblocked and
-completed.
+Resume T009 by creating Starter Clock in Play Console for Android package
+`com.starterclock.app`, configuring the one-time product
+`starter_clock_pro_lifetime`, adding license/internal testers, and preparing a
+signed internal-test build. Representative Android verification can then run;
+iOS remains a separate deferred release risk. Do not begin T010 until T009 is
+unblocked and completed unless the owner explicitly narrows its scope.

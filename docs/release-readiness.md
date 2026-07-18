@@ -1,7 +1,7 @@
 # Starter Clock Release Readiness
 
 **Status:** Blocked
-**Last updated:** 2026-07-05
+**Last updated:** 2026-07-18
 
 This document records the current release-readiness evidence for T009. The
 release verdict is `CHANGES REQUIRED` because representative native device and
@@ -22,20 +22,28 @@ store-sandbox evidence has not run.
 - Updated Expo SDK 56 patch dependencies to the versions required by
   Expo Doctor before `expo-sharing` was added.
 
+## Hardening Completed In T011
+
+- Aligned the final Expo SDK 56 patch dependencies and passed Expo Doctor 21/21.
+- Paged and virtualized Pro history, bounded observation/reminder queries, and
+  narrowed delete cleanup without limiting complete export.
+- Added 1,000-feeding repository coverage and native History screen contract
+  tests; 56/56 tests and the complete host quality suite pass.
+
 ## Evidence Matrix
 
 | Area | Evidence | Result |
 |---|---|---|
 | TypeScript | `npm run typecheck` | Pass |
-| Unit/integration tests | `npm test` | Pass: 9 files, 51 tests |
-| Coverage | `npm run test:coverage` | Pass: 90.15% statements / 83.33% branches overall; domain 98.5% / 96.26%; database 85.39% / 87.93% |
+| Unit/integration tests | `npm test` | Pass: 10 files, 56 tests |
+| Coverage | `npm run test:coverage` | Pass: 90.51% statements / 84.72% branches overall; domain 98.5% / 96.26%; database 89.71% / 89.55% |
 | Lint | `npm run lint` | Pass |
 | Web export | `npm run build:web` | Pass |
 | iOS export | `npx expo export --platform ios` | Pass |
 | Android export | `npx expo export --platform android` | Pass |
 | App config | `npx expo config --type public` | Pass; `expo-sharing`, notifications, SQLite, image picker, and IAP plugins present |
-| Dependency security | `npm audit --audit-level=high` before adding `expo-sharing`; `expo install expo-sharing` audit output | No high or critical findings; 11 moderate Expo transitive findings remain |
-| Expo health | `npx expo-doctor` before adding `expo-sharing` | Pass: 21/21 after SDK patch updates |
+| Dependency security | `npm audit --audit-level=high` after final SDK patch alignment | No high or critical findings; 11 moderate Expo transitive findings remain |
+| Expo health | `npx expo-doctor` after final SDK patch alignment | Pass: 21/21 |
 | Rendered web | Playwright Chromium against static web export at 1366x900 and 390x844 | Pass before `expo-sharing`: title/content present, calculator interaction produced `1:3:2` and `Hydration: 66.7%`, no console warnings/errors, no failed requests, no horizontal overflow |
 | Source hygiene | `git diff --check`; source secret/TODO scan | Pass, with Windows line-ending warnings only |
 
@@ -50,15 +58,9 @@ store-sandbox evidence has not run.
    failure, restore, offline cached Pro, and refund/revocation.
 3. Representative iOS device evidence is still missing for the same native
    notification, photo, export/delete, and StoreKit sandbox flows.
-4. `expo-doctor` and `npm audit --audit-level=high` could not be rerun after
-   adding `expo-sharing` because the escalation reviewer rejected further
-   escalated commands due the account usage limit. Local builds and config pass
-   after the dependency change, and `expo install expo-sharing` reported only
-   moderate findings.
-5. The final rendered Playwright check after `expo-sharing` could not be rerun
-   for the same escalation-limit reason. The web UI code under test was not
-   changed by the native export/share addition, and `npm run build:web` still
-   passes.
+4. The final rendered Playwright check after `expo-sharing` has not been rerun.
+   The web UI code under test was not changed by the native export/share
+   addition, and `npm run build:web` still passes.
 
 ## Verdict
 

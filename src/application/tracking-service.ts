@@ -21,9 +21,11 @@ export class TrackingService {
   }
   async reconcileCapabilities() { await Promise.all([this.reminders?.reconcile().catch(() => undefined), this.entitlements?.refresh()]); }
   listStarters() { return this.repository.listStarters(); }
-  async listFeedings(starterId: string, limit?: number) {
+  async listFeedings(starterId: string, limit?: number, offset = 0) {
     const pro = (await this.getEntitlement()).level === "pro";
-    return this.repository.listFeedings(starterId, pro ? limit : Math.min(limit ?? 30, 30));
+    if (pro) return this.repository.listFeedings(starterId, limit, offset);
+    if (offset >= 30) return [];
+    return this.repository.listFeedings(starterId, Math.min(limit ?? 30, 30 - offset), offset);
   }
   getFeeding(id: string) { return this.repository.getFeeding(id); }
   getReminderDefault() { return this.repository.getReminderDefault(); }
@@ -64,7 +66,7 @@ export class TrackingService {
   }
 
   async deleteStarter(id: string) {
-    const photos = (await this.repository.listFeedings(id)).flatMap((feeding) => feeding.photo ? [feeding.photo.relativePath] : []);
+    const photos = await this.repository.listPhotoPaths(id);
     await this.repository.deleteStarter(id);
     await this.removePhotosBestEffort(photos);
   }
@@ -142,16 +144,19 @@ export class TrackingService {
   }
 
   async deleteAllData() {
-    const feedings = (await Promise.all((await this.repository.listStarters()).map((starter) => this.repository.listFeedings(starter.id)))).flat();
+    const [photos, reminders] = await Promise.all([
+      this.repository.listPhotoPaths(),
+      this.repository.listRemindersWithNotificationIds(),
+    ]);
     await this.repository.deleteAllData();
-    if (this.reminders) await Promise.all(feedings.map((feeding) => this.reminders?.cancel(feeding.reminder).catch(() => undefined)));
-    await this.removePhotosBestEffort(feedings.flatMap((feeding) => feeding.photo ? [feeding.photo.relativePath] : []));
+    if (this.reminders) await Promise.all(reminders.map((reminder) => this.reminders?.cancel(reminder).catch(() => undefined)));
+    await this.removePhotosBestEffort(photos);
   }
 
   private async personalizationObservations(starterId: string, excludedId?: string): Promise<PeakObservation[]> {
-    const feedings = await this.repository.listFeedings(starterId);
+    const feedings = await this.repository.listObservedFeedings(starterId, 12, excludedId);
     return feedings.flatMap((feeding) => {
-      if (feeding.id === excludedId || !feeding.observation) return [];
+      if (!feeding.observation) return [];
       return [{
         predictedMidpointHours: (feeding.estimate.midpointAtMs - feeding.fedAtMs) / 3_600_000,
         observedElapsedHours: (feeding.observation.observedAtMs - feeding.fedAtMs) / 3_600_000,

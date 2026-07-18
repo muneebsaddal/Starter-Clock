@@ -31,6 +31,13 @@ const feedingRowSchema = z.object({
 
 const entitlementRowSchema = z.object({ product_id: z.string().min(1), state: z.enum(["free", "pro"]), store: z.enum(["ios", "android", "unknown"]), last_verified_at_ms: z.number().nullable() });
 
+const reminderRowSchema = z.object({
+  enabled: z.number().int().min(0).max(1), status: z.enum(["disabled", "pending", "scheduled", "denied", "failed", "expired"]),
+  target_at_ms: z.number(), notification_id: z.string(), error_code: z.enum(["NOTIFICATION_DENIED", "NOTIFICATION_UNAVAILABLE", "NOTIFICATION_SCHEDULE_FAILED"]).nullable(), updated_at_ms: z.number(),
+});
+
+const MAX_FEEDING_PAGE_SIZE = 1_000;
+
 const feedingSelect = `
   SELECT f.*, e.model_version, e.earliest_at_ms, e.midpoint_at_ms, e.latest_at_ms,
     e.mode, e.factors_json, e.missing_inputs_json, e.personalization_json,
@@ -71,9 +78,29 @@ export class SQLiteStarterRepository implements StarterRepository {
 
   async deleteStarter(id: string) { await this.database.runAsync("DELETE FROM starters WHERE id = ?", id); }
 
-  async listFeedings(starterId: string, limit?: number) {
-    const appliedLimit = Math.min(limit ?? 10_000, 10_000);
-    const rows = await this.database.getAllAsync<unknown>(`${feedingSelect} WHERE f.starter_id = ? ORDER BY f.fed_at_ms DESC LIMIT ?`, starterId, appliedLimit);
+  async listFeedings(starterId: string, limit?: number, offset = 0) {
+    const appliedOffset = Math.max(0, Math.trunc(offset));
+    const rows = limit === undefined
+      ? await this.database.getAllAsync<unknown>(`${feedingSelect} WHERE f.starter_id = ? ORDER BY f.fed_at_ms DESC`, starterId)
+      : await this.database.getAllAsync<unknown>(
+        `${feedingSelect} WHERE f.starter_id = ? ORDER BY f.fed_at_ms DESC LIMIT ? OFFSET ?`,
+        starterId,
+        Math.max(0, Math.min(Math.trunc(limit), MAX_FEEDING_PAGE_SIZE)),
+        appliedOffset,
+      );
+    return rows.map(mapFeeding);
+  }
+
+  async listObservedFeedings(starterId: string, limit: number, excludedId?: string) {
+    const appliedLimit = Math.max(0, Math.min(Math.trunc(limit), 12));
+    const exclusion = excludedId ? " AND f.id <> ?" : "";
+    const params: BindValue[] = [starterId];
+    if (excludedId) params.push(excludedId);
+    params.push(appliedLimit);
+    const rows = await this.database.getAllAsync<unknown>(
+      `${feedingSelect} WHERE f.starter_id = ? AND o.observed_at_ms IS NOT NULL${exclusion} ORDER BY f.fed_at_ms DESC LIMIT ?`,
+      ...params,
+    );
     return rows.map(mapFeeding);
   }
 
@@ -139,9 +166,48 @@ export class SQLiteStarterRepository implements StarterRepository {
     );
   }
 
-  async listReminderFeedings() {
-    const rows = await this.database.getAllAsync<unknown>(`${feedingSelect} ORDER BY f.fed_at_ms DESC`);
+  async expirePastReminders(nowMs: number) {
+    await this.database.runAsync(
+      `UPDATE reminders SET status = 'expired', error_code = NULL, updated_at_ms = ?
+       WHERE enabled = 1 AND target_at_ms <= ? AND notification_id IS NULL AND status <> 'expired'`,
+      nowMs,
+      nowMs,
+    );
+  }
+
+  async listReminderFeedings(nowMs: number) {
+    const rows = await this.database.getAllAsync<unknown>(
+      `${feedingSelect} WHERE r.notification_id IS NOT NULL OR (r.enabled = 1 AND r.target_at_ms > ?) ORDER BY r.target_at_ms ASC`,
+      nowMs,
+    );
     return rows.map(mapFeeding);
+  }
+
+  async listPhotoPaths(starterId?: string) {
+    const rows = starterId
+      ? await this.database.getAllAsync<unknown>(
+        "SELECT p.relative_path FROM photos p JOIN feedings f ON f.id = p.feeding_id WHERE f.starter_id = ?",
+        starterId,
+      )
+      : await this.database.getAllAsync<unknown>("SELECT relative_path FROM photos");
+    return rows.map((row) => z.object({ relative_path: z.string().min(1) }).parse(row).relative_path);
+  }
+
+  async listRemindersWithNotificationIds() {
+    const rows = await this.database.getAllAsync<unknown>(
+      "SELECT enabled,status,target_at_ms,notification_id,error_code,updated_at_ms FROM reminders WHERE notification_id IS NOT NULL",
+    );
+    return rows.map((row): Reminder => {
+      const parsed = reminderRowSchema.parse(row);
+      return {
+        enabled: parsed.enabled === 1,
+        status: parsed.status,
+        targetAtMs: parsed.target_at_ms,
+        notificationId: parsed.notification_id,
+        updatedAtMs: parsed.updated_at_ms,
+        ...(parsed.error_code === null ? {} : { errorCode: parsed.error_code }),
+      };
+    });
   }
 
   async getReminderDefault() {

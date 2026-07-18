@@ -20,6 +20,11 @@ function makeFeeding(overrides: Partial<Feeding> = {}): Feeding {
   };
 }
 
+function feedingUuid(index: number) {
+  const hex = index.toString(16);
+  return `${hex.padStart(8, "0")}-2222-4222-8222-${hex.padStart(12, "0")}`;
+}
+
 describe("SQLite migrations and repository", () => {
   let database: NodeDatabase; let repository: SQLiteStarterRepository;
   beforeEach(async () => { database = new NodeDatabase(); repository = new SQLiteStarterRepository(database, () => now); await repository.initialize(); });
@@ -92,6 +97,48 @@ describe("SQLite migrations and repository", () => {
     const limited = await repository.listFeedings(starterId, 30); expect(limited).toHaveLength(30); expect(limited[0]?.fedAtMs).toBeGreaterThan(limited[29]?.fedAtMs ?? 0);
     await repository.deleteFeeding(limited[0]!.id); expect(await repository.getFeeding(limited[0]!.id)).toBeNull();
     await repository.deleteStarter(starterId); expect(await repository.listFeedings(starterId)).toEqual([]);
+  });
+
+  it("pages, personalizes, exports and deletes correctly with 1,000 feedings", async () => {
+    await repository.saveStarter(starter);
+    for (let index = 0; index < 1_000; index += 1) {
+      await repository.saveFeeding(makeFeeding({
+        id: feedingUuid(index),
+        fedAtMs: now + index * 60_000,
+        ...(index % 20 === 0 ? { observation: { observedAtMs: now + index * 60_000 + 8 * 3_600_000 } } : {}),
+      }));
+    }
+
+    const firstPage = await repository.listFeedings(starterId, 100);
+    const secondPage = await repository.listFeedings(starterId, 100, 100);
+    const lastPage = await repository.listFeedings(starterId, 100, 900);
+    expect(firstPage).toHaveLength(100);
+    expect(secondPage).toHaveLength(100);
+    expect(lastPage).toHaveLength(100);
+    expect(new Set([...firstPage, ...secondPage].map((feeding) => feeding.id))).toHaveLength(200);
+    expect(firstPage[0]?.fedAtMs).toBeGreaterThan(secondPage[0]?.fedAtMs ?? 0);
+
+    const observations = await repository.listObservedFeedings(starterId, 12, feedingUuid(980));
+    expect(observations).toHaveLength(12);
+    expect(observations.some((feeding) => feeding.id === feedingUuid(980))).toBe(false);
+    expect(observations.every((feeding) => feeding.observation !== undefined)).toBe(true);
+
+    const exported = await repository.exportAllData();
+    expect(exported.feedings).toHaveLength(1_000);
+    await repository.deleteAllData();
+    expect(await repository.listFeedings(starterId)).toEqual([]);
+  }, 20_000);
+
+  it("limits reminder reconciliation rows to actionable records", async () => {
+    await repository.saveStarter(starter);
+    await repository.saveFeeding(makeFeeding({ id: feedingUuid(1), reminder: { enabled: true, status: "pending", targetAtMs: now - 1, updatedAtMs: now } }));
+    await repository.saveFeeding(makeFeeding({ id: feedingUuid(2), reminder: { enabled: true, status: "pending", targetAtMs: now + 1, updatedAtMs: now } }));
+    await repository.saveFeeding(makeFeeding({ id: feedingUuid(3), reminder: { enabled: false, status: "scheduled", targetAtMs: now - 1, notificationId: "native-old", updatedAtMs: now } }));
+
+    await repository.expirePastReminders(now);
+    const actionable = await repository.listReminderFeedings(now);
+    expect(actionable.map((feeding) => feeding.id)).toEqual([feedingUuid(3), feedingUuid(2)]);
+    expect((await repository.getFeeding(feedingUuid(1)))?.reminder.status).toBe("expired");
   });
 
   it("exports portable local data without OS notification identifiers", async () => {

@@ -46,10 +46,14 @@ export class ReminderService {
       await this.notifications.prepare();
       scheduled = await this.notifications.listScheduled();
     } catch { return; }
-    const feedings = await this.repository.listReminderFeedings();
+    const now = this.clock.now();
+    await this.repository.expirePastReminders(now);
+    const feedings = await this.repository.listReminderFeedings(now);
+    const scheduledIds = new Set(scheduled.map((entry) => entry.id));
     const ownedIds = new Set(feedings.flatMap((feeding) => feeding.reminder.notificationId ? [feeding.reminder.notificationId] : []));
     await Promise.all(scheduled.filter((entry) => entry.feedingId && !ownedIds.has(entry.id)).map((entry) => this.notifications.cancel(entry.id).catch(() => undefined)));
     for (const feeding of feedings) {
+      if (feeding.reminder.enabled && feeding.reminder.targetAtMs > now && feeding.reminder.notificationId && scheduledIds.has(feeding.reminder.notificationId)) continue;
       const starter = await this.repository.getStarter(feeding.starterId);
       if (starter) await this.sync(feeding, starter.name, false);
     }

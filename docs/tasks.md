@@ -1,6 +1,6 @@
 # Starter Clock Task Ledger
 
-**Last updated:** 2026-07-05
+**Last updated:** 2026-07-18
 
 This is the authoritative task index and status ledger. IDs are permanent and
 never reused. The user selects tasks explicitly and approves phase changes.
@@ -17,6 +17,7 @@ never reused. The user selects tasks explicitly and approves phase changes.
 | T008 | Build web landing page and calculators | 5 | DONE | T003, T005, user approval of Phase 5 | [Plan](plans/T008-build-web-landing-and-calculators.md) |
 | T009 | Verify platforms, accessibility, privacy, and data controls | 6 | BLOCKED | T007, T008, user approval of Phase 6 | [Plan](plans/T009-verify-release-readiness.md) |
 | T010 | Prepare store assets and release builds | 6 | PLANNED | T009 | [Plan](plans/T010-prepare-store-release.md) |
+| T011 | Harden performance and architecture before store testing | 6 | DONE | T006, T008, user approval to continue non-store development while T009 is blocked | [Plan](plans/T011-performance-architecture-hardening.md) |
 
 ## Status Definitions
 
@@ -48,6 +49,16 @@ assigned T008.
 T008 was completed on 2026-07-05 after Playwright/Chrome mobile verification
 confirmed the feeding-ratio result block no longer clips or overflows.
 The user approved Phase 6 and explicitly assigned T009 on 2026-07-05. T009 is
-blocked on representative native device/store-sandbox verification and final
-post-`expo-sharing` escalated audit/doctor reruns, as recorded in
-`docs/release-readiness.md`.
+blocked on representative native device/store-sandbox verification and the
+final rendered post-`expo-sharing` web check, as recorded in
+`docs/release-readiness.md`. The final audit and Expo Doctor reruns passed in
+T011.
+On 2026-07-10, the user confirmed the store-account blockers will remain for
+now and asked to continue structural and architectural hardening that does not
+depend on Apple or Google store access. T011 is ready for explicit assignment.
+On 2026-07-18, the user confirmed the Google Play Console developer account is
+created and explicitly asked to continue Starter Clock. T011 completed with
+paged/virtualized history, bounded capability queries, a 1,000-feeding
+regression, SDK-compatible patch updates, and passing host quality gates. T009
+remains blocked on console configuration and representative device/store
+sandbox evidence.

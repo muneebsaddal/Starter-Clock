@@ -12,6 +12,8 @@ interface TrackingContextValue {
   starters: Starter[];
   selectedStarter: Starter | null;
   feedings: Feeding[];
+  hasMoreFeedings: boolean;
+  loadingMoreFeedings: boolean;
   entitlement: EntitlementSnapshot;
   reminderDefault: boolean;
   createStarter(name: string): Promise<Starter>;
@@ -29,10 +31,12 @@ interface TrackingContextValue {
   exportData(): Promise<string>;
   deleteAllData(): Promise<void>;
   refresh(): Promise<void>;
+  loadMoreFeedings(): Promise<void>;
   clearError(): void;
 }
 
 const TrackingContext = createContext<TrackingContextValue | null>(null);
+const HISTORY_PAGE_SIZE = 100;
 
 export function TrackingProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(true);
@@ -40,6 +44,8 @@ export function TrackingProvider({ children }: PropsWithChildren) {
   const [starters, setStarters] = useState<Starter[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [feedings, setFeedings] = useState<Feeding[]>([]);
+  const [hasMoreFeedings, setHasMoreFeedings] = useState(false);
+  const [loadingMoreFeedings, setLoadingMoreFeedings] = useState(false);
   const [entitlement, setEntitlement] = useState<EntitlementSnapshot>({ productId: "starter_clock_pro_lifetime", level: "free", store: "unknown", lastVerifiedAtMs: null, offline: false });
   const [reminderDefault, setReminderDefault] = useState(true);
   const selectedStarter = starters.find((starter) => starter.id === selectedId) ?? starters.find((starter) => starter.status === "active") ?? null;
@@ -50,11 +56,16 @@ export function TrackingProvider({ children }: PropsWithChildren) {
       const nextStarters = await service.listStarters();
       const persistedSelectedId = selectedId ?? await service.getSelectedStarterId();
       const nextSelected = nextStarters.find((starter) => starter.id === persistedSelectedId && starter.status === "active") ?? nextStarters.find((starter) => starter.status === "active") ?? null;
-      const [nextFeedings, nextEntitlement, nextReminderDefault] = await Promise.all([nextSelected ? service.listFeedings(nextSelected.id) : [], service.getEntitlement(), service.getReminderDefault()]);
+      const [feedingPage, nextEntitlement, nextReminderDefault] = await Promise.all([
+        nextSelected ? service.listFeedings(nextSelected.id, HISTORY_PAGE_SIZE + 1) : [],
+        service.getEntitlement(),
+        service.getReminderDefault(),
+      ]);
       setStarters(nextStarters);
       setSelectedId(nextSelected?.id ?? null);
       await service.setSelectedStarterId(nextSelected?.id ?? null);
-      setFeedings(nextFeedings);
+      setFeedings(feedingPage.slice(0, HISTORY_PAGE_SIZE));
+      setHasMoreFeedings(feedingPage.length > HISTORY_PAGE_SIZE);
       setEntitlement(nextEntitlement);
       setReminderDefault(nextReminderDefault);
       setError(null);
@@ -64,6 +75,24 @@ export function TrackingProvider({ children }: PropsWithChildren) {
       setLoading(false);
     }
   }, [selectedId]);
+
+  const loadMoreFeedings = useCallback(async () => {
+    if (!selectedStarter || entitlement.level !== "pro" || !hasMoreFeedings || loadingMoreFeedings) return;
+    setLoadingMoreFeedings(true);
+    try {
+      const page = await (await getTrackingService()).listFeedings(selectedStarter.id, HISTORY_PAGE_SIZE + 1, feedings.length);
+      const additions = page.slice(0, HISTORY_PAGE_SIZE);
+      setFeedings((current) => {
+        const existingIds = new Set(current.map((feeding) => feeding.id));
+        return [...current, ...additions.filter((feeding) => !existingIds.has(feeding.id))];
+      });
+      setHasMoreFeedings(page.length > HISTORY_PAGE_SIZE);
+    } catch {
+      setError("Couldn’t load more feeding history. Try again.");
+    } finally {
+      setLoadingMoreFeedings(false);
+    }
+  }, [entitlement.level, feedings.length, hasMoreFeedings, loadingMoreFeedings, selectedStarter]);
 
   useEffect(() => { const timer = setTimeout(() => void refresh(), 0); return () => clearTimeout(timer); }, [refresh]);
   useEffect(() => {
@@ -85,7 +114,7 @@ export function TrackingProvider({ children }: PropsWithChildren) {
   }, [refresh]);
 
   const value = useMemo<TrackingContextValue>(() => ({
-    loading, error, starters, selectedStarter, feedings, entitlement, reminderDefault, refresh,
+    loading, error, starters, selectedStarter, feedings, hasMoreFeedings, loadingMoreFeedings, entitlement, reminderDefault, refresh, loadMoreFeedings,
     clearError: () => setError(null),
     createStarter: (name) => perform(async () => { const service = await getTrackingService(); const starter = await service.createStarter(name); await service.setSelectedStarterId(starter.id); setSelectedId(starter.id); return starter; }),
     renameStarter: async (name) => { if (!selectedStarter) return; await perform(async () => (await getTrackingService()).renameStarter(selectedStarter.id, name)); },
@@ -107,7 +136,7 @@ export function TrackingProvider({ children }: PropsWithChildren) {
       await perform(async () => (await getTrackingService()).deleteAllData());
       setSelectedId(null);
     },
-  }), [entitlement, error, feedings, loading, perform, refresh, reminderDefault, selectedStarter, starters]);
+  }), [entitlement, error, feedings, hasMoreFeedings, loadMoreFeedings, loading, loadingMoreFeedings, perform, refresh, reminderDefault, selectedStarter, starters]);
 
   return <TrackingContext.Provider value={value}>{children}</TrackingContext.Provider>;
 }

@@ -1,7 +1,7 @@
 # Starter Clock Architecture
 
-**Status:** T009 release-readiness contract
-**Last updated:** 2026-07-05
+**Status:** T011 performance-hardened release-readiness contract
+**Last updated:** 2026-07-18
 
 This document is the canonical owner of technical decisions and boundaries.
 Product behavior remains in `requirements.md`; screen behavior remains in
@@ -50,6 +50,7 @@ capabilities directly.
 | ADR-012 | Collect no analytics in MVP. Keep a bounded local diagnostic ring buffer with error code, operation, model/schema version, platform, and timestamp—never amounts, names, notes, photos, or purchase tokens. | Full event analytics or crash attachments by default. | Privacy contract remains intact; support evidence is exportable only by explicit user action. |
 | ADR-013 | Unit-test domain and policy code with Vitest; integration-test SQLite migrations/repositories and fake capability adapters; use React Native Testing Library for screens and later device E2E for critical native flows. | Device-only testing; snapshot-heavy UI tests. | NFR-005 coverage is enforceable at domain/data boundaries while native behavior still receives device verification. |
 | ADR-014 | Personalize only after five valid observations with median absolute residual deviation at most three hours; apply a median residual shift capped at four hours and never narrow the baseline interval in MVP. | Personalize after one observation; regression/ML; silently learn from all history. | Outliers and sparse history do not create false confidence; the UI may say history adjusted the estimate only when this gate passes. |
+| ADR-015 | Page Pro history in 100-row UI batches, render native history with `SectionList`, and use purpose-specific observation, reminder, photo, and notification-ID queries. Full export remains intentionally complete. | Load and render all retained feedings for every screen; scan full history for the latest 12 observations or reminder cleanup. | Today/history refresh work is bounded, Pro can incrementally reach complete retained history, and cleanup avoids materializing unrelated feeding data. Native launch/scroll timing remains a T009 device gate. |
 
 ## Repository Contract
 
@@ -76,22 +77,23 @@ tests do not depend on ambient time or random values.
 
 ## Package Baseline and Capability Evidence
 
-The package snapshot was checked on 2026-06-21 and the T007 native capability
-versions were rechecked on 2026-06-22. The app uses
+The package snapshot was checked on 2026-06-21, the T007 native capability
+versions were rechecked on 2026-06-22, and Expo-compatible patches were aligned
+and verified on 2026-07-18. The app uses
 the current Expo SDK 56 template and uses `npx expo install` for Expo-owned
 packages so compatible patch versions are resolved. Do not manually combine
 the standalone latest React Native package with Expo.
 
 | Package | Checked version | Decision |
 |---|---:|---|
-| `expo` | 56.0.14 | Platform/runtime baseline |
-| `expo-router` | 56.2.13 | File-based navigation and web route splitting |
+| `expo` | 56.0.16 | Platform/runtime baseline |
+| `expo-router` | 56.2.15 | File-based navigation and web route splitting |
 | `expo-sqlite` | 56.0.5 | Structured local persistence |
-| `expo-notifications` | 56.0.19 | One-off local peak notifications |
+| `expo-notifications` | 56.0.21 | One-off local peak notifications |
 | `expo-file-system` | 56.0.8 | Managed photo and export files |
-| `expo-image-picker` | 56.0.19 | System photo/camera picker |
+| `expo-image-picker` | 56.0.21 | System photo/camera picker |
 | `expo-crypto` | 56.0.4 | UUID generation |
-| `expo-sharing` | 56.0.20 | System export share sheet |
+| `expo-sharing` | 56.0.22 | System export share sheet |
 | `react-native-iap` | 15.3.2 | Direct StoreKit / Google Play Billing entitlement adapter |
 | `zod` | 4.4.3 | Runtime boundary schemas |
 | `vitest` | 4.1.9 | Domain and non-rendered integration tests |
@@ -351,5 +353,8 @@ Every migration/model change adds a versioned fixture and regression tests.
 - Store behavior, OS notification delivery, permissions, and file cleanup cannot
   be fully proven in unit tests; representative device/sandbox verification
   remains a later release gate.
+- The 1,000-feeding host regression proves repository paging, complete export,
+  deletion, and bounded observation selection, but native launch, memory, and
+  scroll performance still require representative-device measurement in T009.
 - Direct store integration reduces third-party data processing but increases
   adapter and test responsibility compared with a purchase service.

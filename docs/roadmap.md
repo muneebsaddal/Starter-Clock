@@ -1,7 +1,7 @@
 # Starter Clock Roadmap
 
-**Status:** Phase 6 in progress; T009 blocked on representative release-readiness evidence
-**Last updated:** 2026-07-05
+**Status:** Phase 6 in progress; T011 complete; T009 blocked on native/store evidence
+**Last updated:** 2026-07-18
 
 This document owns milestone intent and phase outcomes. Task status and order
 are canonical in `docs/tasks.md`.
@@ -14,7 +14,7 @@ are canonical in `docs/tasks.md`.
 | 3. Local-first tracking | The complete offline mobile tracking loop works and is tested. | T006 | Phase audit and user approval. |
 | 4. Reminders and monetization | Notifications and purchase entitlements behave safely across mobile targets. | T007 | Phase audit and user approval. |
 | 5. Web acquisition | Responsive landing page and free calculators are usable and tested. | T008 | Phase audit and user approval. |
-| 6. Release readiness | Representative platforms, accessibility, privacy, stores, and release builds are verified. | T009-T010 | Release audit and explicit launch approval. |
+| 6. Release readiness | Representative platforms, accessibility, privacy, stores, performance hardening, and release builds are verified. | T009-T011 | Release audit and explicit launch approval. |
 
 ## Current Position
 
@@ -41,3 +41,11 @@ approved Phase 6 and assigned T009. T009 completed host-executable checks and
 data-control fixes, but remains blocked on representative Android/iOS device,
 store-sandbox, export/share, delete-all, and final escalated audit/doctor
 evidence.
+On 2026-07-10, the user confirmed Apple/Google store-account blockers will
+remain temporarily and asked to continue structural and architectural testing.
+T011 covers performance and architecture hardening that can proceed without
+claiming T009 release readiness.
+On 2026-07-18, T011 completed Expo patch alignment, paged and virtualized Pro
+history, bounded observation/reminder/cleanup queries, and 1,000-feeding
+regression coverage. Host checks pass; representative native performance and
+store behavior remain part of blocked T009.
